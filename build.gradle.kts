@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("jacoco")
     id("net.ltgt.errorprone") version "3.1.0"
 }
 
@@ -8,6 +9,7 @@ version = "1.0-SNAPSHOT"
 
 allprojects {
     apply(plugin = "net.ltgt.errorprone")
+    apply(plugin = "jacoco")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -27,5 +29,15 @@ allprojects {
 
     tasks.test {
         useJUnitPlatform()
+        finalizedBy(tasks.jacocoTestReport)
+    }
+
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
+        reports {
+            xml.required.set(true)
+            csv.required.set(false)
+            html.required.set(false)
+        }
     }
 }
