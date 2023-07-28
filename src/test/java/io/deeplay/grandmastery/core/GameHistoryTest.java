@@ -23,7 +23,7 @@ class GameHistoryTest {
   @Test
   void setBoardTest() {
     var newGameHistory = new GameHistory();
-    gameHistory.setBoard(new Board() {});
+    gameHistory.setBoard(new HashBoard());
 
     Assertions.assertAll(
         () -> assertNull(newGameHistory.getBoard()), () -> assertNotNull(gameHistory.getBoard()));
