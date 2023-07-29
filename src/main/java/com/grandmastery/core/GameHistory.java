@@ -1,15 +1,12 @@
-package io.deeplay.core;
+package com.grandmastery.core;
 
-import io.deeplay.domain.GameErrorCode;
-import io.deeplay.exceptions.GameException;
+import com.grandmastery.domain.GameErrorCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /***
  * Класс для сохранения истории партии
- * @since 28.07.2023
- * @author Sergei Melnikow
  * */
 public class GameHistory implements GameListener {
     private final List<Move> moves = new ArrayList<>();
@@ -22,7 +19,7 @@ public class GameHistory implements GameListener {
     @Override
     public void setBoard(Board board) {
         if (this.board == null)
-            this.board = board; // TODO: Create with copy-constructor
+            this.board = board; // TODO: Сделать констуктор копирования в Board
     }
 
     /***
@@ -48,7 +45,7 @@ public class GameHistory implements GameListener {
      */
     public Move getLastMove() {
         if (this.isEmpty())
-            throw new GameException(GameErrorCode.MOVE_NOT_FOUND);
+            throw GameErrorCode.MOVE_NOT_FOUND.asException();
 
         return moves.get(moves.size() - 1);
     }
@@ -66,6 +63,6 @@ public class GameHistory implements GameListener {
      @return Доску
      */
     public Board getBoard() {
-        return board; // TODO: Return with copy-constructor
+        return board; // TODO: Возвращать не ссылку а новый объект, созданный через констуктор копирования
     }
 }

@@ -1,19 +1,18 @@
-package io.deeplay.core;
+package com.grandmastery.core;
 
-import io.deeplay.domain.GameErrorCode;
-import io.deeplay.exceptions.GameException;
+import com.grandmastery.domain.GameErrorCode;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /***
  * Класс для сохранения позиции фигуры на шахматной доске
- * @since 28.07.2023
- * @author Sergei Melnikow
  */
 public record Position(int col, int row) {
-    private static final List<Character> validCharacters = List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
-    private static final Set<Character> validNumbers = Set.of('1', '2', '3', '4', '5', '6', '7', '8');
+    private static final Map<Character, Integer> VALID_CHARACTERS =
+            Map.of('a', 1, 'b', 2, 'c', 3, 'd', 4,
+                    'e', 5, 'f', 6, 'g', 7, 'h', 8);
+    private static final Set<Character> VALID_NUMBERS = Set.of('1', '2', '3', '4', '5', '6', '7', '8');
 
     /***
      * Метод возвращает позицию по строке
@@ -22,7 +21,7 @@ public record Position(int col, int row) {
      */
     public static Position getPositionFromString(String stringPos) {
         if (stringPos.length() != 2)
-            throw new GameException(GameErrorCode.INCORRECT_POSITION_FORMAT);
+            throw GameErrorCode.INCORRECT_POSITION_FORMAT.asException();
 
         var col = getColFromChar(stringPos.charAt(0));
         var row = getRowFromChar(stringPos.charAt(1));
@@ -36,8 +35,8 @@ public record Position(int col, int row) {
      * @return Номер строки на шахматной доске
      */
     private static int getRowFromChar(char rowCharacter) {
-        if (!validNumbers.contains(rowCharacter))
-            throw new GameException(GameErrorCode.INCORRECT_POSITION_FORMAT);
+        if (!VALID_NUMBERS.contains(rowCharacter))
+            throw GameErrorCode.INCORRECT_POSITION_FORMAT.asException();
 
         return Integer.parseInt(String.valueOf(rowCharacter));
     }
@@ -48,16 +47,14 @@ public record Position(int col, int row) {
      * @return Номер столбца на шахматной доске
      */
     private static int getColFromChar(char colCharacter) {
-        if (!validCharacters.contains(colCharacter))
-            throw new GameException(GameErrorCode.INCORRECT_POSITION_FORMAT);
+        if (!VALID_CHARACTERS.containsKey(colCharacter))
+            throw GameErrorCode.INCORRECT_POSITION_FORMAT.asException();
 
-        var idx = 1;
+        var key = VALID_CHARACTERS.keySet().stream()
+                .filter(ch -> ch.equals(colCharacter))
+                .findAny()
+                .orElseThrow(GameErrorCode.INCORRECT_MOVE_FORMAT::asException);
 
-        for (Character validCharacter : validCharacters) {
-            if (validCharacter == colCharacter) return idx;
-            idx++;
-        }
-
-        throw new GameException(GameErrorCode.INCORRECT_POSITION_FORMAT);
+        return VALID_CHARACTERS.get(key);
     }
 }

@@ -1,4 +1,4 @@
-package io.deeplay;
+package com.grandmastery;
 
 public class Main {
     public static void main(String[] args) {

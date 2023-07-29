@@ -1,4 +1,4 @@
-package io.deeplay.domain;
+package com.grandmastery.domain;
 
 public enum Color {
     WHITE, BLACK

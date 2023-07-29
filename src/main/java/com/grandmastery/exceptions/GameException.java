@@ -1,6 +1,6 @@
-package io.deeplay.exceptions;
+package com.grandmastery.exceptions;
 
-import io.deeplay.domain.GameErrorCode;
+import com.grandmastery.domain.GameErrorCode;
 
 public class GameException extends RuntimeException {
     public GameException(GameErrorCode gameErrorCode) {

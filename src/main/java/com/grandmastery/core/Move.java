@@ -1,6 +1,6 @@
-package io.deeplay.core;
+package com.grandmastery.core;
 
-import io.deeplay.domain.FigureType;
+import com.grandmastery.domain.FigureType;
 
 public record Move(Position from, Position to, FigureType promotionPiece) {
 }

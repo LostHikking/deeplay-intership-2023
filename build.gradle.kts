@@ -4,7 +4,7 @@ plugins {
     id("net.ltgt.errorprone") version "3.1.0"
 }
 
-group = "io.deeplay"
+group = "com.grandmastery"
 version = "1.0-SNAPSHOT"
 
 allprojects {

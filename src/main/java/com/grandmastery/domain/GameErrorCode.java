@@ -1,4 +1,6 @@
-package io.deeplay.domain;
+package com.grandmastery.domain;
+
+import com.grandmastery.exceptions.GameException;
 
 public enum GameErrorCode {
     MOVE_NOT_FOUND("Ход не найден"),
@@ -14,5 +16,9 @@ public enum GameErrorCode {
 
     public String getDescription() {
         return description;
+    }
+
+    public GameException asException() {
+        return new GameException(this);
     }
 }

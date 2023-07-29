@@ -1,9 +1,9 @@
-package io.deeplay.figures;
+package com.grandmastery.figures;
 
-import io.deeplay.core.Board;
-import io.deeplay.domain.Color;
-import io.deeplay.core.Move;
-import io.deeplay.core.Position;
+import com.grandmastery.domain.Color;
+import com.grandmastery.core.Board;
+import com.grandmastery.core.Move;
+import com.grandmastery.core.Position;
 
 import java.util.List;
 
@@ -24,8 +24,8 @@ public abstract class Piece {
         return isMoved;
     }
 
-    public void setMoved(boolean moved) {
-        isMoved = moved;
+    public void setMoved() {
+        isMoved = true;
     }
 
 
