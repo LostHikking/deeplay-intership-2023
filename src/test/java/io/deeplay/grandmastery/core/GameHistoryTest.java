@@ -1,6 +1,6 @@
-package com.grandmastery.core;
+package io.deeplay.grandmastery.core;
 
-import com.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.exceptions.GameException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

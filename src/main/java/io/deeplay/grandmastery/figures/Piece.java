@@ -1,9 +1,9 @@
-package com.grandmastery.figures;
+package io.deeplay.grandmastery.figures;
 
-import com.grandmastery.domain.Color;
-import com.grandmastery.core.Board;
-import com.grandmastery.core.Move;
-import com.grandmastery.core.Position;
+import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.Position;
 
 import java.util.List;
 

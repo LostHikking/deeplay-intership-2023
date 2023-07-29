@@ -1,4 +1,4 @@
-package com.grandmastery.core;
+package io.deeplay.grandmastery.core;
 
 public interface GameListener {
     void setBoard(Board board);

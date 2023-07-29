@@ -1,4 +1,4 @@
-package com.grandmastery;
+package io.deeplay.grandmastery;
 
 import org.junit.jupiter.api.Test;
 

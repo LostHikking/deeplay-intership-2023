@@ -1,9 +1,9 @@
-package com.grandmastery.utils;
+package io.deeplay.grandmastery.utils;
 
-import com.grandmastery.core.Move;
-import com.grandmastery.core.Position;
-import com.grandmastery.domain.GameErrorCode;
-import com.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.Position;
+import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.domain.FigureType;
 
 import java.util.Arrays;
 import java.util.List;

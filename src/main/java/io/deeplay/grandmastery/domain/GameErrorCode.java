@@ -1,6 +1,6 @@
-package com.grandmastery.domain;
+package io.deeplay.grandmastery.domain;
 
-import com.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.exceptions.GameException;
 
 public enum GameErrorCode {
     MOVE_NOT_FOUND("Ход не найден"),

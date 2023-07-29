@@ -1,7 +1,7 @@
-package com.grandmastery.utils;
+package io.deeplay.grandmastery.utils;
 
-import com.grandmastery.domain.FigureType;
-import com.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.exceptions.GameException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +13,10 @@ class LongAlgebraicNotationParserTest {
         var move = LongAlgebraicNotationParser.getMoveFromString("e2d4");
 
         Assertions.assertAll(
-                () -> Assertions.assertEquals(5, move.from().col()),
-                () -> Assertions.assertEquals(2, move.from().row()),
-                () -> Assertions.assertEquals(4, move.to().col()),
-                () -> Assertions.assertEquals(4, move.to().row()),
+                () -> assertEquals(5, move.from().col()),
+                () -> assertEquals(2, move.from().row()),
+                () -> assertEquals(4, move.to().col()),
+                () -> assertEquals(4, move.to().row()),
                 () -> assertNull(move.promotionPiece())
         );
     }
@@ -51,11 +51,11 @@ class LongAlgebraicNotationParserTest {
         var move = moves.get(0);
 
         Assertions.assertAll(
-                () -> Assertions.assertEquals(2, moves.size()),
-                () -> Assertions.assertEquals(5, move.from().col()),
-                () -> Assertions.assertEquals(2, move.from().row()),
-                () -> Assertions.assertEquals(5, move.to().col()),
-                () -> Assertions.assertEquals(4, move.to().row()),
+                () -> assertEquals(2, moves.size()),
+                () -> assertEquals(5, move.from().col()),
+                () -> assertEquals(2, move.from().row()),
+                () -> assertEquals(5, move.to().col()),
+                () -> assertEquals(4, move.to().row()),
                 () -> assertNull(move.promotionPiece()),
                 () -> assertNotNull(moves.get(1).promotionPiece())
         );

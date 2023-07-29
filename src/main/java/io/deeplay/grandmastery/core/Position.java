@@ -1,6 +1,6 @@
-package com.grandmastery.core;
+package io.deeplay.grandmastery.core;
 
-import com.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.domain.GameErrorCode;
 
 import java.util.Map;
 import java.util.Set;
