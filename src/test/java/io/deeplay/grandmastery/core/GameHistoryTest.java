@@ -29,7 +29,8 @@ class GameHistoryTest {
 
     @Test
     void getLastMove() {
-        var move = new Move(new Position(1, 1), new Position(2, 2), null);
+        var move = new Move(new Position(new Column(1), new Row(1)),
+                new Position(new Column(2), new Row(2)), null);
         gameHistory.makeMove(move);
 
         Assertions.assertAll(
@@ -49,8 +50,10 @@ class GameHistoryTest {
 
     @Test
     void getMoves() {
-        var move1 = new Move(new Position(1, 1), new Position(2, 2), null);
-        var move2 = new Move(new Position(2, 2), new Position(3, 3), null);
+        var move1 = new Move(new Position(new Column(1), new Row(1)),
+                new Position(new Column(2), new Row(2)), null);
+        var move2 = new Move(new Position(new Column(2), new Row(2)),
+                new Position(new Column(3), new Row(3)), null);
 
         gameHistory.makeMove(move1);
         gameHistory.makeMove(move2);

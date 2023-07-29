@@ -13,10 +13,10 @@ class LongAlgebraicNotationParserTest {
         var move = LongAlgebraicNotationParser.getMoveFromString("e2d4");
 
         Assertions.assertAll(
-                () -> assertEquals(5, move.from().col()),
-                () -> assertEquals(2, move.from().row()),
-                () -> assertEquals(4, move.to().col()),
-                () -> assertEquals(4, move.to().row()),
+                () -> assertEquals(5, move.from().col().value()),
+                () -> assertEquals(2, move.from().row().value()),
+                () -> assertEquals(4, move.to().col().value()),
+                () -> assertEquals(4, move.to().row().value()),
                 () -> assertNull(move.promotionPiece())
         );
     }
@@ -52,10 +52,10 @@ class LongAlgebraicNotationParserTest {
 
         Assertions.assertAll(
                 () -> assertEquals(2, moves.size()),
-                () -> assertEquals(5, move.from().col()),
-                () -> assertEquals(2, move.from().row()),
-                () -> assertEquals(5, move.to().col()),
-                () -> assertEquals(4, move.to().row()),
+                () -> assertEquals(5, move.from().col().value()),
+                () -> assertEquals(2, move.from().row().value()),
+                () -> assertEquals(5, move.to().col().value()),
+                () -> assertEquals(4, move.to().row().value()),
                 () -> assertNull(move.promotionPiece()),
                 () -> assertNotNull(moves.get(1).promotionPiece())
         );
