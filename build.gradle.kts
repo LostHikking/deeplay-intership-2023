@@ -31,7 +31,6 @@ allprojects {
 
     checkstyle {
         toolVersion = "10.3.3"
-        configFile = file("${rootDir}/src/main/resources/checkstyle.xml")
     }
 
     tasks.withType<Checkstyle>().configureEach {
