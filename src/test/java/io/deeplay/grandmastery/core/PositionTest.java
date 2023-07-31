@@ -1,42 +1,36 @@
 package io.deeplay.grandmastery.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import io.deeplay.grandmastery.exceptions.GameException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class PositionTest {
 
-    @Test
-    void getPositionFromString() {
-        var position1 = Position.getPositionFromString("a1");
-        var position2 = Position.getPositionFromString("h8");
-        var position3 = Position.getPositionFromString("e2");
+  @Test
+  void getPositionFromStringTest() {
+    var position1 = Position.getPositionFromString("a1");
+    var position2 = Position.getPositionFromString("h8");
+    var position3 = Position.getPositionFromString("e2");
 
-        Assertions.assertAll(
-                () -> assertEquals(1, position1.col().value()),
-                () -> assertEquals(1, position1.row().value()),
-                () -> assertEquals(8, position2.col().value()),
-                () -> assertEquals(8, position2.row().value()),
-                () -> assertEquals(5, position3.col().value()),
-                () -> assertEquals(2, position3.row().value())
-        );
-    }
+    Assertions.assertAll(
+        () -> assertEquals(1, position1.col().value()),
+        () -> assertEquals(1, position1.row().value()),
+        () -> assertEquals(8, position2.col().value()),
+        () -> assertEquals(8, position2.row().value()),
+        () -> assertEquals(5, position3.col().value()),
+        () -> assertEquals(2, position3.row().value()));
+  }
 
-    @Test
-    void getWrongPositionFromString() {
-        Assertions.assertAll(
-                () -> assertThrows(GameException.class,
-                        () -> Position.getPositionFromString("a9")),
-                () -> assertThrows(GameException.class,
-                        () -> Position.getPositionFromString("z1")),
-                () -> assertThrows(GameException.class,
-                        () -> Position.getPositionFromString("z9")),
-                () -> assertThrows(GameException.class,
-                        () -> Position.getPositionFromString("aa")),
-                () -> assertThrows(GameException.class,
-                        () -> Position.getPositionFromString("22"))
-        );
-    }
+  @Test
+  void getWrongPositionFromStringTest() {
+    Assertions.assertAll(
+        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("a9")),
+        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("z1")),
+        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("z9")),
+        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("aa")),
+        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("22")));
+  }
 }
