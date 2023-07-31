@@ -2,14 +2,16 @@ plugins {
     id("java")
     id("jacoco")
     id("net.ltgt.errorprone") version "3.1.0"
+    id("checkstyle")
 }
 
-group = "io.deeplay"
+group = "io.deeplay.grandmastery"
 version = "1.0-SNAPSHOT"
 
 allprojects {
     apply(plugin = "net.ltgt.errorprone")
     apply(plugin = "jacoco")
+    apply(plugin = "checkstyle")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -25,6 +27,19 @@ allprojects {
 
         testImplementation(platform("org.junit:junit-bom:5.9.3"))
         testImplementation("org.junit.jupiter:junit-jupiter")
+    }
+
+    checkstyle {
+        toolVersion = "10.3.3"
+    }
+
+    tasks.withType<Checkstyle>().configureEach {
+        maxErrors = 0
+        maxWarnings = 0
+        reports {
+            html.required.set(true)
+            xml.required.set(false)
+        }
     }
 
     tasks.test {
