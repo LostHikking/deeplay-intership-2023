@@ -4,9 +4,7 @@ import io.deeplay.grandmastery.domain.GameErrorCode;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Класс для сохранения истории партии.
-
- */
+/** Класс для сохранения истории партии. */
 public class GameHistory implements GameHistoryListener {
   private final List<Move> moves = new ArrayList<>();
   private Board board;
@@ -18,9 +16,9 @@ public class GameHistory implements GameHistoryListener {
    */
   @Override
   public void setBoard(Board board) {
-    if (this.board == null)
+    if (this.board == null) {
       this.board = board; // TODO: Сделать констуктор копирования в Board
-
+    }
   }
 
   /**
