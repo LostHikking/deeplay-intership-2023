@@ -8,16 +8,18 @@ import io.deeplay.grandmastery.domain.FigureType;
 import java.util.List;
 
 public class King extends Piece {
+  /**
+   * Конструктор для короля.
+   *
+   * @param color Цвет фигуры
+   */
   public King(Color color) {
     super(color);
     this.figureType = FigureType.KING;
-    if(color==Color.WHITE)
-    {
-      this.symbol='\u2654';
-    }
-    else
-    {
-      this.symbol='\u265A';
+    if (color == Color.WHITE) {
+      this.symbol = '♔';
+    } else {
+      this.symbol = '♚';
     }
   }
 
