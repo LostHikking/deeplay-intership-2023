@@ -1,31 +1,35 @@
 package io.deeplay.grandmastery.core;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 
 class PlayerTest {
-    private Player player;
-    @BeforeEach
-    void init(){player = new HumanPlayer("John Doe");}
+  private Player player;
 
-    @Test
-    void testSetValidMoveData() {
+  @BeforeEach
+  void init() {
+    player = new HumanPlayer("John Doe");
+  }
 
-        String validMove = "a2a4";
-        assertDoesNotThrow(() -> player.setMoveData(validMove));
-        assertEquals(validMove, player.getMoveData());
-    }
+  @Test
+  void testSetValidMoveData() {
 
-    @Test
-    void testSetInvalidMoveData_Format() {
+    String validMove = "a2a4";
+    assertDoesNotThrow(() -> player.setMoveData(validMove));
+    assertEquals(validMove, player.getMoveData());
+  }
 
-        String invalidMove = "a2a4e"; // Некорректный формат хода
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> player.setMoveData(invalidMove));
-        assertEquals("Некорректный формат хода. Используйте формат 'a2a4'!", exception.getMessage());
-    }
+  @Test
+  void testSetInvalidMoveData() {
 
-
+    String invalidMove = "a2a4e";
+    IllegalArgumentException exception =
+        assertThrows(IllegalArgumentException.class, () -> player.setMoveData(invalidMove));
+  }
 }

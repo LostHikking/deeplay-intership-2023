@@ -1,80 +1,80 @@
 package io.deeplay.grandmastery.core;
 
-/**
- * Àáñòðàêòíûé êëàññ, ïðåäñòàâëÿþùèé èãðîê
- */
+/** ÐÐ±ÑÑ‚Ñ€Ð°ÐºÑ‚Ð½Ñ‹Ð¹ ÐºÐ»Ð°ÑÑ, Ð¿Ñ€ÐµÐ´ÑÑ‚Ð°Ð²Ð»ÑÐ±Ñ‰Ð¸Ð¹ Ð¸Ð³Ñ€Ð¾ÐºÐ°. */
 public abstract class Player {
-    /**
-     * Èìÿ èãðîêà
-     */
-    private String name;
-    /**
-     * Ñòðîêà ñ õîäîì èãðîêà
-     */
-    private String moveData;
+  /** Ð˜Ð¼Ñ Ð¸Ð³Ñ€Ð¾ÐºÐ°. */
+  private String name;
+  /** Ð¥Ð¾Ð´ Ð¸Ð³Ñ€Ð¾ÐºÐ° Ð² Ð²Ð¸Ð´Ðµ ÑÑ‚Ñ€Ð¾ÐºÐ¸. */
+  private String moveData;
 
-    public Player(String name) {
-        this.name = name;
-    }
+  public Player(String name) {
+    this.name = name;
+  }
 
-    /**
-     * Ñåòòåð õîäà,òàêæå îáðàáàòûâàåò íåêîððåêòíîå çíà÷åíèå
-     * @param moveData
-     */
-    public void setMoveData(String moveData) {
-        if (!isValidMoveFormat(moveData)) {
-            throw new IllegalArgumentException("Íåêîððåêòíûé ôîðìàò õîäà. Èñïîëüçóéòå ôîðìàò 'a2a4'!");
-        }
-        this.moveData = moveData;
+  /**
+   * ÐœÐµÑ‚Ð¾Ð´, Ð·Ð°Ð¿Ð¸ÑÑ‹Ð²Ð°ÑŽÑ‰Ð¸Ð¹ Ñ…Ð¾Ð´ Ð¸Ð³Ñ€Ð¾ÐºÐ°.
+   *
+   * @param moveData Ð¥Ð¾Ð´ Ð¸Ð³Ñ€Ð¾ÐºÐ°
+   * @throws IllegalArgumentException Ð•ÑÐ»Ð¸ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚ Ð½ÐµÐ¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ñ‹Ð¹
+   */
+  public void setMoveData(String moveData) {
+    if (!isValidMoveFormat(moveData)) {
+      throw new IllegalArgumentException();
     }
-    public String getName() {
-        return name;
-    }
-    public String getMoveData() {
-        return moveData;
-    }
+    this.moveData = moveData;
+  }
 
-    /**
-     * Ìåòîä, ïðîâåðÿþùèé êîððåêòíîñòü ñèíòàêñèñà õîäà èãðîêà
-     * @param moveData Õîä èãðîêà. Ïðèìåð: a2b2
-     * @return true/false â çàâèñèìîñòè îò êîððåêòíîñòè
-     */
-    private boolean isValidMoveFormat(String moveData) {
-        if (moveData.length() != 4) {
-            return false;
-        }
-        char startCol = moveData.charAt(0);
-        char startRow = moveData.charAt(1);
-        char endCol = moveData.charAt(2);
-        char endRow = moveData.charAt(3);
-        if (!isValidColPosition(startCol) || !isValidColPosition(endCol) ||
-                !isValidRowPosition(startRow) || !isValidRowPosition(endRow)) {
-            return false;
-        }
-        return true;
+  public String getName() {
+    return name;
+  }
+
+  public String getMoveData() {
+    return moveData;
+  }
+
+  /**
+   * ÐœÐµÑ‚Ð¾Ð´, Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÑŽÑ‰Ð¸Ð¹ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾ÑÑ‚ÑŒ Ñ…Ð¾Ð´Ð°.
+   *
+   * @param moveData Ð¥Ð¾Ð´ Ð¸Ð³Ñ€Ð¾ÐºÐ°. ÐŸÑ€Ð¸Ð¼ÐµÑ€: a2b2
+   * @return true/false Ð² Ð·Ð°Ð²Ð¸ÑÐ¸Ð¼Ð¾ÑÑ‚Ð¸ Ð¾Ñ‚ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾ÑÑ‚Ð¸
+   */
+  private boolean isValidMoveFormat(String moveData) {
+    if (moveData.length() != 4) {
+      return false;
     }
-
-    /**
-     * Ìåòîä, ïðîâåðÿþùèé êîððåêòíîñòü ââåäåííîé ãîðèçîíòàëè â ñòðîêå õîäà
-     * @param symbol Îäèí èç ñèìâîëîâ ãîðèçîíòàëè õîäà
-     * @return true/false
-     */
-    private boolean isValidRowPosition(char symbol) {
-        return(symbol >= '1' && symbol <= '8');
+    char startCol = moveData.charAt(0);
+    char startRow = moveData.charAt(1);
+    char endCol = moveData.charAt(2);
+    char endRow = moveData.charAt(3);
+    if (!isValidColPosition(startCol)
+        || !isValidColPosition(endCol)
+        || !isValidRowPosition(startRow)
+        || !isValidRowPosition(endRow)) {
+      return false;
     }
+    return true;
+  }
 
-    /**
-     * Ìåòîä, ïðîâåðÿþùèé êîððåêòíîñòü ââåäåííîé âåðòèêàëè â ñòðîêå õîäà
-     * @param symbol Îäèí èç ñèìâîëîâ âåðòèêàëè õîäà
-     * @return true/false
-     */
-    private boolean isValidColPosition(char symbol) {
-        return (symbol >= 'a' && symbol <= 'h');
-    }
+  /**
+   * ÐœÐµÑ‚Ð¾Ð´, Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÑŽÑ‰Ð¸Ð¹ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾ÑÑ‚ÑŒ ÑÐ¸Ð¼Ð²Ð¾Ð»Ð° ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ð² Ñ…Ð¾Ð´Ðµ.
+   *
+   * @param symbol Ð¡Ð¸Ð¼Ð²Ð¾Ð», ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¼Ñ‹ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼
+   * @return true/false
+   */
+  private boolean isValidRowPosition(char symbol) {
+    return (symbol >= '1' && symbol <= '8');
+  }
 
-    /**
-     * Àáñòðàêòíûé ìåòîä äëÿ ñîâåðøåíèÿ õîäà èãðîêîì
-     */
-    public abstract void makeMove();
+  /**
+   * ÐœÐµÑ‚Ð¾Ð´, Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÑŽÑ‰Ð¸Ð¹ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾ÑÑ‚ÑŒ ÑÐ¸Ð¼Ð²Ð¾Ð»Ð° ÑÑ‚Ð¾Ð»Ð±Ñ†Ð° Ð² Ñ…Ð¾Ð´Ðµ.
+   *
+   * @param symbol Ð¡Ð¸Ð¼Ð²Ð¾Ð», ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¼Ñ‹ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼
+   * @return true/false
+   */
+  private boolean isValidColPosition(char symbol) {
+    return (symbol >= 'a' && symbol <= 'h');
+  }
 
+  /** ÐÐ±ÑÑ‚Ñ€Ð°ÐºÑ‚Ð½Ñ‹Ð¹ Ð¼ÐµÑ‚Ð¾Ð´ Ð´Ð»Ñ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸ Ñ…Ð¾Ð´Ð° Ð¸Ð³Ñ€Ð¾ÐºÐ°. */
+  public abstract void makeMove();
 }
