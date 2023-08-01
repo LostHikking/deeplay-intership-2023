@@ -3,15 +3,14 @@ package io.deeplay.grandmastery.core;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import java.util.Map;
 
-/** Класс для сохранения позиции столбца фигуры на шахматной доске.
-
- */
+/** Класс для сохранения позиции столбца фигуры на шахматной доске. */
 public record Column(int value) {
   private static final Map<Character, Integer> VALID_CHARACTERS =
       Map.of('a', 1, 'b', 2, 'c', 3, 'd', 4, 'e', 5, 'f', 6, 'g', 7, 'h', 8);
 
-  /** Метод возвращает номер столбца на шахматной доске.
-
+  /**
+   * Метод возвращает номер столбца на шахматной доске.
+   *
    * @param colCharacter Символ столбца на шахматной доске
    * @return Номер столбца на шахматной доске
    */
