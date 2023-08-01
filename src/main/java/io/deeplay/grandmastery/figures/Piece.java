@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class Piece {
+  protected char symbol;
   protected final Color color;
   protected boolean isMoved;
   protected FigureType figureType;
@@ -16,6 +17,10 @@ public abstract class Piece {
   public Piece(Color color) {
     this.color = color;
     isMoved = false;
+  }
+
+  public char getSymbol() {
+    return symbol;
   }
 
   public Color getColor() {

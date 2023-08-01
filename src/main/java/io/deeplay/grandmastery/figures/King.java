@@ -11,6 +11,14 @@ public class King extends Piece {
   public King(Color color) {
     super(color);
     this.figureType = FigureType.KING;
+    if(color==Color.WHITE)
+    {
+      this.symbol='\u2654';
+    }
+    else
+    {
+      this.symbol='\u265A';
+    }
   }
 
   @Override

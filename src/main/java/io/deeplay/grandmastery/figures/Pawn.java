@@ -11,6 +11,14 @@ public class Pawn extends Piece {
   public Pawn(Color color) {
     super(color);
     this.figureType = FigureType.PAWN;
+    if(color==Color.WHITE)
+    {
+      this.symbol='\u2659';
+    }
+    else
+    {
+      this.symbol='\u265F';
+    }
   }
 
   @Override
