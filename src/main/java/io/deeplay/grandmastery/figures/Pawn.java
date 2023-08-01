@@ -8,18 +8,16 @@ import io.deeplay.grandmastery.domain.FigureType;
 import java.util.List;
 
 public class Pawn extends Piece {
-  /**
-   * Конструктор для пешки.
-   *
-   * @param color Цвет фигуры
-   */
   public Pawn(Color color) {
     super(color);
     this.figureType = FigureType.PAWN;
-    if (color == Color.WHITE) {
-      this.symbol = '♙';
-    } else {
-      this.symbol = '♟';
+    if(color==Color.WHITE)
+    {
+      this.symbol='\u2659';
+    }
+    else
+    {
+      this.symbol='\u265F';
     }
   }
 

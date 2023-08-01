@@ -1,58 +1,51 @@
 package io.deeplay.grandmastery.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class HumanPlayerTest {
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-  private HumanPlayer player;
-  private InputStream originalIn;
-  private ByteArrayInputStream testIn;
-  private ByteArrayOutputStream outContent;
+import static org.junit.jupiter.api.Assertions.*;
 
-  @BeforeEach
-  void init() {
-    player = new HumanPlayer("John Doe");
-    originalIn = System.in;
-    outContent = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(outContent));
-  }
+class HumanPlayerTest {
+    private HumanPlayer player;
+    private InputStream originalIn;
+    private ByteArrayInputStream testIn;
 
-  @AfterEach
-  void cleanup() {
-    player.deleteLastMove();
-    System.setIn(originalIn);
-    System.setOut(System.out);
-  }
+    @BeforeEach
+    void init() {
+        player = new HumanPlayer("John Doe");
+        // Сохраняем стандартный входной поток
+        originalIn = System.in;
+    }
 
-  @Test
-  void testMakeMoveValidMove() {
-    String validMoveString = "a2a4";
-    testIn = new ByteArrayInputStream(validMoveString.getBytes(StandardCharsets.UTF_8));
-    System.setIn(testIn);
-    Move validMove = LongAlgebraicNotationParser.getMoveFromString(validMoveString);
-    player.makeMove();
-    assertEquals(validMove, player.getMoveData());
-  }
+    @AfterEach
+    void cleanup() {
+        // Восстанавливаем стандартный входной поток после каждого теста
+        System.setIn(originalIn);
+    }
 
-  @Test
-  void testMakeMove_InvalidMove() {
-    player = new HumanPlayer("John Doe");
-    outContent = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(outContent));
-    String invalidMove = "a2m4";
-    testIn = new ByteArrayInputStream(invalidMove.getBytes(StandardCharsets.UTF_8));
-    System.setIn(testIn);
-    player.makeMove();
-    assertEquals(null, player.getMoveData());
-  }
+    @Test
+    void testMakeMove_ValidMove() {
+        // Вводим корректный ход "a2a4"
+        String validMove = "a2a4";
+        testIn = new ByteArrayInputStream(validMove.getBytes(StandardCharsets.UTF_8));
+        System.setIn(testIn);
+        // Запускаем метод makeMove()
+        player.makeMove();
+        // Проверяем, что ход был установлен правильно
+        assertEquals(validMove, player.getMoveData());
+    }
+
+    @Test
+    void testMakeMove_InvalidMove() {
+        String invalidMove = "a2m4";
+        testIn = new ByteArrayInputStream(invalidMove.getBytes(StandardCharsets.UTF_8));
+        System.setIn(testIn);
+        assertThrows(IllegalArgumentException.class, () -> player.makeMove());
+    }
+
 }

@@ -47,6 +47,10 @@ public class HashBoard extends Board {
     return pieces.get(position);
   }
 
+  public Map<Position, Piece> getPieces() {
+    return pieces;
+  }
+
   @Override
   public void removePiece(Position position) {
     pieces.remove(position);

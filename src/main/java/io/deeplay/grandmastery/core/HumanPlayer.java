@@ -1,24 +1,30 @@
 package io.deeplay.grandmastery.core;
 
-import io.deeplay.grandmastery.exceptions.GameException;
 import java.util.Scanner;
 
-/** Р”РѕС‡РµСЂРЅРёР№ РєР»Р°СЃСЃ РєР»Р°СЃСЃР° Player, РїСЂРµРґСЃС‚Р°РІР»СЏРµС‚ СЂРµР°Р»СЊРЅРѕРіРѕ РёРіСЂРѕРєР°. */
-public class HumanPlayer extends Player {
-  public HumanPlayer(String name) {
-    super(name);
-  }
-
-  /** РњРµС‚РѕРґ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РІРІРѕРґ С…РѕРґР° РёРіСЂРѕРєР°. */
-  @Override
-  public boolean makeMove() {
-    try (Scanner scanner = new Scanner(System.in)) {
-      System.out.print("Р’РІРµРґРёС‚Рµ РІР°С€ С…РѕРґ: ");
-      setMoveData(scanner.nextLine());
-      return true;
-    } catch (GameException e) {
-      System.out.println("РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С…РѕРґ! РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ С…РѕРґ РїСЂР°РІРёР»СЊРЅРѕ.");
-      return false;
+/**
+ * Дочерний класс класса Player, представляющий реального игрока
+ */
+public class HumanPlayer extends Player{
+    public HumanPlayer(String name) {
+        super(name);
     }
-  }
+
+    /**
+     * Метод, который проверяет и записывает ход игрока
+     */
+    public void makeMove() {
+        Scanner scanner = new Scanner(System.in);
+        while (true){
+            try {
+                System.out.print("Введите ваш ход: ");
+                setMoveData(scanner.nextLine());
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Некорректный ход. Пожалуйста, введите корректный ход.");
+                scanner.nextLine();
+            }
+        }
+        scanner.close();
+    }
 }
