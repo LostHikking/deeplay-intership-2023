@@ -1,5 +1,6 @@
 package io.deeplay.grandmastery.core;
 
+import io.deeplay.grandmastery.exceptions.GameException;
 import java.util.Scanner;
 
 /** Дочерний класс класса Player, представляет реального игрока. */
@@ -10,16 +11,14 @@ public class HumanPlayer extends Player {
 
   /** Метод, отвечающий за ввод хода игрока. */
   @Override
-  public void makeMove() {
-    Scanner scanner = new Scanner(System.in);
-    while (true) {
-      try {
-        System.out.print("Введите ваш ход: ");
-        setMoveData(scanner.nextLine());
-        break;
-      } catch (IllegalArgumentException e) {
-        System.out.println("Некорректный ход! Пожалуйста, введите ход правильно.");
-      }
+  public boolean makeMove() {
+    try (Scanner scanner = new Scanner(System.in)) {
+      System.out.print("Введите ваш ход: ");
+      setMoveData(scanner.nextLine());
+      return true;
+    } catch (GameException e) {
+      System.out.println("Некорректный ход! Пожалуйста, введите ход правильно.");
+      return false;
     }
   }
 }
