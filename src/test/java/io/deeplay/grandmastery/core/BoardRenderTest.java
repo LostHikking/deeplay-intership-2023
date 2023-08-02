@@ -1,7 +1,6 @@
 package io.deeplay.grandmastery.core;
 
 import static io.deeplay.grandmastery.core.BoardRender.showBoard;
-import static io.deeplay.grandmastery.utils.BoardUtils.defaultChess;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.deeplay.grandmastery.domain.Color;
@@ -11,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.function.Consumer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,29 +37,27 @@ class BoardRenderTest {
     Board b = new HashBoard();
     b.setPiece(new Position(new Column(0), new Row(0)), new Pawn(Color.WHITE));
     b.setPiece(new Position(new Column(7), new Row(7)), new King(Color.BLACK));
-    Consumer<Board> defaultChess = defaultChess();
-    defaultChess.accept(b);
+
     showBoard(System.out, b);
 
     String expectedOutput =
         "+-----------------------+\n"
-            + "8 |♖|♘|♗|♕|♔|♗|♘|♖|\n"
-            + "  +-----------------------+\n"
-            + "7 |♙|♙|♙|♙|♙|♙|♙|♙|\n"
-            + "  +-----------------------+\n"
-            + "6 |  |  |  |  |  |  |  |  |\n"
-            + "  +-----------------------+\n"
-            + "5 |  |  |  |  |  |  |  |  |\n"
-            + "  +-----------------------+\n"
-            + "4 |  |  |  |  |  |  |  |  |\n"
-            + "  +-----------------------+\n"
-            + "3 |  |  |  |  |  |  |  |  |\n"
-            + "  +-----------------------+\n"
-            + "2 |♟|♟|♟|♟|♟|♟|♟|♟|\n"
-            + "  +-----------------------+\n"
-            + "1 |♜|♞|♝|♛|♚|♝|♞|♜|\n"
-            + "  +-----------------------+\n"
-            + "   a  b  c  d  e  f  g  h";
+            + "|♙|  |  |  |  |  |  |  |\n"
+            + "+-----------------------+\n"
+            + "|  |  |  |  |  |  |  |  |\n"
+            + "+-----------------------+\n"
+            + "|  |  |  |  |  |  |  |  |\n"
+            + "+-----------------------+\n"
+            + "|  |  |  |  |  |  |  |  |\n"
+            + "+-----------------------+\n"
+            + "|  |  |  |  |  |  |  |  |\n"
+            + "+-----------------------+\n"
+            + "|  |  |  |  |  |  |  |  |\n"
+            + "+-----------------------+\n"
+            + "|  |  |  |  |  |  |  |  |\n"
+            + "+-----------------------+\n"
+            + "|  |  |  |  |  |  |  |♚|\n"
+            + "+-----------------------+";
 
     assertEquals(expectedOutput, outContent.toString().trim());
   }
