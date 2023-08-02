@@ -8,9 +8,19 @@ import io.deeplay.grandmastery.domain.FigureType;
 import java.util.List;
 
 public class Bishop extends Piece {
+  /**
+   * Конструктор для слона.
+   *
+   * @param color Цвет фигуры
+   */
   public Bishop(Color color) {
     super(color);
     this.figureType = FigureType.BISHOP;
+    if (color == Color.WHITE) {
+      this.symbol = '♗';
+    } else {
+      this.symbol = '♝';
+    }
   }
 
   @Override

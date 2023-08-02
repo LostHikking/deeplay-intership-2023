@@ -8,9 +8,19 @@ import io.deeplay.grandmastery.domain.FigureType;
 import java.util.List;
 
 public class Rook extends Piece {
+  /**
+   * Конструктор для ладьи.
+   *
+   * @param color Цвет фигуры
+   */
   public Rook(Color color) {
     super(color);
     this.figureType = FigureType.ROOK;
+    if (color == Color.WHITE) {
+      this.symbol = '♖';
+    } else {
+      this.symbol = '♜';
+    }
   }
 
   @Override
