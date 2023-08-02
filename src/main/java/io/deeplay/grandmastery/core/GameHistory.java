@@ -2,7 +2,6 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.utils.BoardUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +71,10 @@ public class GameHistory implements GameHistoryListener {
    * @return Доску
    */
   public Board getBoard() {
+    if (board == null) {
+      return null;
+    }
+
     var copyBoard = new HashBoard();
     BoardUtils.copyBoard(board).accept(copyBoard);
     return copyBoard;

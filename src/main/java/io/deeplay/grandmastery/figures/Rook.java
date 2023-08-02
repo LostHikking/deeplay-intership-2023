@@ -14,23 +14,27 @@ public class Rook extends Piece {
   }
 
   @Override
-  public void move(Position from, Position to, Board board) {}
+  public void move(Board board, Move move) {
 
-  @Override
-  public boolean canMove(Position from, Position to, Board board) {
-    return false;
   }
 
   @Override
-  public List<Move> getAllMoves(Board board) {
+  public boolean canMove(Board board, Move move) {
+    return true;
+  }
+
+  @Override
+  public List<Move> getAllMoves(Board board, Position position) {
     return null;
   }
 
   @Override
-  public void revive(Position position, Board board, Piece piece) {}
+  public void revive(Board board, Move move) {
+
+  }
 
   @Override
-  public boolean canRevive(Position position, Board board) {
-    return false;
+  public boolean canRevive(Board board, Move move) {
+    return true;
   }
 }

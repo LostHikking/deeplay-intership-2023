@@ -1,26 +1,32 @@
 package io.deeplay.grandmastery.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.exceptions.GameException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class LongAlgebraicNotationParserTest {
+  private static Board board;
+
+  @BeforeAll
+  static void init() {
+    board = new HashBoard();
+    BoardUtils.defaultChess().accept(board);
+  }
+
   @Test
   void getSimpleMoveFromStringTest() {
     var move = LongAlgebraicNotationParser.getMoveFromString("e2d4");
 
     Assertions.assertAll(
-        () -> assertEquals(5, move.from().col().value()),
-        () -> assertEquals(2, move.from().row().value()),
-        () -> assertEquals(4, move.to().col().value()),
-        () -> assertEquals(4, move.to().row().value()),
-        () -> assertNull(move.promotionPiece()));
+        () -> Assertions.assertEquals(4, move.from().col().value()),
+        () -> Assertions.assertEquals(1, move.from().row().value()),
+        () -> Assertions.assertEquals(3, move.to().col().value()),
+        () -> Assertions.assertEquals(3, move.to().row().value()),
+        () -> Assertions.assertNull(move.promotionPiece()));
   }
 
   @Test
@@ -28,7 +34,7 @@ class LongAlgebraicNotationParserTest {
     var move = LongAlgebraicNotationParser.getMoveFromString("e2d4q");
 
     Assertions.assertAll(
-        () -> assertNotNull(move.promotionPiece()),
+        () -> Assertions.assertNotNull(move.promotionPiece()),
         () -> Assertions.assertEquals(FigureType.QUEEN, move.promotionPiece()));
   }
 
@@ -36,16 +42,16 @@ class LongAlgebraicNotationParserTest {
   void getWrongMoveFromStringTest() {
     Assertions.assertAll(
         () ->
-            assertThrows(
+            Assertions.assertThrows(
                 GameException.class, () -> LongAlgebraicNotationParser.getMoveFromString("e2d4z")),
         () ->
-            assertThrows(
+            Assertions.assertThrows(
                 GameException.class, () -> LongAlgebraicNotationParser.getMoveFromString("e2d9")),
         () ->
-            assertThrows(
+            Assertions.assertThrows(
                 GameException.class, () -> LongAlgebraicNotationParser.getMoveFromString("e2z4b")),
         () ->
-            assertThrows(
+            Assertions.assertThrows(
                 GameException.class, () -> LongAlgebraicNotationParser.getMoveFromString("12d4")));
   }
 
@@ -55,28 +61,37 @@ class LongAlgebraicNotationParserTest {
     var move = moves.get(0);
 
     Assertions.assertAll(
-        () -> assertEquals(2, moves.size()),
-        () -> assertEquals(5, move.from().col().value()),
-        () -> assertEquals(2, move.from().row().value()),
-        () -> assertEquals(5, move.to().col().value()),
-        () -> assertEquals(4, move.to().row().value()),
-        () -> assertNull(move.promotionPiece()),
-        () -> assertNotNull(moves.get(1).promotionPiece()));
+        () -> Assertions.assertEquals(2, moves.size()),
+        () -> Assertions.assertEquals(4, move.from().col().value()),
+        () -> Assertions.assertEquals(1, move.from().row().value()),
+        () -> Assertions.assertEquals(4, move.to().col().value()),
+        () -> Assertions.assertEquals(3, move.to().row().value()),
+        () -> Assertions.assertNull(move.promotionPiece()),
+        () -> Assertions.assertNotNull(moves.get(1).promotionPiece()));
   }
 
   @Test
   void getWrongMovesFromStringTest() {
     Assertions.assertAll(
         () ->
-            assertThrows(
+            Assertions.assertThrows(
                 GameException.class,
                 () -> LongAlgebraicNotationParser.getMovesFromString("e2e4,e7e5b,a")),
         () ->
-            assertThrows(
+            Assertions.assertThrows(
                 GameException.class,
                 () -> LongAlgebraicNotationParser.getMovesFromString("e2e4,e9e5b")),
         () ->
-            assertThrows(
+            Assertions.assertThrows(
                 GameException.class, () -> LongAlgebraicNotationParser.getMovesFromString("")));
+  }
+
+  @Test
+  void validMovesTest() {
+    var stringMoves = "d2d4,d7d5,c2c4";
+    var moves = LongAlgebraicNotationParser.getMovesFromString(stringMoves);
+
+    // TODO: Дополнить тест, когда будут реализованы ходы фигур
+    Assertions.assertTrue(LongAlgebraicNotationParser.validMoves(moves, board));
   }
 }

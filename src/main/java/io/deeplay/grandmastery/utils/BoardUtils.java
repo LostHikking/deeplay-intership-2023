@@ -118,9 +118,19 @@ public class BoardUtils {
       case PAWN -> {
         return new Pawn(sourcePiece.getColor());
       }
-      default -> {
-        return null;
+      case ROOK -> {
+        return new Rook(sourcePiece.getColor());
       }
+      case QUEEN -> {
+        return new Queen(sourcePiece.getColor());
+      }
+      case BISHOP -> {
+        return new Bishop(sourcePiece.getColor());
+      }
+      case KNIGHT -> {
+        return new Knight(sourcePiece.getColor());
+      }
+      default -> throw GameErrorCode.UNKNOWN_FIGURE_TYPE.asException();
     }
   }
 }
