@@ -1,5 +1,7 @@
 package io.deeplay.grandmastery.utils;
 
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.FigureType;
@@ -22,6 +24,30 @@ import java.util.stream.Collectors;
  * <p>Ходы разделяются запятой.
  */
 public class LongAlgebraicNotationParser {
+  public static boolean validMoves(List<Move> moves, Board board) {
+    var copyBoard = new HashBoard();
+    BoardUtils.copyBoard(board).accept(copyBoard);
+
+    for (Move move : moves) {
+      var piece = copyBoard.getPiece(move.from());
+
+      if (move.promotionPiece() != null) {
+        if (piece.canRevive(move.from(), copyBoard)) {
+          piece.revive(move.from(),);
+        } else {
+          return false;
+        }
+      }
+      else if (piece.canMove(move.from(), move.to(), copyBoard)) {
+        piece.move(move.from(), move.to(), copyBoard);
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   /**
    * * Метод возвращает список ходов на основе входной строки.
    *
@@ -34,8 +60,9 @@ public class LongAlgebraicNotationParser {
         .collect(Collectors.toList());
   }
 
-  /** Метод возвращает ход на основе входной строки.
-
+  /**
+   * Метод возвращает ход на основе входной строки.
+   *
    * @param stringMove Строка содержащая ход в длинной алгебраической записи.
    * @return Возвращает ход, спаршенный из строки
    */

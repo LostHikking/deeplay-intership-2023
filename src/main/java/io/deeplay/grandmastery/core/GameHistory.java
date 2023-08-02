@@ -1,6 +1,8 @@
 package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.utils.BoardUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,9 @@ public class GameHistory implements GameHistoryListener {
   @Override
   public void setBoard(Board board) {
     if (this.board == null) {
-      this.board = board; // TODO: Сделать констуктор копирования в Board
+      var copyBoard = new HashBoard();
+      BoardUtils.copyBoard(board).accept(copyBoard);
+      this.board = copyBoard;
     }
   }
 
@@ -68,6 +72,8 @@ public class GameHistory implements GameHistoryListener {
    * @return Доску
    */
   public Board getBoard() {
-    return board; // TODO: Возвращать новый объект, созданный через констуктор копирования
+    var copyBoard = new HashBoard();
+    BoardUtils.copyBoard(board).accept(copyBoard);
+    return copyBoard;
   }
 }
