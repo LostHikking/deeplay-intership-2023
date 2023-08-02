@@ -8,9 +8,19 @@ import io.deeplay.grandmastery.domain.FigureType;
 import java.util.List;
 
 public class Knight extends Piece {
+  /**
+   * Конструктор для коня.
+   *
+   * @param color Цвет фигуры
+   */
   public Knight(Color color) {
     super(color);
     this.figureType = FigureType.KNIGHT;
+    if (color == Color.WHITE) {
+      this.symbol = '♘';
+    } else {
+      this.symbol = '♞';
+    }
   }
 
   @Override

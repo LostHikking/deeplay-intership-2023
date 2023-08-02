@@ -8,9 +8,19 @@ import io.deeplay.grandmastery.domain.FigureType;
 import java.util.List;
 
 public class Queen extends Piece {
+  /**
+   * Конструктор для королевы.
+   *
+   * @param color Цвет фигуры
+   */
   public Queen(Color color) {
     super(color);
     this.figureType = FigureType.QUEEN;
+    if (color == Color.WHITE) {
+      this.symbol = '♕';
+    } else {
+      this.symbol = '♛';
+    }
   }
 
   @Override

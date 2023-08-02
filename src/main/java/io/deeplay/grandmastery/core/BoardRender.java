@@ -1,14 +1,12 @@
 package io.deeplay.grandmastery.core;
 
-import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.figures.King;
-import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.figures.Piece;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.function.Consumer;
 
 /** Класс, отвечающий за отображение доски. */
 public class BoardRender {
@@ -24,7 +22,8 @@ public class BoardRender {
     PrintWriter printWriter = new PrintWriter(writer);
 
     for (int i = 0; i < 8; i++) {
-      printWriter.print("+-----------------------+\n");
+      printWriter.print("  +-----------------------+\n");
+      printWriter.print(8 - i + " ");
       for (int j = 0; j < 8; j++) {
         Piece piece = board.getPiece(j, i);
         if (piece != null) {
@@ -36,7 +35,8 @@ public class BoardRender {
       printWriter.print("|\n");
     }
 
-    printWriter.print("+-----------------------+\n");
+    printWriter.print("  +-----------------------+\n");
+    printWriter.print("   a  b  c  d  e  f  g  h  \n");
     printWriter.flush();
     printWriter.close();
   }
