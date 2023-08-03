@@ -136,7 +136,7 @@ public class PawnTest {
    */
   @ParameterizedTest
   @CsvSource(value = {"e3f4, WHITE", "e3d4, WHITE", "e5d4, BLACK", "e5f4, BLACK"})
-  public void capturesAnotherPieceTest(String moveStr, String color) {
+  public void captureAnotherPieceTest(String moveStr, String color) {
     Move move = LongAlgebraicNotationParser.getMoveFromString(moveStr);
     Piece pawn = new Pawn(Color.valueOf(color));
     board.setPiece(move.from(), pawn);
@@ -162,7 +162,7 @@ public class PawnTest {
    */
   @ParameterizedTest
   @CsvSource(value = {"e3f2, WHITE", "e3d2, WHITE", "e5d6, BLACK", "e5f6, BLACK"})
-  public void noCanCapturesAnotherPieceTest(String moveStr, String color) {
+  public void noCanCaptureAnotherPieceTest(String moveStr, String color) {
     Move move = LongAlgebraicNotationParser.getMoveFromString(moveStr);
     Piece pawn = new Pawn(Color.valueOf(color));
     board.setPiece(move.from(), pawn);
@@ -284,11 +284,34 @@ public class PawnTest {
   }
 
   /**
+   * Тест для проверки того, что "взятие на проходе" не работает другая пешка переместилась на одну
+   * клетку.
+   */
+  @Test
+  public void notCaptureEnPassantTest() {
+    Move lastMove = LongAlgebraicNotationParser.getMoveFromString("c6c5");
+    Move move = LongAlgebraicNotationParser.getMoveFromString("d5c6");
+
+    Piece whitePawn = new Pawn(Color.WHITE);
+    Piece blackPawn = new Pawn(Color.BLACK);
+    board.setPiece(move.from(), whitePawn);
+    board.setPiece(lastMove.to(), blackPawn);
+    board.setLastMove(lastMove);
+
+    Assertions.assertAll(
+        () -> assertFalse(whitePawn.move(board, move)),
+        () -> assertSame(whitePawn, board.getPiece(move.from()), "Check white pawn position"),
+        () ->
+            assertSame(
+                blackPawn, board.getPiece(lastMove.to()), "Check black blackPawn not remove"));
+  }
+
+  /**
    * Тест для проверки того, что "взятие на проходе" не работает с другими фигурами, кроме пешек.
    */
   @Test
   @DisplayName("Capture En Passant not work piece other than pawn")
-  public void noCaptureEnPassantTest() {
+  public void notCaptureEnPassantAnotherPieceTest() {
     Move lastMove = LongAlgebraicNotationParser.getMoveFromString("c7c5");
     Move move = LongAlgebraicNotationParser.getMoveFromString("d5c6");
 

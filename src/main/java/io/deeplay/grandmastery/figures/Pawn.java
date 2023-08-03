@@ -9,7 +9,6 @@ import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.utils.FigureUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Pawn extends Piece {
   private boolean captureEnPassant;
@@ -36,6 +35,7 @@ public class Pawn extends Piece {
     if (!FigureUtils.basicValidMove(move, board)) {
       return false;
     }
+
     if (move.promotionPiece() != null) {
       return (canMoveForward(move, board) || canCapture(move, board)) && canRevive(board, move);
     }
