@@ -44,6 +44,9 @@ public class LongAlgebraicNotationParser {
         return false;
       }
 
+      // TODO: Вынести эти проверки в Game - дублирование кода
+      // 1) Смена цвета ходившего игрока
+      // 2) Вызовы canRevive(), revive
       if (color == null) {
         color = piece.getColor();
       } else if (color == piece.getColor()) {
