@@ -8,7 +8,8 @@ public enum GameErrorCode {
   INCORRECT_FIGURE_CHARACTER("Неверный символ обозначения фигуры"),
   INCORRECT_POSITION_FORMAT("Неверный формат позиции"),
   NULL_POINTER_SOURCE_BOARD("Параметр sourceBoard не может быть равен null"),
-  UNKNOWN_FIGURE_TYPE("Неизвестный тип фигуры");
+  UNKNOWN_FIGURE_TYPE("Неизвестный тип фигуры"),
+  IMPOSSIBLE_PAWN_REVIVE("Невозможное превращение пешки");
 
   private final String description;
 

@@ -1,8 +1,5 @@
 package io.deeplay.grandmastery.core;
 
-import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.figures.King;
-import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.figures.Piece;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
