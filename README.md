@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/LostHikking/grandmastery/branch/main/graph/badge.svg?token=1NT8RP2OJY)](https://codecov.io/gh/LostHikking/grandmastery)
 [![example workflow](https://github.com/LostHikking/grandmastery/actions/workflows/gradle.yml/badge.svg)](https://github.com/LostHikking/grandmastery/actions)
+[![CodeFactor](https://www.codefactor.io/repository/github/losthikking/grandmastery/badge)](https://www.codefactor.io/repository/github/losthikking/grandmastery)
 
 Grandmastery - приложение для игры в шахматы, написанное на Java.
 
