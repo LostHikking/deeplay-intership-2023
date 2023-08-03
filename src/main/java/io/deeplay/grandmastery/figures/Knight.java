@@ -26,11 +26,6 @@ public class Knight extends Piece {
   }
 
   @Override
-  public void move(Board board, Move move) {
-    // TODO: Шаблонный метод
-  }
-
-  @Override
   public boolean canMove(Board board, Move move) {
     var toCol = move.to().col().value();
     var toRow = move.to().row().value();

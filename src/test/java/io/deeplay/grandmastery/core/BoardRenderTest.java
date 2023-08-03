@@ -6,17 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Pawn;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class BoardRenderTest {
   private InputStream originalIn;
-  private ByteArrayInputStream testIn;
   private ByteArrayOutputStream outContent;
 
   @BeforeEach
@@ -59,6 +58,6 @@ class BoardRenderTest {
             + "|  |  |  |  |  |  |  |♚|\n"
             + "+-----------------------+";
 
-    assertEquals(expectedOutput, outContent.toString().trim());
+    assertEquals(expectedOutput, outContent.toString(StandardCharsets.UTF_8).trim());
   }
 }

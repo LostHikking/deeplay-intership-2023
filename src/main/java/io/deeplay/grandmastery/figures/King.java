@@ -24,8 +24,8 @@ public class King extends Piece {
   }
 
   @Override
-  public void move(Board board, Move move) {
-
+  public boolean move(Board board, Move move) {
+    return false;
   }
 
   @Override
@@ -39,9 +39,7 @@ public class King extends Piece {
   }
 
   @Override
-  public void revive(Board board, Move move) {
-
-  }
+  public void revive(Board board, Move move) {}
 
   @Override
   public boolean canRevive(Board board, Move move) {

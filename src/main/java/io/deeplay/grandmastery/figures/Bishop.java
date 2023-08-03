@@ -28,9 +28,6 @@ public class Bishop extends Piece {
   }
 
   @Override
-  public void move(Board board, Move move) {}
-
-  @Override
   public boolean canMove(Board board, Move move) {
     var toCol = move.to().col().value();
     var toRow = move.to().row().value();

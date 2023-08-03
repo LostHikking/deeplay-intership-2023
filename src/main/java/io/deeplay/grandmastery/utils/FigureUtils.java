@@ -35,6 +35,7 @@ public class FigureUtils {
 
     return isValidPosition(move.from())
         && isValidPosition(move.to())
+        && figureFrom != null
         && (figureTo == null
             || (figureTo.getColor() != figureFrom.getColor()
                 && figureTo.getFigureType() != FigureType.KING));
@@ -83,7 +84,7 @@ public class FigureUtils {
    * @param board Доска
    * @param rowNumber Позиция строки по которой мы бежим
    * @param startCol Начальная позиция по col
-   * @param endCol СНачальная позиция по col
+   * @param endCol Конечная позиция по col
    * @return Есть ли фигура
    */
   public static boolean hasFigureOnHorizontalBetweenColPosition(

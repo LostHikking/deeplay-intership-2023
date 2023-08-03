@@ -58,7 +58,7 @@ public class DefaultChessBoardTest {
    */
   @ParameterizedTest
   @MethodSource("getColAndFigureType")
-  public void startingPieceExceptPawn(int col, FigureType figureType) {
+  public void startingPieceExceptPawnTest(int col, FigureType figureType) {
     for (int i = 0; i < 2; i++) {
       Piece piece;
       Color actualColor;

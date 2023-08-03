@@ -1,6 +1,7 @@
 package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.figures.Piece;
+import java.util.List;
 
 /**
  * Абстрактный класс, представляющий игровую доску. Данный класс определяет общий интерфейс для
@@ -81,4 +82,14 @@ public abstract class Board {
    * @return позиция белого короля или {@code null}, если король не найден.
    */
   public abstract Position getWhiteKingPosition();
+
+  public abstract boolean hasPiece(Position position);
+
+  public boolean hasPiece(int col, int row) {
+    return hasPiece(new Position(new Column(col), new Row(row)));
+  }
+
+  public abstract List<Position> getAllWhitePiecePosition();
+
+  public abstract List<Position> getAllBlackPiecePosition();
 }

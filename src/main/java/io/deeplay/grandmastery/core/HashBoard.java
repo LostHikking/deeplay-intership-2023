@@ -3,7 +3,9 @@ package io.deeplay.grandmastery.core;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.figures.Piece;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,5 +62,36 @@ public class HashBoard extends Board {
   @Override
   public Position getWhiteKingPosition() {
     return whiteKing;
+  }
+
+  @Override
+  public boolean hasPiece(Position position) {
+    return pieces.containsKey(position);
+  }
+
+  @Override
+  public List<Position> getAllWhitePiecePosition() {
+    List<Position> positions = new ArrayList<>();
+    pieces.forEach(
+        (position, piece) -> {
+          if (piece.getColor() == Color.WHITE) {
+            positions.add(position);
+          }
+        });
+
+    return positions;
+  }
+
+  @Override
+  public List<Position> getAllBlackPiecePosition() {
+    List<Position> positions = new ArrayList<>();
+    pieces.forEach(
+        (position, piece) -> {
+          if (piece.getColor() == Color.BLACK) {
+            positions.add(position);
+          }
+        });
+
+    return positions;
   }
 }

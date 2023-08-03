@@ -39,7 +39,27 @@ public abstract class Piece {
     return figureType;
   }
 
-  public abstract void move(Board board, Move move);
+  /**
+   * Выполняет перемещение фигуры на доске в соответствии с переданным ходом.
+   *
+   * @param board доска
+   * @param move ход
+   * @return true, если ход был выполнен успешно и фигура перемещена, false, если ход недопустим или
+   *     не удалось переместить фигуру
+   */
+  public boolean move(Board board, Move move) {
+    if (canMove(board, move)) {
+      Piece piece = board.getPiece(move.from());
+      board.removePiece(move.from());
+      board.removePiece(move.to());
+      board.setPiece(move.to(), piece);
+
+      this.isMoved = true;
+      return true;
+    }
+
+    return false;
+  }
 
   public abstract boolean canMove(Board board, Move move);
 
