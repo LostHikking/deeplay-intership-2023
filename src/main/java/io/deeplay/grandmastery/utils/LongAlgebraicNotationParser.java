@@ -1,7 +1,10 @@
 package io.deeplay.grandmastery.utils;
 
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
+import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import java.util.Arrays;
@@ -22,6 +25,52 @@ import java.util.stream.Collectors;
  * <p>Ходы разделяются запятой.
  */
 public class LongAlgebraicNotationParser {
+  /**
+   * Метод проверяет валидна ли последовательность ходов для данной доски.
+   *
+   * @param moves Последовательность ходов
+   * @param board Доска
+   * @return Валидна ли доска
+   */
+  public static boolean validMoves(List<Move> moves, Board board) {
+    var copyBoard = new HashBoard();
+    BoardUtils.copyBoard(board).accept(copyBoard);
+
+    Color color = null;
+
+    for (Move move : moves) {
+      var piece = copyBoard.getPiece(move.from());
+      if (piece == null) {
+        return false;
+      }
+
+      // TODO: Вынести эти проверки в Game - дублирование кода
+      // 1) Смена цвета ходившего игрока
+      // 2) Вызовы canRevive(), revive
+      if (color == null) {
+        color = piece.getColor();
+      } else if (color == piece.getColor()) {
+        return false;
+      } else {
+        color = piece.getColor();
+      }
+
+      if (move.promotionPiece() != null) {
+        if (piece.canRevive(copyBoard, move)) {
+          piece.revive(copyBoard, move);
+        } else {
+          return false;
+        }
+      } else if (piece.canMove(copyBoard, move)) {
+        piece.move(copyBoard, move);
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   /**
    * * Метод возвращает список ходов на основе входной строки.
    *

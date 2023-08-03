@@ -19,6 +19,6 @@ public record Row(int value) {
       throw GameErrorCode.INCORRECT_POSITION_FORMAT.asException();
     }
 
-    return new Row(Integer.parseInt(String.valueOf(rowCharacter)));
+    return new Row(Integer.parseInt(String.valueOf(rowCharacter)) - 1);
   }
 }

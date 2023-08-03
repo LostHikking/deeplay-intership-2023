@@ -16,12 +16,12 @@ class PositionTest {
     var position3 = Position.getPositionFromString("e2");
 
     Assertions.assertAll(
-        () -> assertEquals(1, position1.col().value()),
-        () -> assertEquals(1, position1.row().value()),
-        () -> assertEquals(8, position2.col().value()),
-        () -> assertEquals(8, position2.row().value()),
-        () -> assertEquals(5, position3.col().value()),
-        () -> assertEquals(2, position3.row().value()));
+        () -> assertEquals(0, position1.col().value()),
+        () -> assertEquals(0, position1.row().value()),
+        () -> assertEquals(7, position2.col().value()),
+        () -> assertEquals(7, position2.row().value()),
+        () -> assertEquals(4, position3.col().value()),
+        () -> assertEquals(1, position3.row().value()));
   }
 
   @Test

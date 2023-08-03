@@ -39,15 +39,15 @@ public abstract class Piece {
     return figureType;
   }
 
-  public abstract void move(Position from, Position to, Board board);
+  public abstract void move(Board board, Move move);
 
-  public abstract boolean canMove(Position from, Position to, Board board);
+  public abstract boolean canMove(Board board, Move move);
 
-  public abstract List<Move> getAllMoves(Board board);
+  public abstract List<Move> getAllMoves(Board board, Position position);
 
-  public abstract void revive(Position position, Board board, Piece piece);
+  public abstract void revive(Board board, Move move);
 
-  public abstract boolean canRevive(Position position, Board board);
+  public abstract boolean canRevive(Board board, Move move);
 
   @Override
   public boolean equals(Object o) {
