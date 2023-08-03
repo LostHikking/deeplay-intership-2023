@@ -96,4 +96,40 @@ public class FigureUtils {
 
     return false;
   }
+
+  /**
+   * Метод проверяет есть ли какая либо фигура на заданной диагонали между двумя позициями.
+   *
+   * @param board Доска
+   * @param startRow Начальная позиция по row
+   * @param endRow Начальная позиция по row
+   * @param startCol Начальная позиция по col
+   * @param endCol Конечная позиция по col
+   * @return Есть ли фигура
+   */
+  public static boolean hasFigureOnDiagonalBetweenPositions(
+      Board board, int startRow, int endRow, int startCol, int endCol) {
+    int dx;
+    int x = startCol;
+    int dy;
+    int y = startRow;
+    if (startCol < endCol) {
+      dx = 1;
+    } else {
+      dx = -1;
+    }
+    if (startRow < endRow) {
+      dy = 1;
+    } else {
+      dy = -1;
+    }
+    while (x != endCol - 1) {
+      x += dx;
+      y += dy;
+      if (board.getPiece(x, y) != null) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
