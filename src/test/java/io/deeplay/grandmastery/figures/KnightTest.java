@@ -36,7 +36,8 @@ class KnightTest {
                     new Move(
                         Position.getPositionFromString("g1"),
                         Position.getPositionFromString("f3"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertTrue(
                 piece.canMove(
@@ -44,7 +45,8 @@ class KnightTest {
                     new Move(
                         Position.getPositionFromString("g1"),
                         Position.getPositionFromString("h3"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertFalse(
                 piece.canMove(
@@ -52,7 +54,8 @@ class KnightTest {
                     new Move(
                         Position.getPositionFromString("g1"),
                         Position.getPositionFromString("a1"),
-                        null))));
+                        null),
+                    true)));
   }
 
   @Test

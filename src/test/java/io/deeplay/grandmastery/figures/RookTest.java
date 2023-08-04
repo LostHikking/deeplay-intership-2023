@@ -38,7 +38,8 @@ class RookTest {
                     new Move(
                         Position.getPositionFromString("f5"),
                         Position.getPositionFromString("f8"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertTrue(
                 piece.canMove(
@@ -46,7 +47,8 @@ class RookTest {
                     new Move(
                         Position.getPositionFromString("f5"),
                         Position.getPositionFromString("f3"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertFalse(
                 piece.canMove(
@@ -54,7 +56,8 @@ class RookTest {
                     new Move(
                         Position.getPositionFromString("f5"),
                         Position.getPositionFromString("f1"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertTrue(
                 piece.canMove(
@@ -62,7 +65,8 @@ class RookTest {
                     new Move(
                         Position.getPositionFromString("f5"),
                         Position.getPositionFromString("h5"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertTrue(
                 piece.canMove(
@@ -70,7 +74,8 @@ class RookTest {
                     new Move(
                         Position.getPositionFromString("f5"),
                         Position.getPositionFromString("a5"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertFalse(
                 piece.canMove(
@@ -78,7 +83,8 @@ class RookTest {
                     new Move(
                         Position.getPositionFromString("f5"),
                         Position.getPositionFromString("a1"),
-                        null))),
+                        null),
+                    true)),
         () ->
             Assertions.assertFalse(
                 piece.canMove(
@@ -86,7 +92,8 @@ class RookTest {
                     new Move(
                         Position.getPositionFromString("f5"),
                         Position.getPositionFromString("h8"),
-                        null))));
+                        null),
+                    true)));
   }
 
   @Test

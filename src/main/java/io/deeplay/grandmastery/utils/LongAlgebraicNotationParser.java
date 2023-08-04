@@ -61,7 +61,7 @@ public class LongAlgebraicNotationParser {
         } else {
           return false;
         }
-      } else if (piece.canMove(copyBoard, move)) {
+      } else if (piece.canMove(copyBoard, move, true)) {
         piece.move(copyBoard, move);
       } else {
         return false;

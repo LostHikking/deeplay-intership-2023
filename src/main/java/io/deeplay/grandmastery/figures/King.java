@@ -31,8 +31,8 @@ public class King extends Piece {
   }
 
   @Override
-  public boolean canMove(Board board, Move move) {
-    if (!FigureUtils.basicValidMove(move, board)) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck) {
+    if (!FigureUtils.basicValidMove(move, board, withKingCheck)) {
       return false;
     }
 
@@ -87,7 +87,7 @@ public class King extends Piece {
         i++) {
       for (Position position : positions) {
         tmpMove = new Move(position, new Position(new Column(i), move.to().row()), null);
-        if (board.getPiece(position).canMove(board, tmpMove)) {
+        if (board.getPiece(position).canMove(board, tmpMove, true)) {
           return false;
         }
       }
@@ -139,7 +139,7 @@ public class King extends Piece {
       }
     }
 
-    return moves.stream().filter(move -> canMove(board, move)).toList();
+    return moves.stream().filter(move -> canMove(board, move, true)).toList();
   }
 
   @Override

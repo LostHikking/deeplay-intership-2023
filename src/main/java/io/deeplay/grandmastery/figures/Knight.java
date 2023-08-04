@@ -26,13 +26,13 @@ public class Knight extends Piece {
   }
 
   @Override
-  public boolean canMove(Board board, Move move) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck) {
     var toCol = move.to().col().value();
     var toRow = move.to().row().value();
     var fromCol = move.from().col().value();
     var fromRow = move.from().row().value();
 
-    return FigureUtils.basicValidMove(move, board)
+    return FigureUtils.basicValidMove(move, board, withKingCheck)
         && ((Math.abs(fromCol - toCol) == 1 && Math.abs(fromRow - toRow) == 2)
             || (Math.abs(fromCol - toCol) == 2 && Math.abs(fromRow - toRow) == 1));
   }
@@ -50,7 +50,7 @@ public class Knight extends Piece {
     moveList.add(FigureUtils.getMoveByPositionAndDeltas(position, 2, -1));
     moveList.add(FigureUtils.getMoveByPositionAndDeltas(position, 2, 1));
 
-    return moveList.stream().filter(move -> canMove(board, move)).toList();
+    return moveList.stream().filter(move -> canMove(board, move, true)).toList();
   }
 
   @Override

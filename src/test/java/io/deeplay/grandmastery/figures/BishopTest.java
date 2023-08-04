@@ -1,8 +1,5 @@
 package io.deeplay.grandmastery.figures;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.HashBoard;
@@ -13,6 +10,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +30,8 @@ class BishopTest {
     board.setPiece(p1, new Bishop(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -43,7 +42,8 @@ class BishopTest {
     board.setPiece(p1, new Bishop(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -54,7 +54,8 @@ class BishopTest {
     board.setPiece(p1, new Bishop(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -63,7 +64,8 @@ class BishopTest {
     Position p2 = new Position(new Column(3), new Row(3));
     board.setPiece(p1, new Bishop(Color.WHITE));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP), true));
   }
 
   @Test
@@ -89,7 +91,7 @@ class BishopTest {
     moves.add(new Move(p, new Position(new Column(1), new Row(5)), null));
     moves.add(new Move(p, new Position(new Column(0), new Row(6)), null));
 
-    assertEquals(moves, bishop.getAllMoves(board, p));
+    Assertions.assertEquals(moves, bishop.getAllMoves(board, p));
   }
 
   @Test
@@ -113,6 +115,6 @@ class BishopTest {
     moves.add(new Move(p, new Position(new Column(1), new Row(5)), null));
     moves.add(new Move(p, new Position(new Column(0), new Row(6)), null));
 
-    assertEquals(moves, bishop.getAllMoves(board, p));
+    Assertions.assertEquals(moves, bishop.getAllMoves(board, p));
   }
 }

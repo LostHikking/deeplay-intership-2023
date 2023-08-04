@@ -31,8 +31,8 @@ public class Pawn extends Piece {
   }
 
   @Override
-  public boolean canMove(Board board, Move move) {
-    if (!FigureUtils.basicValidMove(move, board)) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck) {
+    if (!FigureUtils.basicValidMove(move, board, withKingCheck)) {
       return false;
     }
 
@@ -123,7 +123,7 @@ public class Pawn extends Piece {
     defaultMoves.add(FigureUtils.getMoveByPositionAndDeltas(position, -1, 1));
     defaultMoves.add(FigureUtils.getMoveByPositionAndDeltas(position, 1, -1));
     defaultMoves.add(FigureUtils.getMoveByPositionAndDeltas(position, -1, -1));
-    defaultMoves = defaultMoves.stream().filter(move -> canMove(board, move)).toList();
+    defaultMoves = defaultMoves.stream().filter(move -> canMove(board, move, true)).toList();
 
     List<Move> resultMoves = new ArrayList<>();
     for (Move move : defaultMoves) {

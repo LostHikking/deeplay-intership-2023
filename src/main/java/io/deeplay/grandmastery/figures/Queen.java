@@ -28,13 +28,13 @@ public class Queen extends Piece {
   }
 
   @Override
-  public boolean canMove(Board board, Move move) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck) {
     var toCol = move.to().col().value();
     var toRow = move.to().row().value();
     var fromRow = move.from().row().value();
     var fromCol = move.from().col().value();
 
-    if (!FigureUtils.basicValidMove(move, board)) {
+    if (!FigureUtils.basicValidMove(move, board, withKingCheck)) {
       return false;
     }
 
@@ -67,7 +67,7 @@ public class Queen extends Piece {
       listMove.add(new Move(position, new Position(position.col(), new Row(i)), null));
       listMove.add(new Move(position, new Position(new Column(i), position.row()), null));
     }
-    return listMove.stream().filter(move -> canMove(board, move)).toList();
+    return listMove.stream().filter(move -> canMove(board, move, true)).toList();
   }
 
   @Override

@@ -15,7 +15,6 @@ public class GameStateChecker {
    * @return Стоит ли на доске шах
    */
   public static boolean isCheck(Board board, Color color) {
-    // TODO: Добавить в canMove поле withKingAttack
     var kingPoz =
         color == Color.WHITE ? board.getWhiteKingPosition() : board.getBlackKingPosition();
 
@@ -24,7 +23,7 @@ public class GameStateChecker {
         var piece = board.getPiece(i, j);
         var move = new Move(new Position(new Column(i), new Row(j)), kingPoz, null);
 
-        if (piece != null && piece.getColor() != color && piece.canMove(board, move)) {
+        if (piece != null && piece.getColor() != color && piece.canMove(board, move, false)) {
           return true;
         }
       }

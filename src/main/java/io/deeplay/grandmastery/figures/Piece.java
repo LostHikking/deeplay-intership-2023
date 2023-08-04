@@ -48,7 +48,7 @@ public abstract class Piece {
    *     не удалось переместить фигуру
    */
   public boolean move(Board board, Move move) {
-    if (canMove(board, move)) {
+    if (canMove(board, move, true)) {
       Piece piece = board.getPiece(move.from());
       board.removePiece(move.from());
       board.removePiece(move.to());
@@ -68,7 +68,7 @@ public abstract class Piece {
    * @param move  ход
    * @return true, если фигура может выполнить указанный ход, иначе false
    */
-  public abstract boolean canMove(Board board, Move move);
+  public abstract boolean canMove(Board board, Move move, boolean withKingCheck);
 
   /**
    * Получает все возможные ходы для фигуры с указанной позиции на доске.
