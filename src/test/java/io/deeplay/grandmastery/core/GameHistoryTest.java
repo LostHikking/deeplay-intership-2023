@@ -8,16 +8,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.utils.BoardUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class GameHistoryTest {
   private GameHistory gameHistory;
+  private Board board;
 
   @BeforeEach
   void init() {
     gameHistory = new GameHistory();
+    board = new HashBoard();
+    BoardUtils.defaultChess().accept(board);
   }
 
   @Test
@@ -34,7 +38,7 @@ class GameHistoryTest {
     var move =
         new Move(
             new Position(new Column(1), new Row(1)), new Position(new Column(2), new Row(2)), null);
-    gameHistory.makeMove(move);
+    gameHistory.makeMove(move, board);
 
     Assertions.assertAll(
         () -> assertEquals(move, gameHistory.getLastMove()),
@@ -55,10 +59,10 @@ class GameHistoryTest {
             new Position(new Column(1), new Row(1)), new Position(new Column(2), new Row(2)), null);
     var move2 =
         new Move(
-            new Position(new Column(2), new Row(2)), new Position(new Column(3), new Row(3)), null);
+            new Position(new Column(1), new Row(1)), new Position(new Column(3), new Row(3)), null);
 
-    gameHistory.makeMove(move1);
-    gameHistory.makeMove(move2);
+    gameHistory.makeMove(move1, board);
+    gameHistory.makeMove(move2, board);
 
     Assertions.assertAll(
         () -> assertEquals(move2, gameHistory.getLastMove()),

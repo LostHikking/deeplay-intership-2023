@@ -8,15 +8,15 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class RookTest {
-  private static Piece piece;
-  private static Board board;
+  private Piece piece;
+  private Board board;
 
-  @BeforeAll
-  static void init() {
+  @BeforeEach
+  void init() {
     piece = new Rook(Color.WHITE);
     board = new HashBoard();
     board.setPiece(Position.getPositionFromString("f5"), piece);

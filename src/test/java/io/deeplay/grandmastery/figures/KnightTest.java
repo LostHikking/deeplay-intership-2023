@@ -7,15 +7,15 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.utils.BoardUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class KnightTest {
-  private static Piece piece;
-  private static Board board;
+  private Piece piece;
+  private Board board;
 
-  @BeforeAll
-  static void init() {
+  @BeforeEach
+  void init() {
     piece = new Knight(Color.WHITE);
     board = new HashBoard();
     BoardUtils.defaultChess().accept(board);

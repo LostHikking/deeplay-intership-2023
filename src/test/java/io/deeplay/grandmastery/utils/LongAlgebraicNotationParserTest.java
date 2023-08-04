@@ -5,14 +5,14 @@ import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.exceptions.GameException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LongAlgebraicNotationParserTest {
-  private static Board board;
+  private Board board;
 
-  @BeforeAll
-  static void init() {
+  @BeforeEach
+  void init() {
     board = new HashBoard();
     BoardUtils.defaultChess().accept(board);
   }

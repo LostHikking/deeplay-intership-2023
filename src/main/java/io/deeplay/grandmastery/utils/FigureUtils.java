@@ -5,7 +5,6 @@ import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
-import io.deeplay.grandmastery.domain.FigureType;
 
 /** Класс FigureUtils предоставляет утилиты для работы с фигурами, позициями и ходами. */
 public class FigureUtils {
@@ -35,10 +34,10 @@ public class FigureUtils {
 
     return isValidPosition(move.from())
         && isValidPosition(move.to())
-        && figureFrom != null
-        && (figureTo == null
-            || (figureTo.getColor() != figureFrom.getColor()
-                && figureTo.getFigureType() != FigureType.KING));
+        && figureFrom != null && (figureTo == null || (figureTo.getColor() != figureFrom.getColor()));
+    
+    // TODO: Для проверки на шах это надо удалить и проверять в другом месте
+    // figureTo.getFigureType() != FigureType.KING
   }
 
   /**

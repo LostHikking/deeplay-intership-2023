@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /** Класс, отвечающий за отображение доски. */
 public class BoardRender {
@@ -16,7 +17,7 @@ public class BoardRender {
    * @param board Доска
    */
   public static void showBoard(OutputStream outputStream, Board board) {
-    Charset utf8 = Charset.forName("UTF-8");
+    Charset utf8 = StandardCharsets.UTF_8;
     Writer writer = new OutputStreamWriter(outputStream, utf8);
     PrintWriter printWriter = new PrintWriter(writer);
 
