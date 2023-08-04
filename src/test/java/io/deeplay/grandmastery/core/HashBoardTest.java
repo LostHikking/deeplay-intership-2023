@@ -1,13 +1,17 @@
 package io.deeplay.grandmastery.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.figures.Piece;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,5 +75,46 @@ public class HashBoardTest {
     Piece retrievedPiece = board.getPiece(position);
 
     assertNull(retrievedPiece);
+  }
+
+  @Test
+  public void hasPieceTrueTest() {
+    Position position = new Position(new Column(1), new Row(4));
+    Piece pawn = new Pawn(Color.WHITE);
+    board.setPiece(position, pawn);
+
+    assertTrue(board.hasPiece(position));
+  }
+
+  @Test
+  public void hasPieceFalseTest() {
+    Position position = new Position(new Column(1), new Row(4));
+    assertFalse(board.hasPiece(position));
+  }
+
+  @Test
+  public void getAllWhitePiecePositionTest() {
+    Set<Position> positions = new HashSet<>();
+    positions.add(new Position(new Column(1), new Row(4)));
+    positions.add(new Position(new Column(2), new Row(4)));
+    positions.add(new Position(new Column(3), new Row(4)));
+
+    positions.forEach(position -> board.setPiece(position, new Pawn(Color.WHITE)));
+    board.setPiece(Position.getPositionFromString("a1"), new Pawn(Color.BLACK));
+
+    assertEquals(positions, new HashSet<>(board.getAllWhitePiecePosition()));
+  }
+
+  @Test
+  public void getAllBlackPiecePositionTest() {
+    Set<Position> positions = new HashSet<>();
+    positions.add(new Position(new Column(1), new Row(4)));
+    positions.add(new Position(new Column(2), new Row(4)));
+    positions.add(new Position(new Column(3), new Row(4)));
+
+    positions.forEach(position -> board.setPiece(position, new Pawn(Color.BLACK)));
+    board.setPiece(Position.getPositionFromString("a1"), new Pawn(Color.WHITE));
+
+    assertEquals(positions, new HashSet<>(board.getAllBlackPiecePosition()));
   }
 }

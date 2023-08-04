@@ -61,12 +61,40 @@ public abstract class Piece {
     return false;
   }
 
+  /**
+   * Проверяет, может ли фигура выполнить ход на доске.
+   *
+   * @param board доска
+   * @param move  ход
+   * @return true, если фигура может выполнить указанный ход, иначе false
+   */
   public abstract boolean canMove(Board board, Move move);
 
+  /**
+   * Получает все возможные ходы для фигуры с указанной позиции на доске.
+   *
+   * @param board    доска
+   * @param position позиция фигуры на доске
+   * @return {@code List<Move>} список всех возможных ходов
+   */
   public abstract List<Move> getAllMoves(Board board, Position position);
 
+  /**
+   * Превращение пешки. Этот метод реализован только у пешки.
+   *
+   * @param board доска
+   * @param move  ход
+   */
   public abstract void revive(Board board, Move move);
 
+  /**
+   * Проверяет, может ли пешка превратится. Этот метод реализован только у пешки.
+   * Остальные фигуры по умолчанию возвращают false
+   *
+   * @param board доска
+   * @param move  ход
+   * @return true, если пешка может быть превращена, иначе false
+   */
   public abstract boolean canRevive(Board board, Move move);
 
   @Override
