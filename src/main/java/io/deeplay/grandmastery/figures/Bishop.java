@@ -20,7 +20,7 @@ public class Bishop extends Piece {
   public Bishop(Color color) {
     super(color);
     this.figureType = FigureType.BISHOP;
-    if (color == Color.WHITE) {
+    if (color != Color.WHITE) {
       this.symbol = '♗';
     } else {
       this.symbol = '♝';

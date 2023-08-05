@@ -23,7 +23,7 @@ public class King extends Piece {
     super(color);
     this.figureType = FigureType.KING;
     rookCastlingPos = null;
-    if (color == Color.WHITE) {
+    if (color != Color.WHITE) {
       this.symbol = '♔';
     } else {
       this.symbol = '♚';

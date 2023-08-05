@@ -23,7 +23,7 @@ public class Pawn extends Piece {
     this.figureType = FigureType.PAWN;
     captureEnPassant = false;
 
-    if (color == Color.WHITE) {
+    if (color != Color.WHITE) {
       this.symbol = '♙';
     } else {
       this.symbol = '♟';

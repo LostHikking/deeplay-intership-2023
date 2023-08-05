@@ -1,15 +1,15 @@
 package io.deeplay.grandmastery.figures;
 
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.HashBoard;
-import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
-import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class RookTest {
   private Piece piece;
@@ -21,140 +21,57 @@ class RookTest {
     board = new HashBoard();
     board.setPiece(Position.getPositionFromString("f5"), piece);
     board.setPiece(Position.getPositionFromString("f3"), new Bishop(Color.BLACK));
+    board.setPiece(Position.getPositionFromString("f7"), new King(Color.BLACK));
   }
 
-  @Test
-  void moveTest() {
-    // TODO: Сделать после реализации шаблонного метода
-  }
+  @ParameterizedTest
+  @CsvSource(
+      value = {"f5f6", "f5f4", "f5f3", "f5a5", "f5b5", "f5c5", "f5d5", "f5e5", "f5g5", "f5h5"})
+  void moveCorrectTest(String moveStr) {
+    var move = LongAlgebraicNotationParser.getMoveFromString(moveStr);
 
-  @Test
-  void canMoveTest() {
     Assertions.assertAll(
-        () ->
-            Assertions.assertTrue(
-                piece.canMove(
-                    board,
-                    new Move(
-                        Position.getPositionFromString("f5"),
-                        Position.getPositionFromString("f8"),
-                        null),
-                    true)),
-        () ->
-            Assertions.assertTrue(
-                piece.canMove(
-                    board,
-                    new Move(
-                        Position.getPositionFromString("f5"),
-                        Position.getPositionFromString("f3"),
-                        null),
-                    true)),
-        () ->
-            Assertions.assertFalse(
-                piece.canMove(
-                    board,
-                    new Move(
-                        Position.getPositionFromString("f5"),
-                        Position.getPositionFromString("f1"),
-                        null),
-                    true)),
-        () ->
-            Assertions.assertTrue(
-                piece.canMove(
-                    board,
-                    new Move(
-                        Position.getPositionFromString("f5"),
-                        Position.getPositionFromString("h5"),
-                        null),
-                    true)),
-        () ->
-            Assertions.assertTrue(
-                piece.canMove(
-                    board,
-                    new Move(
-                        Position.getPositionFromString("f5"),
-                        Position.getPositionFromString("a5"),
-                        null),
-                    true)),
-        () ->
-            Assertions.assertFalse(
-                piece.canMove(
-                    board,
-                    new Move(
-                        Position.getPositionFromString("f5"),
-                        Position.getPositionFromString("a1"),
-                        null),
-                    true)),
-        () ->
-            Assertions.assertFalse(
-                piece.canMove(
-                    board,
-                    new Move(
-                        Position.getPositionFromString("f5"),
-                        Position.getPositionFromString("h8"),
-                        null),
-                    true)));
+        () -> Assertions.assertTrue(piece.move(board, move)),
+        () -> Assertions.assertNull(board.getPiece(move.from())),
+        () -> Assertions.assertSame(piece, board.getPiece(move.to())));
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      value = {"f5a6", "f5f7", "f5f2", "f5f1", "f5f8", "f5c6", "f5a1", "f5h8", "f5g4", "f5h1"})
+  void moveWrongTest(String moveStr) {
+    var move = LongAlgebraicNotationParser.getMoveFromString(moveStr);
+
+    Assertions.assertAll(
+        () -> Assertions.assertFalse(piece.move(board, move)),
+        () -> Assertions.assertNotNull(board.getPiece(move.from())),
+        () -> Assertions.assertNotSame(piece, board.getPiece(move.to())));
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      value = {"f5f6", "f5f4", "f5f3", "f5a5", "f5b5", "f5c5", "f5d5", "f5e5", "f5g5", "f5h5"})
+  void canMoveCorrectTest(String moveStr) {
+    Assertions.assertTrue(
+        piece.canMove(board, LongAlgebraicNotationParser.getMoveFromString(moveStr), true));
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      value = {"f5f5", "f5f7", "f5f2", "f5f1", "f5f8", "f5c6", "f5a1", "f5h8", "f5g4", "f5h1"})
+  void canMoveWrongTest(String moveStr) {
+    Assertions.assertFalse(
+        piece.canMove(board, LongAlgebraicNotationParser.getMoveFromString(moveStr), true));
   }
 
   @Test
   void getAllMovesTest() {
-    var startPos = Position.getPositionFromString("f5");
-    var allMoves = piece.getAllMoves(board, startPos);
-
-    Assertions.assertAll(
-        () -> Assertions.assertEquals(12, allMoves.size()),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(0), new Row(4)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(1), new Row(4)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(2), new Row(4)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(3), new Row(4)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(4), new Row(4)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(6), new Row(4)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(7), new Row(4)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(5), new Row(7)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(5), new Row(6)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(5), new Row(5)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(5), new Row(3)), null))),
-        () ->
-            Assertions.assertTrue(
-                allMoves.contains(
-                    new Move(startPos, new Position(new Column(5), new Row(2)), null))));
+    Assertions.assertEquals(
+        10, piece.getAllMoves(board, Position.getPositionFromString("f5")).size());
   }
 
   @Test
-  void canRevive() {
+  void canReviveTest() {
     Assertions.assertFalse(piece.canRevive(board, null));
   }
 }

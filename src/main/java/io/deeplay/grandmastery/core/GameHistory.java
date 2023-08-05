@@ -2,6 +2,7 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.BoardUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +37,15 @@ public class GameHistory implements GameHistoryListener {
   @Override
   public void makeMove(Move move, Board board) {
     movesWithoutTakingAndAdvancingPawns++;
-    var piece = board.getPiece(move.from());
-    var fieldTo = board.getPiece(move.to());
 
-    if (piece.getFigureType() == FigureType.PAWN || fieldTo != null) {
+    var toPos = move.to();
+    var piece = board.getPiece(toPos);
+    Piece pieceToBeforeMove =
+        !boards.isEmpty() ? boards.get(boards.size() - 1).getPiece(toPos) : null;
+
+    if (piece.getFigureType() == FigureType.PAWN
+        || move.promotionPiece() != null
+        || pieceToBeforeMove != null) {
       movesWithoutTakingAndAdvancingPawns = 0;
     }
 
@@ -108,10 +114,10 @@ public class GameHistory implements GameHistoryListener {
   /**
    * Метод возвращает количество повторений позиции на доске в истории.
    *
-   * @param board Доска
+   * @param checkBoard Доска
    * @return Количество повторений позиции на доске в истории
    */
-  public int getMaxRepeatPosition(Board board) {
+  public int getMaxRepeatPosition(Board checkBoard) {
     return (int)
         boards.stream()
             .filter(
@@ -119,10 +125,11 @@ public class GameHistory implements GameHistoryListener {
                   for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
                       var historyBoardPiece = historyBoard.getPiece(i, j);
-                      var boardPiece = board.getPiece(i, j);
+                      var boardPiece = checkBoard.getPiece(i, j);
+
                       if (historyBoardPiece != null && !historyBoardPiece.equals(boardPiece)) {
                         return false;
-                      } else if (boardPiece != null && boardPiece.equals(historyBoardPiece)) {
+                      } else if (boardPiece != null && !boardPiece.equals(historyBoardPiece)) {
                         return false;
                       }
                     }

@@ -67,38 +67,6 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске пат определённому виду фигур.
-   *
-   * @param board Доска
-   * @return Стоит ли на доске пат
-   */
-  private static boolean isStaleMate(Board board, Color color) {
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        var piece = board.getPiece(i, j);
-        var pos = new Position(new Column(i), new Row(j));
-
-        if (piece != null && piece.getColor() == color) {
-          var allMoves = piece.getAllMoves(board, pos);
-          if (!allMoves.isEmpty()) {
-            for (Move move : allMoves) {
-              var copyBoard = new HashBoard();
-              BoardUtils.copyBoard(board).accept(copyBoard);
-
-              piece.move(copyBoard, move);
-              if (!isCheck(copyBoard, color)) {
-                return false;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return true;
-  }
-
-  /**
    * Метод проверяет стоит ли на доске ничья.
    *
    * @param board Доска
@@ -135,8 +103,42 @@ public class GameStateChecker {
     }
 
     return drawWithLackOfFigures(whiteFiguresList, blackFiguresList)
-        && drawWithRepeatPosition(gameHistory, board)
-        && drawWithGameWithoutTakingAndAdvancingPawns(gameHistory);
+        || drawWithRepeatPosition(gameHistory, board)
+        || drawWithGameWithoutTakingAndAdvancingPawns(gameHistory);
+  }
+
+  /**
+   * Метод проверяет стоит ли на доске пат определённому виду фигур.
+   *
+   * <p>Не юзаем этот метод!!! Юзаем isDraw(...).
+   *
+   * @param board Доска
+   * @return Стоит ли на доске пат
+   */
+  public static boolean isStaleMate(Board board, Color color) {
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        var piece = board.getPiece(i, j);
+        var pos = new Position(new Column(i), new Row(j));
+
+        if (piece != null && piece.getColor() == color) {
+          var allMoves = piece.getAllMoves(board, pos);
+          if (!allMoves.isEmpty()) {
+            for (Move move : allMoves) {
+              var copyBoard = new HashBoard();
+              BoardUtils.copyBoard(board).accept(copyBoard);
+
+              piece.move(copyBoard, move);
+              if (!isCheck(copyBoard, color)) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return true;
   }
 
   /**
@@ -148,9 +150,9 @@ public class GameStateChecker {
    */
   private static boolean drawWithLackOfFigures(List<FigureType> white, List<FigureType> black) {
     if (white.size() == 1 && white.get(0).equals(FigureType.KING)) {
-      return drawWithFiguresAgainstKing(white);
-    } else if (black.size() == 1 && black.get(0).equals(FigureType.KING)) {
       return drawWithFiguresAgainstKing(black);
+    } else if (black.size() == 1 && black.get(0).equals(FigureType.KING)) {
+      return drawWithFiguresAgainstKing(white);
     }
 
     return false;

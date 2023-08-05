@@ -1,14 +1,9 @@
 package io.deeplay.grandmastery.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.utils.BoardUtils;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,50 +17,108 @@ class GameHistoryTest {
     gameHistory = new GameHistory();
     board = new HashBoard();
     BoardUtils.defaultChess().accept(board);
+    gameHistory.setBoard(board);
+
+    var movesStr =
+        "d2d4,d7d5,c2c4,d5c4,e2e4,b8c6,g1f3,g8f6,e4e5,f6d7,f1e2,e7e6,b1c3,c6b4,c3b1,b4c6";
+    var moves = LongAlgebraicNotationParser.getMovesFromString(movesStr);
+
+    for (Move move : moves) {
+      var piece = board.getPiece(move.from());
+      piece.move(board, move);
+      gameHistory.makeMove(move, board);
+    }
   }
 
   @Test
   void setBoardTest() {
     var newGameHistory = new GameHistory();
-    gameHistory.setBoard(new HashBoard());
-
     Assertions.assertAll(
-        () -> assertNull(newGameHistory.getBoard()), () -> assertNotNull(gameHistory.getBoard()));
+        () -> Assertions.assertNull(newGameHistory.getBoard()),
+        () -> Assertions.assertNotNull(gameHistory.getBoard()));
+  }
+
+  @Test
+  void getMovesWithoutTakingAndAdvancingPawnsTest() {
+    Assertions.assertEquals(4, gameHistory.getMovesWithoutTakingAndAdvancingPawns());
+  }
+
+  @Test
+  void getMovesWithoutTakingAndAdvancingPawnsAfterMovePawnTest() {
+    var move =
+        new Move(Position.getPositionFromString("b2"), Position.getPositionFromString("b3"), null);
+
+    var piece = board.getPiece(move.from());
+    piece.move(board, move);
+    gameHistory.makeMove(move, board);
+
+    Assertions.assertEquals(0, gameHistory.getMovesWithoutTakingAndAdvancingPawns());
+  }
+
+  @Test
+  void getMovesWithoutTakingAndAdvancingPawnsAfterTakingTest() {
+    var moves =
+        List.of(
+            LongAlgebraicNotationParser.getMoveFromString("b1c3"),
+            LongAlgebraicNotationParser.getMoveFromString("c6e5"));
+
+    for (Move move : moves) {
+      var piece = board.getPiece(move.from());
+      piece.move(board, move);
+      gameHistory.makeMove(move, board);
+    }
+
+    Assertions.assertEquals(0, gameHistory.getMovesWithoutTakingAndAdvancingPawns());
   }
 
   @Test
   void getLastMoveTest() {
     var move =
         new Move(
-            new Position(new Column(1), new Row(1)), new Position(new Column(2), new Row(2)), null);
-    gameHistory.makeMove(move, board);
+            new Position(new Column(1), new Row(3)), new Position(new Column(2), new Row(5)), null);
 
     Assertions.assertAll(
-        () -> assertEquals(move, gameHistory.getLastMove()),
-        () -> assertFalse(gameHistory.isEmpty()));
+        () -> Assertions.assertEquals(move, gameHistory.getLastMove()),
+        () -> Assertions.assertFalse(gameHistory.isEmpty()));
   }
 
   @Test
   void getLastMoveFromEmptyHistoryTest() {
+    var newGameHistory = new GameHistory();
+
     Assertions.assertAll(
-        () -> assertThrows(GameException.class, () -> gameHistory.getLastMove()),
-        () -> assertTrue(gameHistory.isEmpty()));
+        () -> Assertions.assertThrows(GameException.class, newGameHistory::getLastMove),
+        () -> Assertions.assertTrue(newGameHistory.isEmpty()));
+  }
+
+  @Test
+  void getMaxRepeatPositionTestWithNewPosition() {
+    var moves =
+        List.of(
+            LongAlgebraicNotationParser.getMoveFromString("b1c3"),
+            LongAlgebraicNotationParser.getMoveFromString("c6e5"));
+
+    for (Move move : moves) {
+      var piece = board.getPiece(move.from());
+      piece.move(board, move);
+      gameHistory.makeMove(move, board);
+    }
+
+    Assertions.assertEquals(1, gameHistory.getMaxRepeatPosition(board));
+  }
+
+  @Test
+  void getMaxRepeatPositionTest() {
+    var move = LongAlgebraicNotationParser.getMoveFromString("b1c3");
+    var piece = board.getPiece(move.from());
+    piece.move(board, move);
+    gameHistory.makeMove(move, board);
+
+    Assertions.assertEquals(2, gameHistory.getMaxRepeatPosition(board));
   }
 
   @Test
   void getMovesTest() {
-    var move1 =
-        new Move(
-            new Position(new Column(1), new Row(1)), new Position(new Column(2), new Row(2)), null);
-    var move2 =
-        new Move(
-            new Position(new Column(1), new Row(1)), new Position(new Column(3), new Row(3)), null);
-
-    gameHistory.makeMove(move1, board);
-    gameHistory.makeMove(move2, board);
-
-    Assertions.assertAll(
-        () -> assertEquals(move2, gameHistory.getLastMove()),
-        () -> assertEquals(2, gameHistory.getMoves().size()));
+    Assertions.assertEquals(16, gameHistory.getMoves().size());
   }
 }

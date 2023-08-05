@@ -20,7 +20,7 @@ public class Rook extends Piece {
   public Rook(Color color) {
     super(color);
     this.figureType = FigureType.ROOK;
-    if (color == Color.WHITE) {
+    if (color != Color.WHITE) {
       this.symbol = '♖';
     } else {
       this.symbol = '♜';

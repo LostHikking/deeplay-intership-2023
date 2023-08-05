@@ -21,20 +21,19 @@ public class BoardRender {
     Writer writer = new OutputStreamWriter(outputStream, utf8);
     PrintWriter printWriter = new PrintWriter(writer);
 
-    for (int i = 0; i < 8; i++) {
-      printWriter.print("+-----------------------+\n");
+    for (int i = 7; i >= 0; i--) {
       for (int j = 0; j < 8; j++) {
         Piece piece = board.getPiece(j, i);
         if (piece != null) {
           printWriter.print("|" + piece.getSymbol());
         } else {
-          printWriter.print("|  ");
+          printWriter.print("| ");
         }
       }
       printWriter.print("|\n");
     }
 
-    printWriter.print("+-----------------------+\n");
+    printWriter.print("\n");
     printWriter.flush();
     printWriter.close();
   }
