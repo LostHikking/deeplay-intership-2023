@@ -8,6 +8,7 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -116,5 +117,15 @@ class BishopTest {
     moves.add(new Move(p, new Position(new Column(0), new Row(6)), null));
 
     Assertions.assertEquals(moves, bishop.getAllMoves(board, p));
+  }
+
+  @Test
+  void wrongMoveBishopTest() {
+    var hashBoard = new HashBoard();
+    var bishop = new Bishop(Color.WHITE);
+
+    hashBoard.setPiece(Position.getPositionFromString("e6"), bishop);
+    Assertions.assertFalse(
+        bishop.canMove(hashBoard, LongAlgebraicNotationParser.getMoveFromString("e6h8"), true));
   }
 }

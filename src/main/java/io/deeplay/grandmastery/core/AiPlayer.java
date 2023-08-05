@@ -15,22 +15,26 @@ public class AiPlayer extends Player {
     ArrayList<Piece> piecesOfThisColor = new ArrayList<>();
     ArrayList<Position> positions = new ArrayList<>();
     Piece p;
+    Position pos;
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         p = board.getPiece(j, i);
-        if (p != null && p.getColor() == this.color) {
+        pos = new Position(new Column(j), new Row(i));
+        if (p != null && p.getColor() == this.color && !p.getAllMoves(board, pos).isEmpty()) {
           piecesOfThisColor.add(p);
-          positions.add(new Position(new Column(j), new Row(i)));
+          positions.add(pos);
         }
       }
     }
     List<Move> moves;
-    do {
-      int i = (int) (Math.random() * piecesOfThisColor.size());
-      moves = piecesOfThisColor.get(i).getAllMoves(board, positions.get(i));
-    } while (moves.isEmpty());
-    int i = (int) (Math.random() * moves.size());
-    this.setMoveData(moves.get(i));
+    if (piecesOfThisColor.isEmpty()) {
+      return false;
+    }
+    int size = piecesOfThisColor.size();
+    int ind = (int) (Math.random() * size);
+    moves = piecesOfThisColor.get(ind).getAllMoves(board, positions.get(ind));
+    ind = (int) (Math.random() * moves.size());
+    this.setMoveData(moves.get(ind));
     return true;
   }
 }

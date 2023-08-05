@@ -8,6 +8,7 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -236,5 +237,15 @@ class QueenTest {
     moves.add(new Move(p, new Position(new Column(2), new Row(3)), null));
 
     Assertions.assertEquals(moves, queen.getAllMoves(board, p));
+  }
+
+  @Test
+  void wrongMoveQueenTest() {
+    var hashBoard = new HashBoard();
+    var queen = new Queen(Color.WHITE);
+
+    hashBoard.setPiece(Position.getPositionFromString("e6"), queen);
+    Assertions.assertFalse(
+        queen.canMove(hashBoard, LongAlgebraicNotationParser.getMoveFromString("e6h8"), true));
   }
 }

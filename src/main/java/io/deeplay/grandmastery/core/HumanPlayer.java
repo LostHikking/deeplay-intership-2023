@@ -8,7 +8,7 @@ import java.util.Scanner;
 /** Дочерний класс класса Player, представляет реального игрока. */
 public class HumanPlayer extends Player {
   public HumanPlayer(String name, Board board, Color color) {
-    super(name, board,color);
+    super(name, board, color);
   }
 
   /** Метод, отвечающий за ввод хода игрока. */
