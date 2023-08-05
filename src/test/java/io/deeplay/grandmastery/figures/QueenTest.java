@@ -248,4 +248,23 @@ class QueenTest {
     Assertions.assertFalse(
         queen.canMove(hashBoard, LongAlgebraicNotationParser.getMoveFromString("e6h8"), true));
   }
+
+  @Test
+  void pizdationQueenAgain() {
+    var hashBoard = new HashBoard();
+    var queen = new Queen(Color.WHITE);
+    var pos = Position.getPositionFromString("e5");
+
+    hashBoard.setPiece(pos, queen);
+    hashBoard.setPiece(Position.getPositionFromString("f3"), new King(Color.WHITE));
+    hashBoard.setPiece(Position.getPositionFromString("a7"), new King(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("a1"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("e1"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("h2"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("h8"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("e8"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("b8"), new Rook(Color.BLACK));
+    Assertions.assertEquals(27, queen.getAllMoves(hashBoard, pos).size());
+  }
+
 }

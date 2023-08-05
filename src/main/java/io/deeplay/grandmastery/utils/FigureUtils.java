@@ -76,7 +76,6 @@ public class FigureUtils {
         return true;
       }
     }
-
     return false;
   }
 
@@ -126,7 +125,7 @@ public class FigureUtils {
     } else {
       dy = -1;
     }
-    while (x != endCol - 1) {
+    while (x != endCol - dx) {
       x += dx;
       y += dy;
       if (board.getPiece(x, y) != null) {
