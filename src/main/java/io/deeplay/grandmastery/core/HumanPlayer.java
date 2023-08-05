@@ -1,13 +1,14 @@
 package io.deeplay.grandmastery.core;
 
+import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /** Дочерний класс класса Player, представляет реального игрока. */
 public class HumanPlayer extends Player {
-  public HumanPlayer(String name) {
-    super(name);
+  public HumanPlayer(String name, Board board, Color color) {
+    super(name, board, color);
   }
 
   /** Метод, отвечающий за ввод хода игрока. */

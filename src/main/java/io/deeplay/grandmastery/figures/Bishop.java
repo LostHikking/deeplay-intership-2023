@@ -1,5 +1,7 @@
 package io.deeplay.grandmastery.figures;
 
+import static java.lang.Math.abs;
+
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.Move;
@@ -37,13 +39,17 @@ public class Bishop extends Piece {
     if (!FigureUtils.basicValidMove(move, board, true)) {
       return false;
     }
-    return !FigureUtils.hasFigureOnDiagonalBetweenPositions(board, fromRow, toRow, fromCol, toCol);
+    if (abs(toCol - fromCol) == abs(toRow - fromRow)) {
+      return !FigureUtils.hasFigureOnDiagonalBetweenPositions(
+          board, fromRow, toRow, fromCol, toCol);
+    }
+    return false;
   }
 
   @Override
   public List<Move> getAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
-    int[] dx  = {1, -1, 1, -1};
+    int[] dx = {1, -1, 1, -1};
     int[] dy = {1, -1, -1, 1};
 
     for (int dir = 0; dir < 4; dir++) {

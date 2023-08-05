@@ -3,6 +3,7 @@ package io.deeplay.grandmastery.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class HumanPlayerTest {
-
+  private Board board;
   private HumanPlayer player;
   private InputStream originalIn;
   private ByteArrayInputStream testIn;
@@ -22,7 +23,7 @@ public class HumanPlayerTest {
 
   @BeforeEach
   void init() {
-    player = new HumanPlayer("John Doe");
+    player = new HumanPlayer("John Doe", board, Color.WHITE);
     originalIn = System.in;
     outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
@@ -47,7 +48,7 @@ public class HumanPlayerTest {
 
   @Test
   void testMakeMove_InvalidMove() {
-    player = new HumanPlayer("John Doe");
+    player = new HumanPlayer("John Doe", board, Color.WHITE);
     outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
     String invalidMove = "a2m4";

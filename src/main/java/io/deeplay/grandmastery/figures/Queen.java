@@ -1,5 +1,7 @@
 package io.deeplay.grandmastery.figures;
 
+import static java.lang.Math.abs;
+
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.Move;
@@ -42,18 +44,19 @@ public class Queen extends Piece {
       return !FigureUtils.hasFigureOnVerticalBetweenRowPosition(board, toCol, toRow, fromRow);
     } else if (toRow == fromRow) {
       return !FigureUtils.hasFigureOnHorizontalBetweenColPosition(board, toRow, toCol, fromCol);
-    } else {
+    } else if (abs(toCol - fromCol) == abs(toRow - fromRow)) {
       return !FigureUtils.hasFigureOnDiagonalBetweenPositions(
           board, fromRow, toRow, fromCol, toCol);
     }
+    return false;
   }
 
   @Override
   public List<Move> getAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
-    int [] dx = {1, -1, 1, -1};
-    int [] dy = {1, -1, -1, 1};
-
+    //диагонали
+    int[] dx = {1, -1, 1, -1};
+    int[] dy = {1, -1, -1, 1};
     for (int dir = 0; dir < 4; dir++) {
       int x = position.col().value() + dx[dir];
       int y = position.row().value() + dy[dir];
@@ -63,10 +66,12 @@ public class Queen extends Piece {
         y += dy[dir];
       }
     }
+    //горизонталь и вертикаль
     for (int i = 0; i < 8; i++) {
       listMove.add(new Move(position, new Position(position.col(), new Row(i)), null));
       listMove.add(new Move(position, new Position(new Column(i), position.row()), null));
     }
+
     return listMove.stream().filter(move -> canMove(board, move, true)).toList();
   }
 

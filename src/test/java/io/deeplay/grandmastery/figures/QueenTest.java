@@ -8,6 +8,7 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -203,7 +204,7 @@ class QueenTest {
   }
 
   @Test
-  void getAllMovesTestWithPieces() {
+  void getAllMovesTestWithPieces1() {
     Position p = new Position(new Column(3), new Row(3));
     Queen queen = new Queen(Color.BLACK);
     board.setPiece(p, queen);
@@ -237,4 +238,33 @@ class QueenTest {
 
     Assertions.assertEquals(moves, queen.getAllMoves(board, p));
   }
+
+  @Test
+  void wrongMoveQueenTest() {
+    var hashBoard = new HashBoard();
+    var queen = new Queen(Color.WHITE);
+
+    hashBoard.setPiece(Position.getPositionFromString("e6"), queen);
+    Assertions.assertFalse(
+        queen.canMove(hashBoard, LongAlgebraicNotationParser.getMoveFromString("e6h8"), true));
+  }
+
+  @Test
+  void getAllMovesTestWithPieces2() {
+    var hashBoard = new HashBoard();
+    var queen = new Queen(Color.WHITE);
+    var pos = Position.getPositionFromString("e5");
+
+    hashBoard.setPiece(pos, queen);
+    hashBoard.setPiece(Position.getPositionFromString("f3"), new King(Color.WHITE));
+    hashBoard.setPiece(Position.getPositionFromString("a7"), new King(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("a1"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("e1"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("h2"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("h8"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("e8"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.getPositionFromString("b8"), new Rook(Color.BLACK));
+    Assertions.assertEquals(27, queen.getAllMoves(hashBoard, pos).size());
+  }
+
 }
