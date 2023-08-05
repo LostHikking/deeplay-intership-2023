@@ -10,29 +10,37 @@ public class AiPlayer extends Player {
     super("Bot", board, color);
   }
 
+
   @Override
   public boolean makeMove() {
-    ArrayList<Piece> piecesOfThisColor = new ArrayList<>();
-    ArrayList<Position> positions = new ArrayList<>();
+    ArrayList<Piece> piecesWithMoves = new ArrayList<>();
+    List<Position> positions;
+    // Создаем список позиций для удаления
+    List<Position> positionsToRemove = new ArrayList<>();
     Piece p;
-    Position pos;
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        p = board.getPiece(j, i);
-        pos = new Position(new Column(j), new Row(i));
-        if (p != null && p.getColor() == this.color && !p.getAllMoves(board, pos).isEmpty()) {
-          piecesOfThisColor.add(p);
-          positions.add(pos);
-        }
+    if (this.color == Color.BLACK) {
+      positions = board.getAllBlackPiecePosition();
+    } else {
+      positions = board.getAllWhitePiecePosition();
+    }
+    for (Position position : positions) {
+      p = board.getPiece(position);
+      if (!p.getAllMoves(board, position).isEmpty()) {
+        piecesWithMoves.add(p);
+      } else {
+        positionsToRemove.add(position);
       }
     }
-    List<Move> moves;
-    if (piecesOfThisColor.isEmpty()) {
+    //удаляю их вне цикла, чтобы не было предупреждений об ConcurrentModificationException
+    positions.removeAll(positionsToRemove);
+    if (piecesWithMoves.isEmpty()) {
       return false;
     }
-    int size = piecesOfThisColor.size();
+    //занимаемся рандомом
+    List<Move> moves;
+    int size = piecesWithMoves.size();
     int ind = (int) (Math.random() * size);
-    moves = piecesOfThisColor.get(ind).getAllMoves(board, positions.get(ind));
+    moves = piecesWithMoves.get(ind).getAllMoves(board, positions.get(ind));
     ind = (int) (Math.random() * moves.size());
     this.setMoveData(moves.get(ind));
     return true;

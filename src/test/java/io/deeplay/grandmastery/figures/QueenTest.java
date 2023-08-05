@@ -204,7 +204,7 @@ class QueenTest {
   }
 
   @Test
-  void getAllMovesTestWithPieces() {
+  void getAllMovesTestWithPieces1() {
     Position p = new Position(new Column(3), new Row(3));
     Queen queen = new Queen(Color.BLACK);
     board.setPiece(p, queen);
@@ -250,7 +250,7 @@ class QueenTest {
   }
 
   @Test
-  void pizdationQueenAgain() {
+  void getAllMovesTestWithPieces2() {
     var hashBoard = new HashBoard();
     var queen = new Queen(Color.WHITE);
     var pos = Position.getPositionFromString("e5");
