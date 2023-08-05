@@ -29,16 +29,18 @@ public class FigureUtils {
    * @param move Ход.
    * @return Валиден ли ход
    */
-  public static boolean basicValidMove(Move move, Board board) {
+  public static boolean basicValidMove(Move move, Board board, boolean withKingCheck) {
     var figureFrom = board.getPiece(move.from());
     var figureTo = board.getPiece(move.to());
+
+    if (withKingCheck && figureTo != null && figureTo.getFigureType() == FigureType.KING) {
+      return false;
+    }
 
     return isValidPosition(move.from())
         && isValidPosition(move.to())
         && figureFrom != null
-        && (figureTo == null
-            || (figureTo.getColor() != figureFrom.getColor()
-                && figureTo.getFigureType() != FigureType.KING));
+        && (figureTo == null || (figureTo.getColor() != figureFrom.getColor()));
   }
 
   /**

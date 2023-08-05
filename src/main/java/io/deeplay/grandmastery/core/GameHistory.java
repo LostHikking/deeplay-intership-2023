@@ -1,6 +1,8 @@
 package io.deeplay.grandmastery.core;
 
+import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.BoardUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,9 @@ import java.util.List;
 public class GameHistory implements GameHistoryListener {
   private final List<Move> moves = new ArrayList<>();
   private Board board;
+  private int movesWithoutTakingAndAdvancingPawns = 0;
+
+  private final List<Board> boards = new ArrayList<>();
 
   /**
    * * Метод устанавливает начальное состояние доски.
@@ -30,7 +35,24 @@ public class GameHistory implements GameHistoryListener {
    * @param move Ход
    */
   @Override
-  public void makeMove(Move move) {
+  public void makeMove(Move move, Board board) {
+    movesWithoutTakingAndAdvancingPawns++;
+
+    var toPos = move.to();
+    var piece = board.getPiece(toPos);
+    Piece pieceToBeforeMove =
+        !boards.isEmpty() ? boards.get(boards.size() - 1).getPiece(toPos) : null;
+
+    if (piece.getFigureType() == FigureType.PAWN
+        || move.promotionPiece() != null
+        || pieceToBeforeMove != null) {
+      movesWithoutTakingAndAdvancingPawns = 0;
+    }
+
+    var newBoard = new HashBoard();
+    BoardUtils.copyBoard(board).accept(newBoard);
+
+    boards.add(newBoard);
     moves.add(move);
   }
 
@@ -78,5 +100,43 @@ public class GameHistory implements GameHistoryListener {
     var copyBoard = new HashBoard();
     BoardUtils.copyBoard(board).accept(copyBoard);
     return copyBoard;
+  }
+
+  /**
+   * Метод возвращает количество ходов без взятий и продвижения пешек.
+   *
+   * @return Количество ходов без взятий и продвижения пешек
+   */
+  public int getMovesWithoutTakingAndAdvancingPawns() {
+    return movesWithoutTakingAndAdvancingPawns;
+  }
+
+  /**
+   * Метод возвращает количество повторений позиции на доске в истории.
+   *
+   * @param checkBoard Доска
+   * @return Количество повторений позиции на доске в истории
+   */
+  public int getMaxRepeatPosition(Board checkBoard) {
+    return (int)
+        boards.stream()
+            .filter(
+                historyBoard -> {
+                  for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                      var historyBoardPiece = historyBoard.getPiece(i, j);
+                      var boardPiece = checkBoard.getPiece(i, j);
+
+                      if (historyBoardPiece != null && !historyBoardPiece.equals(boardPiece)) {
+                        return false;
+                      } else if (boardPiece != null && !boardPiece.equals(historyBoardPiece)) {
+                        return false;
+                      }
+                    }
+                  }
+
+                  return true;
+                })
+            .count();
   }
 }

@@ -1,8 +1,5 @@
 package io.deeplay.grandmastery.figures;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.HashBoard;
@@ -13,6 +10,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +30,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -43,7 +42,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -54,7 +54,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -63,7 +64,8 @@ class QueenTest {
     Position p3 = new Position(new Column(3), new Row(3));
     board.setPiece(p1, new Queen(Color.WHITE));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -74,7 +76,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -85,7 +88,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -96,7 +100,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -105,7 +110,8 @@ class QueenTest {
     Position p2 = new Position(new Column(3), new Row(0));
     board.setPiece(p1, new Queen(Color.WHITE));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP), true));
   }
 
   @Test
@@ -116,7 +122,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -127,7 +134,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -138,7 +146,8 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    assertTrue(!board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertFalse(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -147,7 +156,8 @@ class QueenTest {
     Position p3 = new Position(new Column(0), new Row(3));
     board.setPiece(p1, new Queen(Color.WHITE));
 
-    assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
+    Assertions.assertTrue(
+        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
   }
 
   @Test
@@ -189,7 +199,7 @@ class QueenTest {
     moves.add(new Move(p, new Position(new Column(3), new Row(7)), null));
     moves.add(new Move(p, new Position(new Column(7), new Row(3)), null));
 
-    assertEquals(moves, queen.getAllMoves(board, p));
+    Assertions.assertEquals(moves, queen.getAllMoves(board, p));
   }
 
   @Test
@@ -225,6 +235,6 @@ class QueenTest {
     moves.add(new Move(p, new Position(new Column(3), new Row(2)), null));
     moves.add(new Move(p, new Position(new Column(2), new Row(3)), null));
 
-    assertEquals(moves, queen.getAllMoves(board, p));
+    Assertions.assertEquals(moves, queen.getAllMoves(board, p));
   }
 }

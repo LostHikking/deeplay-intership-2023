@@ -1,6 +1,7 @@
 package io.deeplay.grandmastery.utils;
 
 import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
@@ -47,6 +48,7 @@ public class LongAlgebraicNotationParser {
       // TODO: Вынести эти проверки в Game - дублирование кода
       // 1) Смена цвета ходившего игрока
       // 2) Вызовы canRevive(), revive
+      // Или вообще сделать отдельный класс для проигрования партии?
       if (color == null) {
         color = piece.getColor();
       } else if (color == piece.getColor()) {
@@ -61,11 +63,11 @@ public class LongAlgebraicNotationParser {
         } else {
           return false;
         }
-      } else if (piece.canMove(copyBoard, move)) {
-        piece.move(copyBoard, move);
-      } else {
+      } else if (!piece.move(copyBoard, move)) {
         return false;
       }
+
+      BoardRender.showBoard(System.out, copyBoard);
     }
 
     return true;

@@ -48,7 +48,7 @@ public abstract class Piece {
    *     не удалось переместить фигуру
    */
   public boolean move(Board board, Move move) {
-    if (canMove(board, move)) {
+    if (canMove(board, move, true)) {
       Piece piece = board.getPiece(move.from());
       board.removePiece(move.from());
       board.removePiece(move.to());
@@ -65,15 +65,15 @@ public abstract class Piece {
    * Проверяет, может ли фигура выполнить ход на доске.
    *
    * @param board доска
-   * @param move  ход
+   * @param move ход
    * @return true, если фигура может выполнить указанный ход, иначе false
    */
-  public abstract boolean canMove(Board board, Move move);
+  public abstract boolean canMove(Board board, Move move, boolean withKingCheck);
 
   /**
    * Получает все возможные ходы для фигуры с указанной позиции на доске.
    *
-   * @param board    доска
+   * @param board доска
    * @param position позиция фигуры на доске
    * @return {@code List<Move>} список всех возможных ходов
    */
@@ -83,16 +83,16 @@ public abstract class Piece {
    * Превращение пешки. Этот метод реализован только у пешки.
    *
    * @param board доска
-   * @param move  ход
+   * @param move ход
    */
   public abstract void revive(Board board, Move move);
 
   /**
-   * Проверяет, может ли пешка превратится. Этот метод реализован только у пешки.
-   * Остальные фигуры по умолчанию возвращают false
+   * Проверяет, может ли пешка превратится. Этот метод реализован только у пешки. Остальные фигуры
+   * по умолчанию возвращают false
    *
    * @param board доска
-   * @param move  ход
+   * @param move ход
    * @return true, если пешка может быть превращена, иначе false
    */
   public abstract boolean canRevive(Board board, Move move);
@@ -105,11 +105,13 @@ public abstract class Piece {
     if (!(o instanceof Piece piece)) {
       return false;
     }
-    return isMoved == piece.isMoved && color == piece.color && figureType == piece.figureType;
+    return getSymbol() == piece.getSymbol()
+        && getColor() == piece.getColor()
+        && getFigureType() == piece.getFigureType();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(color, isMoved, figureType);
+    return Objects.hash(getSymbol(), getColor(), getFigureType());
   }
 }

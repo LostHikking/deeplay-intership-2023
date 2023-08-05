@@ -20,7 +20,7 @@ public class Bishop extends Piece {
   public Bishop(Color color) {
     super(color);
     this.figureType = FigureType.BISHOP;
-    if (color == Color.WHITE) {
+    if (color != Color.WHITE) {
       this.symbol = '♗';
     } else {
       this.symbol = '♝';
@@ -28,13 +28,13 @@ public class Bishop extends Piece {
   }
 
   @Override
-  public boolean canMove(Board board, Move move) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck) {
     var toCol = move.to().col().value();
     var toRow = move.to().row().value();
     var fromRow = move.from().row().value();
     var fromCol = move.from().col().value();
 
-    if (!FigureUtils.basicValidMove(move, board)) {
+    if (!FigureUtils.basicValidMove(move, board, true)) {
       return false;
     }
     return !FigureUtils.hasFigureOnDiagonalBetweenPositions(board, fromRow, toRow, fromCol, toCol);
@@ -55,7 +55,7 @@ public class Bishop extends Piece {
         y += dy[dir];
       }
     }
-    return listMove.stream().filter(move -> canMove(board, move)).toList();
+    return listMove.stream().filter(move -> canMove(board, move, true)).toList();
   }
 
   @Override

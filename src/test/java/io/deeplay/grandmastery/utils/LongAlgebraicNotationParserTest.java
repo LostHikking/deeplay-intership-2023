@@ -5,14 +5,14 @@ import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.exceptions.GameException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LongAlgebraicNotationParserTest {
-  private static Board board;
+  private Board board;
 
-  @BeforeAll
-  static void init() {
+  @BeforeEach
+  void init() {
     board = new HashBoard();
     BoardUtils.defaultChess().accept(board);
   }
@@ -88,10 +88,18 @@ class LongAlgebraicNotationParserTest {
 
   @Test
   void validMovesTest() {
-    var stringMoves = "d2d4,d7d5,c2c4";
-    var moves = LongAlgebraicNotationParser.getMovesFromString(stringMoves);
+    var movesStr = "d2d4,d7d5,c2c4,d5c4,e2e4,b8c6,g1f3,g8f6,e4e5,f6d7,f1e2,e7e6";
+    // e1g1 - роккировка здесь ломает тест
+    var moves = LongAlgebraicNotationParser.getMovesFromString(movesStr);
 
-    // TODO: Дополнить тест, когда будут реализованы ходы фигур
     Assertions.assertTrue(LongAlgebraicNotationParser.validMoves(moves, board));
+  }
+
+  @Test
+  void validMovesWrongTest() {
+    var movesStr = "d2d4,d7d5,c2c4,d5c4,e2e4,b8c6,g1f3,g8f6,e4e5,f6d7,f1e2,e7e5";
+    var moves = LongAlgebraicNotationParser.getMovesFromString(movesStr);
+
+    Assertions.assertFalse(LongAlgebraicNotationParser.validMoves(moves, board));
   }
 }
