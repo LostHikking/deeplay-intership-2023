@@ -1,6 +1,7 @@
 package io.deeplay.grandmastery.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotationParser;
@@ -54,6 +55,6 @@ public class HumanPlayerTest {
     testIn = new ByteArrayInputStream(invalidMove.getBytes(StandardCharsets.UTF_8));
     System.setIn(testIn);
     player.makeMove();
-    assertEquals(null, player.getMoveData());
+    assertNull(player.getMoveData());
   }
 }
