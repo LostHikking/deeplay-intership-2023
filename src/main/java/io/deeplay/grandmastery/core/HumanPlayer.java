@@ -2,7 +2,6 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
