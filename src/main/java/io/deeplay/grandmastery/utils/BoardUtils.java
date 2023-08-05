@@ -14,6 +14,8 @@ import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.figures.Queen;
 import io.deeplay.grandmastery.figures.Rook;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -67,7 +69,74 @@ public class BoardUtils {
    * @return Наследник {@link Board}, представляющий настраиваемую доску по расстановке Фишера.
    */
   public static Consumer<Board> fischerChess() {
-    return board -> {};
+    return fischerBoard -> {
+      for (int i = 0; i < 8; i++) {
+        fischerBoard.setPiece(new Position(new Column(i), new Row(1)), new Pawn(Color.WHITE));
+        fischerBoard.setPiece(new Position(new Column(i), new Row(6)), new Pawn(Color.BLACK));
+      }
+      ArrayList<Integer> positions = new ArrayList<>();
+      positions.addAll(List.of(0, 1, 2, 3, 4, 5, 6, 7));
+      // ставим короля
+      int posKing = (int) (Math.random() * 5) + 1;
+      fischerBoard.setPiece(new Position(new Column(posKing), new Row(0)), new King(Color.WHITE));
+      fischerBoard.setPiece(new Position(new Column(posKing), new Row(7)), new King(Color.BLACK));
+      positions.remove(Integer.valueOf(posKing));
+      // ставим ладью по левую сторону
+      int posRook1 = (int) (Math.random() * posKing);
+      fischerBoard.setPiece(new Position(new Column(posRook1), new Row(0)), new Rook(Color.WHITE));
+      fischerBoard.setPiece(new Position(new Column(posRook1), new Row(7)), new Rook(Color.BLACK));
+      positions.remove(Integer.valueOf(posRook1));
+      // по правую
+      int posRook2 = (int) (Math.random() * (7 - posKing)) + posKing + 1;
+      fischerBoard.setPiece(new Position(new Column(posRook2), new Row(0)), new Rook(Color.WHITE));
+      fischerBoard.setPiece(new Position(new Column(posRook2), new Row(7)), new Rook(Color.BLACK));
+      positions.remove(Integer.valueOf(posRook2));
+      // ставим первого слона в рандомную клетку из оставшихся
+      int ind = (int) (Math.random() * 5);
+      int posBishop1 = positions.get(ind);
+      fischerBoard.setPiece(
+          new Position(new Column(posBishop1), new Row(0)), new Bishop(Color.WHITE));
+      fischerBoard.setPiece(
+          new Position(new Column(posBishop1), new Row(7)), new Bishop(Color.BLACK));
+      positions.remove(Integer.valueOf(posBishop1));
+      // ставим второго слона в клетку противоположного цвета
+      int posBishop2;
+      ind = (int) (Math.random() * 4);
+      if (posBishop1 % 2 == 0) {
+        while (positions.get(ind) % 2 == 0) {
+          ind = (int) (Math.random() * 3);
+        }
+        posBishop2 = positions.get(ind);
+      } else {
+        while (positions.get(ind) % 2 != 0) {
+          ind = (int) (Math.random() * 3);
+        }
+        posBishop2 = positions.get(ind);
+      }
+      fischerBoard.setPiece(
+          new Position(new Column(posBishop2), new Row(0)), new Bishop(Color.WHITE));
+      fischerBoard.setPiece(
+          new Position(new Column(posBishop2), new Row(7)), new Bishop(Color.BLACK));
+      positions.remove(Integer.valueOf(posBishop2));
+      // ставим рандомно двух коней и ферзя
+      ind = (int) (Math.random() * 3);
+      int posKnight1 = positions.get(ind);
+      fischerBoard.setPiece(
+          new Position(new Column(posKnight1), new Row(0)), new Knight(Color.WHITE));
+      fischerBoard.setPiece(
+          new Position(new Column(posKnight1), new Row(7)), new Knight(Color.BLACK));
+      positions.remove(Integer.valueOf(posKnight1));
+      ind = (int) (Math.random() * 2);
+      int posKnight2 = positions.get(ind);
+      fischerBoard.setPiece(
+          new Position(new Column(posKnight2), new Row(0)), new Knight(Color.WHITE));
+      fischerBoard.setPiece(
+          new Position(new Column(posKnight2), new Row(7)), new Knight(Color.BLACK));
+      positions.remove(Integer.valueOf(posKnight2));
+      int posQueen = positions.get(0);
+      fischerBoard.setPiece(new Position(new Column(posQueen), new Row(0)), new Queen(Color.WHITE));
+      fischerBoard.setPiece(new Position(new Column(posQueen), new Row(7)), new Queen(Color.BLACK));
+    };
   }
 
   /**
