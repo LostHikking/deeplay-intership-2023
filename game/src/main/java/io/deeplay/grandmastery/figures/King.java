@@ -23,11 +23,6 @@ public class King extends Piece {
     super(color);
     this.figureType = FigureType.KING;
     rookCastlingPos = null;
-    if (color != Color.WHITE) {
-      this.symbol = '♔';
-    } else {
-      this.symbol = '♚';
-    }
   }
 
   @Override
@@ -74,12 +69,8 @@ public class King extends Piece {
       return false;
     }
 
-    List<Position> positions;
-    if (this.color == Color.WHITE) {
-      positions = board.getAllBlackPiecePosition();
-    } else {
-      positions = board.getAllWhitePiecePosition();
-    }
+    List<Position> positions =
+        board.getAllPieceByColorPosition(this.color == Color.WHITE ? Color.BLACK : Color.WHITE);
 
     Move tmpMove;
     for (int i = Math.min(move.from().col().value(), move.to().col().value());

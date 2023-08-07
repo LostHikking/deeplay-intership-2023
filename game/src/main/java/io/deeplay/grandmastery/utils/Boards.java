@@ -74,8 +74,7 @@ public class Boards {
         fischerBoard.setPiece(new Position(new Column(i), new Row(1)), new Pawn(Color.WHITE));
         fischerBoard.setPiece(new Position(new Column(i), new Row(6)), new Pawn(Color.BLACK));
       }
-      ArrayList<Integer> positions = new ArrayList<>();
-      positions.addAll(List.of(0, 1, 2, 3, 4, 5, 6, 7));
+      ArrayList<Integer> positions = new ArrayList<>(List.of(0, 1, 2, 3, 4, 5, 6, 7));
       // ставим короля
       int posKing = (int) (Math.random() * 5) + 1;
       fischerBoard.setPiece(new Position(new Column(posKing), new Row(0)), new King(Color.WHITE));

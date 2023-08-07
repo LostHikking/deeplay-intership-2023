@@ -22,11 +22,6 @@ public class Queen extends Piece {
   public Queen(Color color) {
     super(color);
     this.figureType = FigureType.QUEEN;
-    if (color != Color.WHITE) {
-      this.symbol = '♕';
-    } else {
-      this.symbol = '♛';
-    }
   }
 
   @Override
@@ -45,8 +40,7 @@ public class Queen extends Piece {
     } else if (toRow == fromRow) {
       return !Figures.hasFigureOnHorizontalBetweenColPosition(board, toRow, toCol, fromCol);
     } else if (abs(toCol - fromCol) == abs(toRow - fromRow)) {
-      return !Figures.hasFigureOnDiagonalBetweenPositions(
-          board, fromRow, toRow, fromCol, toCol);
+      return !Figures.hasFigureOnDiagonalBetweenPositions(board, fromRow, toRow, fromCol, toCol);
     }
     return false;
   }
@@ -54,7 +48,7 @@ public class Queen extends Piece {
   @Override
   public List<Move> getAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
-    //диагонали
+    // диагонали
     int[] dx = {1, -1, 1, -1};
     int[] dy = {1, -1, -1, 1};
     for (int dir = 0; dir < 4; dir++) {
@@ -66,7 +60,7 @@ public class Queen extends Piece {
         y += dy[dir];
       }
     }
-    //горизонталь и вертикаль
+    // горизонталь и вертикаль
     for (int i = 0; i < 8; i++) {
       listMove.add(new Move(position, new Position(position.col(), new Row(i)), null));
       listMove.add(new Move(position, new Position(new Column(i), position.row()), null));

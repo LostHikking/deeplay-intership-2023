@@ -3,10 +3,10 @@ package io.deeplay.grandmastery.core;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.figures.Piece;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс, представляющий шахматную доску. Расширяет абстрактный класс Board и реализует его
@@ -70,28 +70,15 @@ public class HashBoard extends Board {
   }
 
   @Override
-  public List<Position> getAllWhitePiecePosition() {
-    List<Position> positions = new ArrayList<>();
-    pieces.forEach(
-        (position, piece) -> {
-          if (piece.getColor() == Color.WHITE) {
-            positions.add(position);
-          }
-        });
-
-    return positions;
+  public List<Position> getAllPieceByColorPosition(Color color) {
+    return pieces.entrySet().stream()
+        .filter(entry -> entry.getValue().getColor() == color)
+        .map(Map.Entry::getKey)
+        .collect(Collectors.toList());
   }
 
   @Override
-  public List<Position> getAllBlackPiecePosition() {
-    List<Position> positions = new ArrayList<>();
-    pieces.forEach(
-        (position, piece) -> {
-          if (piece.getColor() == Color.BLACK) {
-            positions.add(position);
-          }
-        });
-
-    return positions;
+  public List<Position> getAllPiecePosition() {
+    return pieces.keySet().stream().toList();
   }
 }

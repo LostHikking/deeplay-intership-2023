@@ -1,21 +1,23 @@
 package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 
-/** Абстрактный класс, представлябщий игрока. */
-public abstract class Player {
+/** Абстрактный класс, представляющий игрока. */
+public abstract class Player implements PlayerListener {
   /** Имя игрока. */
-  private String name;
+  private final String name;
   /** Ход игрока в виде строки. */
   private Move moveData;
   /** Доска. */
   protected Board board;
-  /** цвет игрока. */
+  /** Цвет игрока. */
   protected Color color;
 
   /**
    * Конструктор для плеера.
+   *
    * @param name Имя
    * @param board Доска
    * @param color Цвет
@@ -30,8 +32,9 @@ public abstract class Player {
    * Метод, записывающий ход игрока.
    *
    * @param move Ход игрока
+   * @throws GameException Если ход не валиден.
    */
-  public void setMoveData(String move) {
+  public void setMoveData(String move) throws GameException {
     this.moveData = LongAlgebraicNotation.getMoveFromString(move);
   }
 
@@ -43,13 +46,18 @@ public abstract class Player {
     moveData = null;
   }
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public Move getMoveData() {
     return moveData;
   }
 
-  public abstract boolean makeMove();
+  @Override
+  public Color getColor() {
+    return color;
+  }
 }

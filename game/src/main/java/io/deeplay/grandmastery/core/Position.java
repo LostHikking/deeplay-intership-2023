@@ -20,4 +20,8 @@ public record Position(Column col, Row row) {
 
     return new Position(col, row);
   }
+
+  public static String positionToString(Position position) {
+    return position.col.getChar() + position.row.getChar();
+  }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class Piece {
-  protected char symbol;
   protected final Color color;
   protected boolean isMoved;
   protected FigureType figureType;
@@ -17,10 +16,6 @@ public abstract class Piece {
   public Piece(Color color) {
     this.color = color;
     isMoved = false;
-  }
-
-  public char getSymbol() {
-    return symbol;
   }
 
   public Color getColor() {
@@ -105,13 +100,11 @@ public abstract class Piece {
     if (!(o instanceof Piece piece)) {
       return false;
     }
-    return getSymbol() == piece.getSymbol()
-        && getColor() == piece.getColor()
-        && getFigureType() == piece.getFigureType();
+    return getColor() == piece.getColor() && getFigureType() == piece.getFigureType();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getSymbol(), getColor(), getFigureType());
+    return Objects.hash(getColor(), getFigureType());
   }
 }

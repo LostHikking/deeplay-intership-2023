@@ -2,6 +2,7 @@ package io.deeplay.grandmastery.utils;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.HashBoard;
+import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.exceptions.GameException;
 import org.junit.jupiter.api.Assertions;
@@ -79,8 +80,7 @@ class LongAlgebraicNotationTest {
                 () -> LongAlgebraicNotation.getMovesFromString("e2e4,e7e5b,a")),
         () ->
             Assertions.assertThrows(
-                GameException.class,
-                () -> LongAlgebraicNotation.getMovesFromString("e2e4,e9e5b")),
+                GameException.class, () -> LongAlgebraicNotation.getMovesFromString("e2e4,e9e5b")),
         () ->
             Assertions.assertThrows(
                 GameException.class, () -> LongAlgebraicNotation.getMovesFromString("")));
@@ -88,11 +88,20 @@ class LongAlgebraicNotationTest {
 
   @Test
   void validMovesTest() {
-    var movesStr = "d2d4,d7d5,c2c4,d5c4,e2e4,b8c6,g1f3,g8f6,e4e5,f6d7,f1e2,e7e6";
-    // e1g1 - роккировка здесь ломает тест
+    var movesStr = "d2d4,d7d5,c2c4,d5c4,e2e4,b8c6,g1f3,g8f6,e4e5,f6d7,f1e2,e7e6,e1g1";
     var moves = LongAlgebraicNotation.getMovesFromString(movesStr);
 
     Assertions.assertTrue(LongAlgebraicNotation.validMoves(moves, board));
+  }
+
+  @Test
+  void toStringMoveTest() {
+    Move move = LongAlgebraicNotation.getMoveFromString("d2d4");
+    Move movePromotion = LongAlgebraicNotation.getMoveFromString("e7e8q");
+
+    Assertions.assertAll(
+        () -> Assertions.assertEquals("d2d4", LongAlgebraicNotation.moveToString(move)),
+        () -> Assertions.assertEquals("e7e8q", LongAlgebraicNotation.moveToString(movePromotion)));
   }
 
   @Test

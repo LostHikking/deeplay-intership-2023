@@ -1,5 +1,6 @@
 package io.deeplay.grandmastery.core;
 
+import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.figures.Piece;
 import java.util.List;
 
@@ -89,7 +90,7 @@ public abstract class Board {
     return hasPiece(new Position(new Column(col), new Row(row)));
   }
 
-  public abstract List<Position> getAllWhitePiecePosition();
+  public abstract List<Position> getAllPieceByColorPosition(Color color);
 
-  public abstract List<Position> getAllBlackPiecePosition();
+  public abstract List<Position> getAllPiecePosition();
 }
