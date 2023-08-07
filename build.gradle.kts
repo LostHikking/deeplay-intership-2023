@@ -8,7 +8,8 @@ plugins {
 group = "io.deeplay.grandmastery"
 version = "1.0-SNAPSHOT"
 
-allprojects {
+subprojects {
+    apply(plugin = "java")
     apply(plugin = "net.ltgt.errorprone")
     apply(plugin = "jacoco")
     apply(plugin = "checkstyle")
