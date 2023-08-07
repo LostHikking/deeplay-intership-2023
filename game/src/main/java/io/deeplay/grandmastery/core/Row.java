@@ -21,4 +21,8 @@ public record Row(int value) {
 
     return new Row(Integer.parseInt(String.valueOf(rowCharacter)) - 1);
   }
+
+  public String getChar() {
+    return String.valueOf(value + 1);
+  }
 }

@@ -22,12 +22,6 @@ public class Pawn extends Piece {
     super(color);
     this.figureType = FigureType.PAWN;
     captureEnPassant = false;
-
-    if (color != Color.WHITE) {
-      this.symbol = '♙';
-    } else {
-      this.symbol = '♟';
-    }
   }
 
   @Override

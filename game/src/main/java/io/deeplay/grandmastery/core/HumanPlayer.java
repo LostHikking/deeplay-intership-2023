@@ -2,25 +2,32 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
+import java.io.IOException;
 
 /** Дочерний класс класса Player, представляет реального игрока. */
 public class HumanPlayer extends Player {
-  public HumanPlayer(String name, Board board, Color color) {
+  /** Пользовательский интерфейс. */
+  private final UI userInterface;
+
+  /**
+   * Конструктор для плеера.
+   *
+   * @param name Имя
+   * @param board Доска
+   * @param color Цвет
+   */
+  public HumanPlayer(String name, Board board, Color color, UI ui) {
     super(name, board, color);
+    this.userInterface = ui;
   }
 
   /** Метод, отвечающий за ввод хода игрока. */
   @Override
-  public boolean makeMove() {
-    try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
-      System.out.print("Введите ваш ход: ");
-      setMoveData(scanner.nextLine());
-      return true;
-    } catch (GameException e) {
-      System.out.println("Некорректный ход! Пожалуйста, введите ход правильно.");
-      return false;
+  public void makeMove() throws GameException {
+    try {
+      setMoveData(userInterface.inputMove(this.getName()));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 }

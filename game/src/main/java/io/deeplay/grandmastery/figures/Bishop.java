@@ -22,11 +22,6 @@ public class Bishop extends Piece {
   public Bishop(Color color) {
     super(color);
     this.figureType = FigureType.BISHOP;
-    if (color != Color.WHITE) {
-      this.symbol = '♗';
-    } else {
-      this.symbol = '♝';
-    }
   }
 
   @Override
@@ -40,8 +35,7 @@ public class Bishop extends Piece {
       return false;
     }
     if (abs(toCol - fromCol) == abs(toRow - fromRow)) {
-      return !Figures.hasFigureOnDiagonalBetweenPositions(
-          board, fromRow, toRow, fromCol, toCol);
+      return !Figures.hasFigureOnDiagonalBetweenPositions(board, fromRow, toRow, fromCol, toCol);
     }
     return false;
   }

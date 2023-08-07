@@ -266,5 +266,4 @@ class QueenTest {
     hashBoard.setPiece(Position.getPositionFromString("b8"), new Rook(Color.BLACK));
     Assertions.assertEquals(27, queen.getAllMoves(hashBoard, pos).size());
   }
-
 }

@@ -1,13 +1,13 @@
 package io.deeplay.grandmastery.utils;
 
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.exceptions.GameException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +48,7 @@ public class LongAlgebraicNotation {
       // TODO: Вынести эти проверки в Game - дублирование кода
       // 1) Смена цвета ходившего игрока
       // 2) Вызовы canRevive(), revive
-      // Или вообще сделать отдельный класс для проигрования партии?
+      // Или вообще сделать отдельный класс для проигрывания партии?
       if (color == null) {
         color = piece.getColor();
       } else if (color == piece.getColor()) {
@@ -66,8 +66,6 @@ public class LongAlgebraicNotation {
       } else if (!piece.move(copyBoard, move)) {
         return false;
       }
-
-      BoardRender.showBoard(System.out, copyBoard);
     }
 
     return true;
@@ -90,8 +88,9 @@ public class LongAlgebraicNotation {
    *
    * @param stringMove Строка содержащая ход в длинной алгебраической записи.
    * @return Возвращает ход, спаршенный из строки
+   * @throws GameException Если строка не соответствует ожидаемому формату хода.
    */
-  public static Move getMoveFromString(String stringMove) {
+  public static Move getMoveFromString(String stringMove) throws GameException {
     if (stringMove.length() == 4) {
       return getSimpleMoveFromString(stringMove);
     } else if (stringMove.length() == 5) {
@@ -132,5 +131,19 @@ public class LongAlgebraicNotation {
             .orElseThrow(GameErrorCode.INCORRECT_FIGURE_CHARACTER::asException);
 
     return new Move(fromPosition, toPosition, piece);
+  }
+
+  /**
+   * Преобразует объект хода в его строковое представление.
+   *
+   * @param move Объект хода, который требуется преобразовать в строку.
+   * @return Строковое представление хода.
+   */
+  public static String moveToString(Move move) {
+    return move.promotionPiece() != null
+        ? Position.positionToString(move.from())
+            + Position.positionToString(move.to())
+            + move.promotionPiece().getSymbol()
+        : Position.positionToString(move.from()) + Position.positionToString(move.to());
   }
 }

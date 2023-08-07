@@ -18,11 +18,6 @@ public class Knight extends Piece {
   public Knight(Color color) {
     super(color);
     this.figureType = FigureType.KNIGHT;
-    if (color != Color.WHITE) {
-      this.symbol = '♘';
-    } else {
-      this.symbol = '♞';
-    }
   }
 
   @Override
