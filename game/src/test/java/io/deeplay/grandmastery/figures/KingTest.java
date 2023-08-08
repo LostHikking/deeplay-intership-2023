@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -135,22 +134,6 @@ public class KingTest {
     }
 
     assertFalse(king.move(board, move), "Check " + color + " pawn");
-  }
-
-  @Test
-  @Disabled
-  public void noCaptureProtectedPieceTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("d3e4");
-    Piece king = new King(Color.WHITE);
-    Piece queen = new Queen(Color.BLACK);
-    board.setPiece(move.from(), king);
-    board.setPiece(move.to(), queen);
-    board.setPiece(Position.getPositionFromString("e8"), new Rook(Color.BLACK));
-
-    Assertions.assertAll(
-        () -> assertFalse(king.move(board, move)),
-        () -> assertSame(king, board.getPiece(move.from()), "Check king position"),
-        () -> assertSame(queen, board.getPiece(move.to()), "Check queen position"));
   }
 
   @Test

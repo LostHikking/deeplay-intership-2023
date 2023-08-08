@@ -11,6 +11,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -23,7 +24,7 @@ public class HumanPlayerTest {
   private ConsoleUi consoleUi;
 
   @Test
-  public void makeMoveValidInputTest() throws GameException {
+  public void makeMoveValidInputTest() throws GameException, IOException {
     String testInput = "e2e4\n";
     InputStream inputStream =
         new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
@@ -38,7 +39,7 @@ public class HumanPlayerTest {
   }
 
   @Test
-  public void makeMoveWithInvalidInputTest() {
+  public void makeMoveWithInvalidInputTest() throws IOException {
     String testInput = "e2k4\n";
     InputStream inputStream =
         new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));

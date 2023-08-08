@@ -93,4 +93,8 @@ public abstract class Board {
   public abstract List<Position> getAllPieceByColorPosition(Color color);
 
   public abstract List<Position> getAllPiecePosition();
+
+  public void clear() {
+    lastMove = null;
+  }
 }

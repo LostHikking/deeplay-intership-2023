@@ -28,16 +28,21 @@ public class ConsoleUi implements UI {
   /** printStream для вывода. */
   private final PrintStream printStream;
 
+  /** Справка. */
+  private final String help;
+
   /**
    * Конструктор класса ConsoleUi.
    *
    * @param inputStream Входной поток данных.
    * @param outputStream Выходной поток данных.
+   * @throws IOException Возникает при ошибках ввода-вывода.
    */
-  public ConsoleUi(InputStream inputStream, OutputStream outputStream) {
+  public ConsoleUi(InputStream inputStream, OutputStream outputStream) throws IOException {
     this.bufferedReader =
         new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()));
     this.printStream = new PrintStream(outputStream);
+    help = writeHelp();
   }
 
   /**
@@ -151,20 +156,25 @@ public class ConsoleUi implements UI {
     }
   }
 
+  /** Метод для вывода справки в консоль. */
+  @Override
+  public void printHelp() {
+    printStream.println(help);
+  }
+
   /**
-   * Метод для вывода справки на консоль.
+   * Метод для считывания справки из файла в константу HELP.
    *
    * @throws IOException если произошла ошибка при считывании из файла.
    */
-  @Override
-  public void printHelp() throws IOException {
-    printStream.println();
-    String helpPath = "src/main/resources/Help.txt";
+  private String writeHelp() throws IOException {
+    StringBuilder stringBuilder = new StringBuilder("\n");
+    final String helpPath = "src/main/resources/Help.txt";
     try (BufferedReader file =
         Files.newBufferedReader(Paths.get(helpPath), Charset.defaultCharset())) {
-      file.lines().forEach(printStream::println);
+      file.lines().forEach(s -> stringBuilder.append(s).append("\n"));
     }
-    printStream.println();
+    return stringBuilder.toString();
   }
 
   /**

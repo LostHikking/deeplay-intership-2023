@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Класс для сохранения истории партии. */
-public class GameHistory implements GameHistoryListener {
+public class GameHistory implements GameListener, GameHistoryListener {
   private final List<Move> moves = new ArrayList<>();
   private Board board;
   private int movesWithoutTakingAndAdvancingPawns = 0;
@@ -21,7 +21,7 @@ public class GameHistory implements GameHistoryListener {
    * @param board Какая-то реализация доски
    */
   @Override
-  public void setBoard(Board board) {
+  public void startup(Board board) {
     if (this.board == null) {
       var copyBoard = new HashBoard();
       Boards.copyBoard(board).accept(copyBoard);
@@ -102,6 +102,34 @@ public class GameHistory implements GameHistoryListener {
     return copyBoard;
   }
 
+  public Board getBoardByIndex(int index) {
+    return boards.get(index);
+  }
+
+  /** Удаляет последнее состояние доски из списка состояний, если список состояний не пуст. */
+  public void removeLastStateBoard() {
+    if (!boards.isEmpty()) {
+      boards.remove(boards.size() - 1);
+    }
+  }
+
+  public Move getMoveByIndex(int index) {
+    return moves.get(index);
+  }
+
+  public void removeLastMove() {
+    moves.remove(moves.size() - 1);
+  }
+
+  @Override
+  public void rollback(Board board) {
+    Boards.copyBoard(getBoardByIndex(boards.size() - 2)).accept(board);
+    board.setLastMove(getMoveByIndex(moves.size() - 2));
+
+    removeLastStateBoard();
+    removeLastMove();
+  }
+
   /**
    * Метод возвращает количество ходов без взятий и продвижения пешек.
    *
@@ -138,5 +166,10 @@ public class GameHistory implements GameHistoryListener {
                   return true;
                 })
             .count();
+  }
+
+  @Override
+  public boolean checkIsDraw(Board board) {
+    return GameStateChecker.isDraw(board, this);
   }
 }

@@ -48,32 +48,27 @@ public class ConsoleUiTest {
    *
    * @param testInput строка с вводом, передаваемая в тест в качестве потока данных.
    * @param mode ожидаемый режим игры после выбора.
-   * @throws RuntimeException в случае возникновения исключения при выполнении теста.
+   * @throws IOException в случае возникновения исключения при выполнении теста.
    */
   @ParameterizedTest
   @CsvSource(value = {"1, BOT_VS_BOT", "2, HUMAN_VS_BOT", "3, HUMAN_VS_HUMAN"})
-  public void selectModeTest(String testInput, String mode) {
+  public void selectModeTest(String testInput, String mode) throws IOException {
     testInput += "\n";
     InputStream inputStream =
         new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
     consoleUi = new ConsoleUi(inputStream, output);
-
-    try {
-      GameMode selectedMode = consoleUi.selectMode();
-      String expect =
-          """
+    GameMode selectedMode = consoleUi.selectMode();
+    String expect =
+        """
     Выберите режим игры:
     1. Bot vs Bot
     2. Bot vs Human
     3. Human vs Human
           """;
 
-      Assertions.assertAll(
-          () -> assertEquals(GameMode.valueOf(mode), selectedMode),
-          () -> assertEquals(expect, output.toString(Charset.defaultCharset())));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    Assertions.assertAll(
+        () -> assertEquals(GameMode.valueOf(mode), selectedMode),
+        () -> assertEquals(expect, output.toString(Charset.defaultCharset())));
   }
 
   /**
@@ -81,93 +76,76 @@ public class ConsoleUiTest {
    *
    * @param testInput строка с вводом, передаваемая в тест в качестве потока данных.
    * @param color ожидаемый цвет после выбора.
-   * @throws RuntimeException в случае возникновения исключения при выполнении теста.
+   * @throws IOException в случае возникновения исключения при выполнении теста.
    */
   @ParameterizedTest
   @CsvSource(value = {"1, WHITE", "2, BLACK"})
-  public void selectColorTest(String testInput, String color) {
+  public void selectColorTest(String testInput, String color) throws IOException {
     testInput += "\n";
     InputStream inputStream =
         new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
     consoleUi = new ConsoleUi(inputStream, output);
 
-    try {
-      Color selectedColor = consoleUi.selectColor();
+    Color selectedColor = consoleUi.selectColor();
 
-      Assertions.assertAll(
-          () -> assertEquals(Color.valueOf(color), selectedColor),
-          () ->
-              assertEquals(
-                  "Выберете цвет: 1 - Белые, 2 - Черные\n",
-                  output.toString(Charset.defaultCharset())));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    Assertions.assertAll(
+        () -> assertEquals(Color.valueOf(color), selectedColor),
+        () ->
+            assertEquals(
+                "Выберете цвет: 1 - Белые, 2 - Черные\n",
+                output.toString(Charset.defaultCharset())));
   }
 
   @Test
-  public void incorrectSelectTest() {
+  public void incorrectSelectTest() throws IOException {
     String testInput = "3\n2\n";
     InputStream inputStream =
         new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
     consoleUi = new ConsoleUi(inputStream, output);
 
-    try {
-      Color selectedColor = consoleUi.selectColor();
+    Color selectedColor = consoleUi.selectColor();
 
-      Assertions.assertAll(
-          () -> assertEquals(Color.BLACK, selectedColor),
-          () ->
-              assertTrue(
-                  output
-                      .toString(Charset.defaultCharset())
-                      .contains("Пожалуйста, введите одно из возможных значений [1, 2]")));
-
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    Assertions.assertAll(
+        () -> assertEquals(Color.BLACK, selectedColor),
+        () ->
+            assertTrue(
+                output
+                    .toString(Charset.defaultCharset())
+                    .contains("Пожалуйста, введите одно из возможных значений [1, 2]")));
   }
 
   @Test
-  public void inputPlayerNameTest() {
+  public void inputPlayerNameTest() throws IOException {
     String testInput = "Dima\n";
     InputStream inputStream =
         new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
     consoleUi = new ConsoleUi(inputStream, output);
 
-    try {
-      String playerName = consoleUi.inputPlayerName(Color.WHITE);
+    String playerName = consoleUi.inputPlayerName(Color.WHITE);
 
-      Assertions.assertAll(
-          () -> assertEquals("Dima", playerName),
-          () ->
-              assertEquals(
-                  "Игрок WHITE введите ваше имя: \n", output.toString(Charset.defaultCharset())));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    Assertions.assertAll(
+        () -> assertEquals("Dima", playerName),
+        () ->
+            assertEquals(
+                "Игрок WHITE введите ваше имя: \n", output.toString(Charset.defaultCharset())));
   }
 
   @Test
-  public void inputMoveTest() {
+  public void inputMoveTest() throws IOException {
     String testInput = "e2e4\n";
     InputStream inputStream =
         new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
     consoleUi = new ConsoleUi(inputStream, output);
 
-    try {
-      String inputMove = consoleUi.inputMove("Dima");
+    String inputMove = consoleUi.inputMove("Dima");
 
-      Assertions.assertAll(
-          () -> assertEquals("e2e4", inputMove),
-          () -> assertEquals("Dima введите ваш ход: ", output.toString(Charset.defaultCharset())));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    Assertions.assertAll(
+        () -> assertEquals("e2e4", inputMove),
+        () -> assertEquals("Dima введите ваш ход: ", output.toString(Charset.defaultCharset())));
   }
 
   @Test
-  public void showMoveTest() {
+  public void showMoveTest() throws IOException {
     Board board = new HashBoard();
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Boards.defaultChess().accept(board);
@@ -200,7 +178,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void showResulWinnerGameTest() {
+  public void showResulWinnerGameTest() throws IOException {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Player winner = new HumanPlayer("Dima", null, Color.WHITE, consoleUi);
     consoleUi.showResultGame(winner);
@@ -209,14 +187,14 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void showResulStalemateTest() {
+  public void showResulStalemateTest() throws IOException {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.showResultGame(null);
     assertEquals("Stalemate!\n", output.toString(Charset.defaultCharset()));
   }
 
   @Test
-  public void printIncorrectMoveTest() {
+  public void printIncorrectMoveTest() throws IOException {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.incorrectMove();
     String expect = "Некорректный ход! Пожалуйста, введите ход правильно.\nПример хода: e2e4.\n";
@@ -224,7 +202,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printEmptyStartPositionTest() {
+  public void printEmptyStartPositionTest() throws IOException {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.emptyStartPosition(move);
@@ -233,7 +211,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printMoveImpossibleTest() {
+  public void printMoveImpossibleTest() throws IOException {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.moveImpossible(move);
@@ -242,7 +220,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printWarningYourKingInCheckTest() {
+  public void printWarningYourKingInCheckTest() throws IOException {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.warningYourKingInCheck(move);
@@ -251,15 +229,11 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printHelpTest() {
-    try {
-      consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
-      consoleUi.printHelp();
-      String helpPath = "src/main/resources/Help.txt";
-      String expect = "\n" + Files.readString(Path.of(helpPath), Charset.defaultCharset()) + "\n";
-      assertEquals(expect, output.toString(Charset.defaultCharset()));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  public void printHelpTest() throws IOException {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.printHelp();
+    String helpPath = "src/main/resources/Help.txt";
+    String expect = "\n" + Files.readString(Path.of(helpPath), Charset.defaultCharset()) + "\n";
+    assertEquals(expect, output.toString(Charset.defaultCharset()));
   }
 }
