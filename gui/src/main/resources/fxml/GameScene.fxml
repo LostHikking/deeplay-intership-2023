@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Scene xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.deeplay.grandmastery.GameController">
+    <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="800" style="-fx-background-color: rgb(245,245,220);">
+      <children>
+         <GridPane gridLinesVisible="true" layoutX="48.0" layoutY="100.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="100.0">
+            <columnConstraints>
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+               <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0" />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+               <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="NEVER" />
+            </rowConstraints>
+
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="6" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="7" GridPane.rowIndex="0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="7" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="6" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="7" GridPane.rowIndex="3" />
+
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="6" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="7" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="6" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="7" GridPane.rowIndex="5" />
+
+
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="5" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="6" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="7" GridPane.rowIndex="6" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="4" GridPane.rowIndex="7" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="5" GridPane.rowIndex="7" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(124, 76, 62);" GridPane.columnIndex="6" GridPane.rowIndex="7" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: rgb(81, 42, 42);" GridPane.columnIndex="7" GridPane.rowIndex="7" />
+         </GridPane>
+         <HBox layoutX="50.0" layoutY="25.0" prefHeight="40.0" prefWidth="700.0" spacing="10.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+            <children>
+               <Button contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="345.0" style="-fx-background-color: rgb(213,178,156); -fx-border-color: BLACK; -fx-background-radius: 15px; -fx-border-radius: 15px;" text="Предложить ничью" textOverrun="CLIP" onAction="#handleOfferDraw"/>
+               <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="345.0" style="-fx-background-color: rgb(213,178,156); -fx-border-color: BLACK; -fx-background-radius: 15px; -fx-border-radius: 15px;" text="Сдаться" textOverrun="CLIP" onAction="#handleSurrender"/>
+            </children>
+         </HBox>
+         <Label layoutX="213.0" layoutY="74.0" text="Имя игрока 1" />
+         <Label layoutX="213.0" layoutY="507.0" text="Имя игрока 2" />
+         <TextArea layoutX="500.0" layoutY="100.0" prefHeight="400.0" prefWidth="250.0" style="-fx-background-color: rgb(34,34,34); -fx-control-inner-background: rgb(222,184,135);" />
+      </children></AnchorPane>
+</Scene>
