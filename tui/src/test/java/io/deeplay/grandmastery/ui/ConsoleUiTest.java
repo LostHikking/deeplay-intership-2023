@@ -9,9 +9,11 @@ import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.core.Position;
+import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.figures.Pawn;
+import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.ByteArrayInputStream;
@@ -19,8 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,6 +96,33 @@ public class ConsoleUiTest {
                 output.toString(Charset.defaultCharset())));
   }
 
+  /**
+   * Параметризованный тест для метода selectChessType().
+   *
+   * @param testInput строка с вводом, передаваемая в тест в качестве потока данных.
+   * @param type ожидаемый тип после выбора.
+   * @throws IOException в случае возникновения исключения при выполнении теста.
+   */
+  @ParameterizedTest
+  @CsvSource(value = {"1, CLASSIC", "2, FISHERS"})
+  public void selectChessTypeTest(String testInput, String type) throws IOException {
+    testInput += "\n";
+    InputStream inputStream =
+        new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
+    consoleUi = new ConsoleUi(inputStream, output);
+
+    ChessType selectedColor = consoleUi.selectChessType();
+    String expect = """
+Выберите начальную расстановку шахмат
+1. Классические
+2. Фишера
+        """;
+
+    Assertions.assertAll(
+        () -> assertEquals(ChessType.valueOf(type), selectedColor),
+        () -> assertEquals(expect, output.toString(Charset.defaultCharset())));
+  }
+
   @Test
   public void incorrectSelectTest() throws IOException {
     String testInput = "3\n2\n";
@@ -145,13 +172,13 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void showMoveTest() throws IOException {
+  public void showMoveTest() {
     Board board = new HashBoard();
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Boards.defaultChess().accept(board);
-    Player player = new HumanPlayer("Dima", board, Color.WHITE, consoleUi);
+    Player player = new HumanPlayer("Dima", Color.WHITE, consoleUi);
 
-    player.setMoveData("e2e4");
+    player.setLastMove("e2e4");
     board.removePiece(Position.getPositionFromString("e2"));
     board.setPiece(Position.getPositionFromString("e4"), new Pawn(Color.WHITE));
     consoleUi.showMove(board, player);
@@ -178,23 +205,23 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void showResulWinnerGameTest() throws IOException {
+  public void showResulWinnerGameTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
-    Player winner = new HumanPlayer("Dima", null, Color.WHITE, consoleUi);
+    Player winner = new HumanPlayer("Dima", Color.WHITE, consoleUi);
     consoleUi.showResultGame(winner);
 
     assertEquals("Win WHITE: Dima\n", output.toString(Charset.defaultCharset()));
   }
 
   @Test
-  public void showResulStalemateTest() throws IOException {
+  public void showResulStalemateTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.showResultGame(null);
     assertEquals("Stalemate!\n", output.toString(Charset.defaultCharset()));
   }
 
   @Test
-  public void printIncorrectMoveTest() throws IOException {
+  public void printIncorrectMoveTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.incorrectMove();
     String expect = "Некорректный ход! Пожалуйста, введите ход правильно.\nПример хода: e2e4.\n";
@@ -202,7 +229,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printEmptyStartPositionTest() throws IOException {
+  public void printEmptyStartPositionTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.emptyStartPosition(move);
@@ -211,7 +238,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printMoveImpossibleTest() throws IOException {
+  public void printMoveImpossibleTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.moveImpossible(move);
@@ -220,7 +247,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printWarningYourKingInCheckTest() throws IOException {
+  public void printWarningYourKingInCheckTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.warningYourKingInCheck(move);
@@ -229,11 +256,9 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void printHelpTest() throws IOException {
+  public void printHelpTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.printHelp();
-    String helpPath = "src/main/resources/Help.txt";
-    String expect = "\n" + Files.readString(Path.of(helpPath), Charset.defaultCharset()) + "\n";
-    assertEquals(expect, output.toString(Charset.defaultCharset()));
+    assertEquals(ConsoleHelp.help + "\n", output.toString(Charset.defaultCharset()));
   }
 }

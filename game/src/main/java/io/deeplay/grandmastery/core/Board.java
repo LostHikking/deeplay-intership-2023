@@ -67,8 +67,9 @@ public abstract class Board {
    * Удаляет фигуру с указанной позиции на доске.
    *
    * @param position позиция, с которой нужно удалить фигуру.
+   * @return удаленная фигура.
    */
-  public abstract void removePiece(Position position);
+  public abstract Piece removePiece(Position position);
 
   /**
    * Возвращает позицию черного короля на доске.

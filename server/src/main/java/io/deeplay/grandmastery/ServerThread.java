@@ -16,9 +16,10 @@ public class ServerThread extends Thread {
 
   /**
    * Конструктор для ServerThread.
+   *
    * @param socket Сокет
    * @throws IOException Неудачая попытка чтения/записи
-   * */
+   */
   public ServerThread(Socket socket) throws IOException {
     this.socket = socket;
 

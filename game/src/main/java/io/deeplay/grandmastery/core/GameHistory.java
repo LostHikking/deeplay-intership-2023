@@ -3,16 +3,16 @@ package io.deeplay.grandmastery.core;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.figures.Piece;
+import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Класс для сохранения истории партии. */
-public class GameHistory implements GameListener, GameHistoryListener {
+public class GameHistory implements GameListener {
   private final List<Move> moves = new ArrayList<>();
-  private Board board;
   private int movesWithoutTakingAndAdvancingPawns = 0;
-
+  private boolean gameOver;
   private final List<Board> boards = new ArrayList<>();
 
   /**
@@ -22,11 +22,8 @@ public class GameHistory implements GameListener, GameHistoryListener {
    */
   @Override
   public void startup(Board board) {
-    if (this.board == null) {
-      var copyBoard = new HashBoard();
-      Boards.copyBoard(board).accept(copyBoard);
-      this.board = copyBoard;
-    }
+    addBoard(board);
+    gameOver = false;
   }
 
   /**
@@ -35,25 +32,29 @@ public class GameHistory implements GameListener, GameHistoryListener {
    * @param move Ход
    */
   @Override
-  public void makeMove(Move move, Board board) {
+  public void makeMove(Move move) {
+    if (gameOver) {
+      throw GameErrorCode.GAME_ALREADY_OVER.asException();
+    }
     movesWithoutTakingAndAdvancingPawns++;
 
+    Board board = getCurBoard();
+    Board beforeLast = getBeforeLastBoard();
     var toPos = move.to();
     var piece = board.getPiece(toPos);
-    Piece pieceToBeforeMove =
-        !boards.isEmpty() ? boards.get(boards.size() - 1).getPiece(toPos) : null;
+    Piece pieceToBeforeMove = beforeLast != null ? beforeLast.getPiece(toPos) : null;
 
     if (piece.getFigureType() == FigureType.PAWN
         || move.promotionPiece() != null
         || pieceToBeforeMove != null) {
       movesWithoutTakingAndAdvancingPawns = 0;
     }
-
-    var newBoard = new HashBoard();
-    Boards.copyBoard(board).accept(newBoard);
-
-    boards.add(newBoard);
     moves.add(move);
+  }
+
+  @Override
+  public void gameOver() {
+    this.gameOver = true;
   }
 
   /**
@@ -88,46 +89,33 @@ public class GameHistory implements GameListener, GameHistoryListener {
   }
 
   /**
-   * * Метод возвращает доску.
+   * * Метод возвращает текущую доску.
    *
    * @return Доску
    */
-  public Board getBoard() {
-    if (board == null) {
-      return null;
-    }
+  public Board getCurBoard() {
+    return boards.isEmpty() ? null : boards.get(boards.size() - 1);
+  }
 
-    var copyBoard = new HashBoard();
+  /**
+   * * Метод возвращает позапрошлую доску.
+   *
+   * @return Доску
+   */
+  public Board getBeforeLastBoard() {
+    return boards.size() > 1 ? boards.get(boards.size() - 2) : null;
+  }
+
+  /**
+   * Метод копирует и добавляет новую борду в историю. По идее добавление должно происходить перед
+   * каждым makeMove в GameHistory
+   *
+   * @param board доска для копирования.
+   */
+  public void addBoard(Board board) {
+    Board copyBoard = new HashBoard();
     Boards.copyBoard(board).accept(copyBoard);
-    return copyBoard;
-  }
-
-  public Board getBoardByIndex(int index) {
-    return boards.get(index);
-  }
-
-  /** Удаляет последнее состояние доски из списка состояний, если список состояний не пуст. */
-  public void removeLastStateBoard() {
-    if (!boards.isEmpty()) {
-      boards.remove(boards.size() - 1);
-    }
-  }
-
-  public Move getMoveByIndex(int index) {
-    return moves.get(index);
-  }
-
-  public void removeLastMove() {
-    moves.remove(moves.size() - 1);
-  }
-
-  @Override
-  public void rollback(Board board) {
-    Boards.copyBoard(getBoardByIndex(boards.size() - 2)).accept(board);
-    board.setLastMove(getMoveByIndex(moves.size() - 2));
-
-    removeLastStateBoard();
-    removeLastMove();
+    boards.add(board);
   }
 
   /**
@@ -150,26 +138,20 @@ public class GameHistory implements GameListener, GameHistoryListener {
         boards.stream()
             .filter(
                 historyBoard -> {
-                  for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                      var historyBoardPiece = historyBoard.getPiece(i, j);
-                      var boardPiece = checkBoard.getPiece(i, j);
+                  List<Position> allOldPosition = historyBoard.getAllPiecePosition();
 
-                      if (historyBoardPiece != null && !historyBoardPiece.equals(boardPiece)) {
-                        return false;
-                      } else if (boardPiece != null && !boardPiece.equals(historyBoardPiece)) {
-                        return false;
-                      }
+                  for (Position position : allOldPosition) {
+                    Piece historyBoardPiece = historyBoard.getPiece(position);
+                    Piece boardPiece = checkBoard.getPiece(position);
+                    if (historyBoardPiece != null && !historyBoardPiece.equals(boardPiece)) {
+                      return false;
+                    } else if (boardPiece != null && !boardPiece.equals(historyBoardPiece)) {
+                      return false;
                     }
                   }
 
                   return true;
                 })
             .count();
-  }
-
-  @Override
-  public boolean checkIsDraw(Board board) {
-    return GameStateChecker.isDraw(board, this);
   }
 }

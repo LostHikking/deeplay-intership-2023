@@ -78,7 +78,7 @@ public class King extends Piece {
         i++) {
       for (Position position : positions) {
         tmpMove = new Move(position, new Position(new Column(i), move.to().row()), null);
-        if (board.getPiece(position).canMove(board, tmpMove, true)) {
+        if (board.getPiece(position).canMove(board, tmpMove)) {
           return false;
         }
       }
@@ -130,14 +130,6 @@ public class King extends Piece {
       }
     }
 
-    return moves.stream().filter(move -> canMove(board, move, true)).toList();
-  }
-
-  @Override
-  public void revive(Board board, Move move) {}
-
-  @Override
-  public boolean canRevive(Board board, Move move) {
-    return false;
+    return moves.stream().filter(move -> canMove(board, move)).toList();
   }
 }
