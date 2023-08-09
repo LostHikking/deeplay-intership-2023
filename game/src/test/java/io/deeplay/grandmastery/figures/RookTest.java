@@ -22,6 +22,7 @@ class RookTest {
     board.setPiece(Position.getPositionFromString("f5"), piece);
     board.setPiece(Position.getPositionFromString("f3"), new Bishop(Color.BLACK));
     board.setPiece(Position.getPositionFromString("f7"), new King(Color.BLACK));
+    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
   }
 
   @ParameterizedTest
@@ -68,10 +69,5 @@ class RookTest {
   void getAllMovesTest() {
     Assertions.assertEquals(
         10, piece.getAllMoves(board, Position.getPositionFromString("f5")).size());
-  }
-
-  @Test
-  void canReviveTest() {
-    Assertions.assertFalse(piece.canRevive(board, null));
   }
 }

@@ -66,14 +66,6 @@ public class Queen extends Piece {
       listMove.add(new Move(position, new Position(new Column(i), position.row()), null));
     }
 
-    return listMove.stream().filter(move -> canMove(board, move, true)).toList();
-  }
-
-  @Override
-  public void revive(Board board, Move move) {}
-
-  @Override
-  public boolean canRevive(Board board, Move move) {
-    return true;
+    return listMove.stream().filter(move -> canMove(board, move)).toList();
   }
 }

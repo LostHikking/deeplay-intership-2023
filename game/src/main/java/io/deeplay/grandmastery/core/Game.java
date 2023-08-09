@@ -1,97 +1,70 @@
 package io.deeplay.grandmastery.core;
 
-import static io.deeplay.grandmastery.domain.GameState.BLACK_MOVE;
-import static io.deeplay.grandmastery.domain.GameState.BLACK_WIN;
-import static io.deeplay.grandmastery.domain.GameState.IMPOSSIBLE_MOVE;
-import static io.deeplay.grandmastery.domain.GameState.INIT_STATE;
-import static io.deeplay.grandmastery.domain.GameState.ROLLBACK;
-import static io.deeplay.grandmastery.domain.GameState.STALEMATE;
-import static io.deeplay.grandmastery.domain.GameState.WHITE_MOVE;
-import static io.deeplay.grandmastery.domain.GameState.WHITE_WIN;
-
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Piece;
+import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
 
 public class Game implements GameListener {
-  private GameState gameState;
+  private Color colorMove;
 
-  private GameState prevGameState;
+  private final Board board = new HashBoard();
 
-  private GameHistoryListener gameHistoryListener;
-
-  private StateListener stateListener;
-
-  public void setGameHistoryListener(GameHistoryListener gameHistoryListener) {
-    this.gameHistoryListener = gameHistoryListener;
-  }
-
-  public void setStateListener(StateListener stateListener) {
-    this.stateListener = stateListener;
-  }
-
-  private boolean notifyCheckIsDraw(Board board) {
-    return gameHistoryListener.checkIsDraw(board);
-  }
-
-  private void notifyStateListeners() {
-    stateListener.changeGameState(gameState);
-  }
+  private boolean gameOver;
 
   @Override
   public void startup(Board board) {
-    gameState = INIT_STATE;
-    Boards.defaultChess().accept(board);
-    gameState = WHITE_MOVE;
-    prevGameState = WHITE_MOVE;
-    //    notifyStateListeners();
+    Boards.copyBoard(board).accept(this.board);
+    colorMove = Color.WHITE;
+    gameOver = false;
   }
 
   @Override
-  public void makeMove(Move move, Board board) {
+  public void makeMove(Move move) throws GameException {
+    if (gameOver) {
+      throw GameErrorCode.GAME_ALREADY_OVER.asException();
+    }
+
     Piece piece = board.getPiece(move.from());
-    if (piece == null) {
-      gameState = IMPOSSIBLE_MOVE;
-      return;
+    if (piece == null || colorMove != piece.getColor()) {
+      throw GameErrorCode.IMPOSSIBLE_MOVE.asException();
     }
 
     if (piece.move(board, move)) {
       board.setLastMove(move);
     } else {
-      gameState = IMPOSSIBLE_MOVE;
-      return;
+      throw GameErrorCode.IMPOSSIBLE_MOVE.asException();
     }
-
-    Color enemyColor = (gameState == GameState.WHITE_MOVE) ? Color.BLACK : Color.WHITE;
-    Color currentColor = (gameState == GameState.WHITE_MOVE) ? Color.WHITE : Color.BLACK;
-
-    if (GameStateChecker.isCheck(board, currentColor)) {
-      prevGameState = gameState;
-      gameState = ROLLBACK;
-    } else if (GameStateChecker.isMate(board, enemyColor)) {
-      gameState = currentColor == Color.WHITE ? WHITE_WIN : BLACK_WIN;
-    } else if (notifyCheckIsDraw(board)) {
-      gameState = STALEMATE;
-    } else {
-      gameState = currentColor == Color.WHITE ? BLACK_MOVE : WHITE_MOVE;
-    }
+    colorMove = colorMove == Color.WHITE ? Color.BLACK : Color.WHITE;
   }
 
   @Override
-  public void rollback(Board board) {
-    gameState = prevGameState;
+  public void gameOver() {
+    gameOver = true;
   }
 
-  public GameState getGameState() {
-    return gameState;
+  public Color getColorMove() {
+    return colorMove;
   }
 
-  public void setGameState(GameState gameState) {
-    this.gameState = gameState;
+  public void setColorMove(Color colorMove) {
+    this.colorMove = colorMove;
   }
 
-  public GameState getPrevGameState() {
-    return prevGameState;
+  public boolean isGameOver() {
+    return gameOver;
+  }
+
+  /**
+   * Метод возвращает копию текущей доски.
+   *
+   * @return копия текущей доски
+   */
+  public Board getCopyBoard() {
+    Board copyBoard = new HashBoard();
+    Boards.copyBoard(board).accept(copyBoard);
+    return copyBoard;
   }
 }

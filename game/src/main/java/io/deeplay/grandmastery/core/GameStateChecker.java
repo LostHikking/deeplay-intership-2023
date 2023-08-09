@@ -2,9 +2,10 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.Boards;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameStateChecker {
   /**
@@ -18,17 +19,16 @@ public class GameStateChecker {
     var kingPoz =
         color == Color.WHITE ? board.getWhiteKingPosition() : board.getBlackKingPosition();
 
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        var piece = board.getPiece(i, j);
-        var move = new Move(new Position(new Column(i), new Row(j)), kingPoz, null);
+    List<Position> piecePosition =
+        board.getAllPieceByColorPosition(color == Color.WHITE ? Color.BLACK : Color.WHITE);
+    for (Position position : piecePosition) {
+      Piece piece = board.getPiece(position);
+      Move move = new Move(position, kingPoz, null);
 
-        if (piece != null && piece.getColor() != color && piece.canMove(board, move, false)) {
-          return true;
-        }
+      if (piece != null && piece.canMove(board, move, false)) {
+        return true;
       }
     }
-
     return false;
   }
 
@@ -44,25 +44,21 @@ public class GameStateChecker {
       return false;
     }
 
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        var piece = board.getPiece(i, j);
-        var pos = new Position(new Column(i), new Row(j));
+    List<Position> piecePosition = board.getAllPieceByColorPosition(color);
+    for (Position position : piecePosition) {
+      Piece piece = board.getPiece(position);
 
-        if (piece != null && piece.getColor() == color) {
-          for (Move move : piece.getAllMoves(board, pos)) {
-            var copyBoard = new HashBoard();
-            Boards.copyBoard(board).accept(copyBoard);
+      for (Move move : piece.getAllMoves(board, position)) {
+        Board copyBoard = new HashBoard();
+        Boards.copyBoard(board).accept(copyBoard);
 
-            piece.move(copyBoard, move);
-            if (!isCheck(copyBoard, color)) {
-              return false;
-            }
+        if (piece.move(copyBoard, move)) {
+          if (!isCheck(copyBoard, color)) {
+            return false;
           }
         }
       }
     }
-
     return true;
   }
 
@@ -86,21 +82,17 @@ public class GameStateChecker {
       return true;
     }
 
-    var whiteFiguresList = new ArrayList<FigureType>();
-    var blackFiguresList = new ArrayList<FigureType>();
+    List<Position> whites = board.getAllPieceByColorPosition(Color.WHITE);
+    List<Position> blacks = board.getAllPieceByColorPosition(Color.BLACK);
 
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        var piece = board.getPiece(i, j);
-        if (piece != null) {
-          if (piece.getColor() == Color.WHITE) {
-            whiteFiguresList.add(piece.getFigureType());
-          } else {
-            blackFiguresList.add(piece.getFigureType());
-          }
-        }
-      }
-    }
+    List<FigureType> whiteFiguresList =
+        whites.stream()
+            .map(position -> board.getPiece(position).getFigureType())
+            .collect(Collectors.toList());
+    List<FigureType> blackFiguresList =
+        blacks.stream()
+            .map(position -> board.getPiece(position).getFigureType())
+            .collect(Collectors.toList());
 
     return drawWithLackOfFigures(whiteFiguresList, blackFiguresList)
         || drawWithRepeatPosition(gameHistory, board)
@@ -116,22 +108,19 @@ public class GameStateChecker {
    * @return Стоит ли на доске пат
    */
   public static boolean isStaleMate(Board board, Color color) {
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        var piece = board.getPiece(i, j);
-        var pos = new Position(new Column(i), new Row(j));
+    List<Position> positions = board.getAllPieceByColorPosition(color);
+    for (Position position : positions) {
+      var piece = board.getPiece(position);
 
-        if (piece != null && piece.getColor() == color) {
-          var allMoves = piece.getAllMoves(board, pos);
-          if (!allMoves.isEmpty()) {
-            for (Move move : allMoves) {
-              var copyBoard = new HashBoard();
-              Boards.copyBoard(board).accept(copyBoard);
+      var allMoves = piece.getAllMoves(board, position);
+      if (!allMoves.isEmpty()) {
+        for (Move move : allMoves) {
+          var copyBoard = new HashBoard();
+          Boards.copyBoard(board).accept(copyBoard);
 
-              piece.move(copyBoard, move);
-              if (!isCheck(copyBoard, color)) {
-                return false;
-              }
+          if (piece.move(copyBoard, move)) {
+            if (!isCheck(copyBoard, color)) {
+              return false;
             }
           }
         }

@@ -1,6 +1,9 @@
 package io.deeplay.grandmastery.utils;
 
 import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.Game;
+import io.deeplay.grandmastery.core.GameHistory;
+import io.deeplay.grandmastery.core.GameStateChecker;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
@@ -8,12 +11,13 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.figures.Piece;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Класс для парсинга ходов в формате длиннай алгебраической нотации.
+ * Класс для парсинга ходов в формате длинной алгебраической нотации.
  *
  * <p>Строка хода всегда состоит из 4 или из 5-ти символов.
  *
@@ -36,38 +40,26 @@ public class LongAlgebraicNotation {
   public static boolean validMoves(List<Move> moves, Board board) {
     var copyBoard = new HashBoard();
     Boards.copyBoard(board).accept(copyBoard);
+    Game game = new Game();
+    game.startup(copyBoard);
+    GameHistory gameHistory = new GameHistory();
+    gameHistory.startup(copyBoard);
 
-    Color color = null;
+    Piece piece = copyBoard.getPiece(moves.get(0).from());
+    game.setColorMove(piece.getColor());
 
     for (Move move : moves) {
-      var piece = copyBoard.getPiece(move.from());
-      if (piece == null) {
+      try {
+        game.makeMove(move);
+      } catch (GameException e) {
         return false;
       }
-
-      // TODO: Вынести эти проверки в Game - дублирование кода
-      // 1) Смена цвета ходившего игрока
-      // 2) Вызовы canRevive(), revive
-      // Или вообще сделать отдельный класс для проигрывания партии?
-      if (color == null) {
-        color = piece.getColor();
-      } else if (color == piece.getColor()) {
-        return false;
-      } else {
-        color = piece.getColor();
-      }
-
-      if (move.promotionPiece() != null) {
-        if (piece.canRevive(copyBoard, move)) {
-          piece.revive(copyBoard, move);
-        } else {
-          return false;
-        }
-      } else if (!piece.move(copyBoard, move)) {
+      Color enemyColor = game.getColorMove() == Color.WHITE ? Color.BLACK : Color.WHITE;
+      if (GameStateChecker.isDraw(copyBoard, gameHistory)
+          || GameStateChecker.isMate(copyBoard, enemyColor)) {
         return false;
       }
     }
-
     return true;
   }
 

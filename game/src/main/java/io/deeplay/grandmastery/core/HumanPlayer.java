@@ -1,31 +1,45 @@
 package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.listeners.InputListener;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.IOException;
 
 /** Дочерний класс класса Player, представляет реального игрока. */
 public class HumanPlayer extends Player {
-  /** Пользовательский интерфейс. */
-  private final UI userInterface;
+  private final InputListener inputListener;
 
   /**
    * Конструктор для плеера.
    *
    * @param name Имя
-   * @param board Доска
    * @param color Цвет
    */
-  public HumanPlayer(String name, Board board, Color color, UI ui) {
-    super(name, board, color);
-    this.userInterface = ui;
+  public HumanPlayer(String name, Color color, InputListener inputListener) {
+    super(name, color);
+    this.inputListener = inputListener;
   }
 
-  /** Метод, отвечающий за ввод хода игрока. */
+  private String notifyInputListener() throws IOException {
+    return inputListener.inputMove(this.getName());
+  }
+
+  /**
+   * Метод, отвечающий за ввод хода игрока.
+   *
+   * @return {@code Move} ход игрока.
+   */
   @Override
-  public void makeMove() throws GameException {
+  public Move createMove() throws GameException {
+    if (gameOver) {
+      throw GameErrorCode.GAME_ALREADY_OVER.asException();
+    }
     try {
-      setMoveData(userInterface.inputMove(this.getName()));
+      Move move = LongAlgebraicNotation.getMoveFromString(notifyInputListener());
+      setLastMove(move);
+      return move;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

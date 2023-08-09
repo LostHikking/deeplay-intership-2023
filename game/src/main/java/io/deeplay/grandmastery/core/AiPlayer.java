@@ -1,27 +1,35 @@
 package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.exceptions.GameException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AiPlayer extends Player {
-  public AiPlayer(Board board, Color color) {
-    super("Bot", board, color);
+  public AiPlayer(Color color) {
+    super("Bot", color);
   }
 
   @Override
-  public void makeMove() {
+  public Move createMove() throws GameException {
+    if (gameOver) {
+      throw GameErrorCode.GAME_ALREADY_OVER.asException();
+    }
+    Board board = game.getCopyBoard();
+
     List<Move> possibleMove = new ArrayList<>();
     List<Position> positions = board.getAllPieceByColorPosition(this.color);
+
     for (Position position : positions) {
       possibleMove.addAll(board.getPiece(position).getAllMoves(board, position));
     }
 
     if (possibleMove.isEmpty()) {
-      setMoveData((String) null);
-      return;
+      throw GameErrorCode.UNDEFINED_BEHAVIOR_BOT.asException();
     }
     int ind = (int) (Math.random() * possibleMove.size());
-    this.setMoveData(possibleMove.get(ind));
+    this.setLastMove(possibleMove.get(ind));
+    return possibleMove.get(ind);
   }
 }

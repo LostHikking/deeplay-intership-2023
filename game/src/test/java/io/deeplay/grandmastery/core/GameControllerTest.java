@@ -1,0 +1,156 @@
+package io.deeplay.grandmastery.core;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import io.deeplay.grandmastery.domain.ChessType;
+import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.utils.Boards;
+import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class GameControllerTest {
+  private GameController gameController;
+
+  private final UI testUi = mock(UI.class);
+
+  /** Создает gameController по умолчанию с двумя игроками людьми. */
+  @BeforeEach
+  public void init() {
+    Player white = new HumanPlayer("White", Color.WHITE, testUi);
+    Player black = new HumanPlayer("Black", Color.BLACK, testUi);
+    gameController = new GameController(white, black);
+  }
+
+  @Test
+  public void beginPlayClassicTest() {
+    gameController.beginPlay(ChessType.CLASSIC);
+
+    Board expectBoard = new HashBoard();
+    Boards.defaultChess().accept(expectBoard);
+
+    Assertions.assertAll(
+        () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()),
+        () -> assertEquals(expectBoard, gameController.getBoard()),
+        () -> assertEquals("White", gameController.getWhite().getName()),
+        () -> assertEquals("Black", gameController.getBlack().getName()),
+        () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
+        () -> assertEquals(Color.BLACK, gameController.getBlack().getColor()));
+  }
+
+  @Test
+  public void beginPlayFishersTest() {
+    gameController.beginPlay(ChessType.FISHERS);
+
+    Board defaultBoard = new HashBoard();
+    Boards.defaultChess().accept(defaultBoard);
+
+    Assertions.assertAll(
+        () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()),
+        () -> assertNotEquals(defaultBoard, gameController.getBoard()),
+        () -> assertEquals("White", gameController.getWhite().getName()),
+        () -> assertEquals("Black", gameController.getBlack().getName()),
+        () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
+        () -> assertEquals(Color.BLACK, gameController.getBlack().getColor()));
+  }
+
+  @Test
+  public void makeMoveTest() throws IOException {
+    when(testUi.inputMove(anyString())).thenReturn("e2e4");
+
+    gameController.beginPlay(ChessType.CLASSIC);
+    gameController.nextMove();
+
+    Assertions.assertAll(
+        () ->
+            assertNotNull(gameController.getBoard().getPiece(Position.getPositionFromString("e4"))),
+        () -> assertEquals(GameState.BLACK_MOVE, gameController.getGameStatus()),
+        () -> assertNull(gameController.getMove()),
+        () -> assertFalse(gameController.isGameOver()));
+  }
+
+  @Test
+  public void makeImpossibleMoveTest() throws IOException {
+    when(testUi.inputMove(anyString())).thenReturn("e3e4");
+
+    gameController.beginPlay(ChessType.CLASSIC);
+
+    Assertions.assertAll(
+        () -> assertThrows(GameException.class, gameController::nextMove),
+        () -> assertNull(gameController.getBoard().getPiece(Position.getPositionFromString("e4"))),
+        () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()),
+        () -> assertNull(gameController.getMove()));
+  }
+
+  @Test
+  public void rollbackMoveTest() throws IOException {
+    when(testUi.inputMove(anyString())).thenReturn("e2e4", "e7e5", "d1h5", "f7f6");
+
+    gameController.beginPlay(ChessType.CLASSIC);
+    for (int i = 0; i < 3; i++) {
+      gameController.nextMove();
+    }
+
+    Board expectBoard = gameController.getBoard();
+    Assertions.assertAll(
+        () -> assertThrows(GameException.class, gameController::nextMove),
+        () -> assertEquals(GameState.BLACK_MOVE, gameController.getGameStatus()),
+        () -> assertEquals(expectBoard, gameController.getBoard()));
+  }
+
+  @Test
+  public void isGameOverWhiteWinTest() throws IOException {
+    when(testUi.inputMove("White")).thenReturn("e2e4", "f1c4", "d1h5", "h5f7");
+    when(testUi.inputMove("Black")).thenReturn("e7e5", "a7a6", "a6a5");
+    gameController.beginPlay(ChessType.CLASSIC);
+    for (int i = 0; i < 7; i++) {
+      gameController.nextMove();
+    }
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.WHITE_WIN, gameController.getGameStatus()),
+        () -> assertEquals(gameController.getWhite(), gameController.getWinPlayer()));
+  }
+
+  @Test
+  public void isGameOverBlackWinTest() throws IOException {
+    when(testUi.inputMove("White")).thenReturn("e2e4", "h2h4", "a2a4", "a4a5");
+    when(testUi.inputMove("Black")).thenReturn("e7e5", "f8c5", "d8h4", "h4f2");
+    gameController.beginPlay(ChessType.CLASSIC);
+    for (int i = 0; i < 8; i++) {
+      gameController.nextMove();
+    }
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.BLACK_WIN, gameController.getGameStatus()),
+        () -> assertEquals(gameController.getBlack(), gameController.getWinPlayer()));
+  }
+
+  @Test
+  public void makeMoveAfterGameOverTest() throws IOException {
+    when(testUi.inputMove("White")).thenReturn("e2e4", "f1c4", "d1h5", "h5f7");
+    when(testUi.inputMove("Black")).thenReturn("e7e5", "a7a6", "a6a5");
+    gameController.beginPlay(ChessType.CLASSIC);
+    for (int i = 0; i < 7; i++) {
+      gameController.nextMove();
+    }
+
+    Assertions.assertAll(
+        () -> assertEquals(GameState.WHITE_WIN, gameController.getGameStatus()),
+        () -> assertTrue(gameController.isGameOver()));
+  }
+}

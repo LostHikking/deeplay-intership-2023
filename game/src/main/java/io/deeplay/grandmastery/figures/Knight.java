@@ -45,14 +45,6 @@ public class Knight extends Piece {
     moveList.add(Figures.getMoveByPositionAndDeltas(position, 2, -1));
     moveList.add(Figures.getMoveByPositionAndDeltas(position, 2, 1));
 
-    return moveList.stream().filter(move -> canMove(board, move, true)).toList();
-  }
-
-  @Override
-  public void revive(Board board, Move move) {}
-
-  @Override
-  public boolean canRevive(Board board, Move move) {
-    return false;
+    return moveList.stream().filter(move -> canMove(board, move)).toList();
   }
 }

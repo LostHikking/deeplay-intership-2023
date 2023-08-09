@@ -31,7 +31,7 @@ public class Bishop extends Piece {
     var fromRow = move.from().row().value();
     var fromCol = move.from().col().value();
 
-    if (!Figures.basicValidMove(move, board, true)) {
+    if (!Figures.basicValidMove(move, board, withKingCheck)) {
       return false;
     }
     if (abs(toCol - fromCol) == abs(toRow - fromRow)) {
@@ -55,14 +55,6 @@ public class Bishop extends Piece {
         y += dy[dir];
       }
     }
-    return listMove.stream().filter(move -> canMove(board, move, true)).toList();
-  }
-
-  @Override
-  public void revive(Board board, Move move) {}
-
-  @Override
-  public boolean canRevive(Board board, Move move) {
-    return true;
+    return listMove.stream().filter(move -> canMove(board, move)).toList();
   }
 }

@@ -330,6 +330,34 @@ public class KingTest {
   }
 
   @Test
+  public void noCaptureProtectedPieceTest() {
+    Move move = LongAlgebraicNotation.getMoveFromString("e8f7");
+    Piece king = new King(Color.BLACK);
+    Piece queen = new Queen(Color.WHITE);
+    board.setPiece(move.from(), king);
+    board.setPiece(move.to(), queen);
+    board.setPiece(Position.getPositionFromString("c4"), new Bishop(Color.WHITE));
+
+    Assertions.assertAll(
+        () -> assertFalse(king.move(board, move)),
+        () -> assertSame(king, board.getPiece(move.from()), "Check king position"),
+        () -> assertSame(queen, board.getPiece(move.to()), "Check queen position"));
+  }
+
+  @Test
+  public void noMoveKingIsCheckTest() {
+    Move move = LongAlgebraicNotation.getMoveFromString("e1e2");
+    Piece king = new King(Color.WHITE);
+    Piece queen = new Queen(Color.BLACK);
+    board.setPiece(move.from(), king);
+    board.setPiece(Position.getPositionFromString("e8"), queen);
+
+    Assertions.assertAll(
+        () -> assertFalse(king.move(board, move)),
+        () -> assertSame(king, board.getPiece(move.from()), "Check king position"));
+  }
+
+  @Test
   public void allMovesKingWithoutCastlingTest() {
     Piece king = new King(Color.WHITE);
     Position position = Position.getPositionFromString("e4");
