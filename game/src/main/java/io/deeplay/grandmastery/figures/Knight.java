@@ -47,12 +47,4 @@ public class Knight extends Piece {
 
     return moveList.stream().filter(move -> canMove(board, move, true)).toList();
   }
-
-  @Override
-  public void revive(Board board, Move move) {}
-
-  @Override
-  public boolean canRevive(Board board, Move move) {
-    return false;
-  }
 }

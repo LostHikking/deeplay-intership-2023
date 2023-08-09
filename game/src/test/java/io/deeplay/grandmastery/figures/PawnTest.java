@@ -518,4 +518,21 @@ public class PawnTest {
 
     assertEquals(expectMoves, pawn.getAllMoves(board, position));
   }
+
+  @Test
+  public void noCaptureEnPassantReversePositionTest() {
+    Move lastMove = LongAlgebraicNotation.getMoveFromString("h2h4");
+    Move move = LongAlgebraicNotation.getMoveFromString("b7c6");
+
+    Piece whitePawn = new Pawn(Color.WHITE);
+    Piece blackPawn = new Pawn(Color.BLACK);
+    board.setPiece(move.from(), blackPawn);
+    board.setPiece(lastMove.to(), whitePawn);
+    board.setLastMove(lastMove);
+
+    Assertions.assertAll(
+        () -> assertFalse(blackPawn.move(board, move)),
+        () -> assertSame(blackPawn, board.getPiece(move.from()), "Check black pawn position"),
+        () -> assertSame(whitePawn, board.getPiece(lastMove.to()), "Check white pawn not remove"));
+  }
 }

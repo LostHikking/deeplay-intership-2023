@@ -3,11 +3,12 @@ package io.deeplay.grandmastery.ui;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.Move;
-import io.deeplay.grandmastery.core.PlayerListener;
+import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +17,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 /** Класс для взаимодействия с пользователем через консоль. */
@@ -27,9 +26,6 @@ public class ConsoleUi implements UI {
 
   /** printStream для вывода. */
   private final PrintStream printStream;
-
-  /** Справка. */
-  private final String help;
 
   /**
    * Конструктор класса ConsoleUi.
@@ -42,7 +38,6 @@ public class ConsoleUi implements UI {
     this.bufferedReader =
         new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()));
     this.printStream = new PrintStream(outputStream);
-    help = writeHelp();
   }
 
   /**
@@ -126,7 +121,7 @@ public class ConsoleUi implements UI {
    * @param movePlayer игрок, выполняющий ход.
    */
   @Override
-  public void showMove(Board board, PlayerListener movePlayer) {
+  public void showMove(Board board, PlayerInfo movePlayer) {
     printStream.println("/―――――――――――――――――――――――――――――――――――――――――――――――――――\\");
     printStream.println(
         " Ход игрока: "
@@ -148,7 +143,7 @@ public class ConsoleUi implements UI {
    * @param winPlayer победитель игры, может быть null, если игра закончилась вничью.
    */
   @Override
-  public void showResultGame(PlayerListener winPlayer) {
+  public void showResultGame(PlayerInfo winPlayer) {
     if (winPlayer == null) {
       printStream.println("Stalemate!");
     } else {
@@ -159,22 +154,7 @@ public class ConsoleUi implements UI {
   /** Метод для вывода справки в консоль. */
   @Override
   public void printHelp() {
-    printStream.println(help);
-  }
-
-  /**
-   * Метод для считывания справки из файла в константу HELP.
-   *
-   * @throws IOException если произошла ошибка при считывании из файла.
-   */
-  private String writeHelp() throws IOException {
-    StringBuilder stringBuilder = new StringBuilder("\n");
-    final String helpPath = "src/main/resources/Help.txt";
-    try (BufferedReader file =
-        Files.newBufferedReader(Paths.get(helpPath), Charset.defaultCharset())) {
-      file.lines().forEach(s -> stringBuilder.append(s).append("\n"));
-    }
-    return stringBuilder.toString();
+    printStream.println(ConsoleHelp.help);
   }
 
   /**

@@ -12,6 +12,7 @@ public enum GameErrorCode {
   UNDEFINED_BEHAVIOR_BOT("Неопределенное поведение, у бота отсутствуют возможные ходы"),
   IMPOSSIBLE_PAWN_REVIVE("Невозможное превращение пешки"),
   ERROR_START_GAME("Ошибка запуска игры"),
+  UNKNOWN_GAME_MODE("Неизвестный мод игры."),
   ERROR_PLAYER_MAKE_MOVE("Ошибка при запросе хода у игрока, MoveData пустой");
 
   private final String description;

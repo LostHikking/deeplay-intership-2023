@@ -3,6 +3,9 @@ package io.deeplay.grandmastery.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
@@ -35,6 +38,8 @@ public class GameTest {
   /** Начальная позиция черного король. */
   private static Position defaultBlackKing;
 
+  private static final StateListener stateListener = mock(StateListener.class);
+
   /** Инициализация королей. */
   @BeforeAll
   public static void initKings() {
@@ -43,6 +48,7 @@ public class GameTest {
 
     defaultBlackKing = Position.getPositionFromString("e8");
     defaultWhiteKing = Position.getPositionFromString("e1");
+    doNothing().when(stateListener).changeGameState(any());
   }
 
   /** Инициализация игры. */
@@ -56,6 +62,7 @@ public class GameTest {
 
     board.setPiece(defaultWhiteKing, whiteKing);
     board.setPiece(defaultBlackKing, blackKing);
+    game.setStateListener(stateListener);
   }
 
   @Test

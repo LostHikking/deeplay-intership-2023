@@ -69,9 +69,4 @@ class RookTest {
     Assertions.assertEquals(
         10, piece.getAllMoves(board, Position.getPositionFromString("f5")).size());
   }
-
-  @Test
-  void canReviveTest() {
-    Assertions.assertFalse(piece.canRevive(board, null));
-  }
 }

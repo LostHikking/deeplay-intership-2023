@@ -74,24 +74,6 @@ public abstract class Piece {
    */
   public abstract List<Move> getAllMoves(Board board, Position position);
 
-  /**
-   * Превращение пешки. Этот метод реализован только у пешки.
-   *
-   * @param board доска
-   * @param move ход
-   */
-  public abstract void revive(Board board, Move move);
-
-  /**
-   * Проверяет, может ли пешка превратится. Этот метод реализован только у пешки. Остальные фигуры
-   * по умолчанию возвращают false
-   *
-   * @param board доска
-   * @param move ход
-   * @return true, если пешка может быть превращена, иначе false
-   */
-  public abstract boolean canRevive(Board board, Move move);
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {

@@ -1,8 +1,10 @@
 package io.deeplay.grandmastery.core;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Knight;
@@ -26,7 +28,7 @@ class AiPlayerTest {
   @Test
   void makeMoveWithPawn() {
     board.setPiece(new Position(new Column(0), new Row(0)), new Pawn(Color.WHITE));
-    aiPlayer.makeMove();
+    aiPlayer.makeMove(board);
     ArrayList<Move> moves = new ArrayList<>();
     moves.add(
         new Move(
@@ -44,7 +46,7 @@ class AiPlayerTest {
   @Test
   void makeMoveWithKnight() {
     board.setPiece(new Position(new Column(0), new Row(0)), new Knight(Color.WHITE));
-    aiPlayer.makeMove();
+    aiPlayer.makeMove(board);
     ArrayList<Move> moves = new ArrayList<>();
     moves.add(
         new Move(
@@ -62,7 +64,7 @@ class AiPlayerTest {
   @Test
   void makeMoveWithRook() {
     board.setPiece(new Position(new Column(0), new Row(0)), new Rook(Color.WHITE));
-    aiPlayer.makeMove();
+    aiPlayer.makeMove(board);
     ArrayList<Move> moves = new ArrayList<>();
     for (int i = 0; i < 8; i++) {
       moves.add(
@@ -82,7 +84,7 @@ class AiPlayerTest {
   @Test
   void makeMoveWithBishop() {
     board.setPiece(new Position(new Column(0), new Row(0)), new Bishop(Color.WHITE));
-    aiPlayer.makeMove();
+    aiPlayer.makeMove(board);
     ArrayList<Move> moves = new ArrayList<>();
     for (int i = 1; i < 8; i++) {
       moves.add(
@@ -97,7 +99,7 @@ class AiPlayerTest {
   @Test
   void makeMoveWithQueen() {
     board.setPiece(new Position(new Column(0), new Row(0)), new Queen(Color.WHITE));
-    aiPlayer.makeMove();
+    aiPlayer.makeMove(board);
     ArrayList<Move> moves = new ArrayList<>();
     for (int i = 0; i < 8; i++) {
       moves.add(
@@ -122,7 +124,7 @@ class AiPlayerTest {
   @Test
   void makeMoveWithKing() {
     board.setPiece(new Position(new Column(0), new Row(0)), new King(Color.WHITE));
-    aiPlayer.makeMove();
+    aiPlayer.makeMove(board);
     ArrayList<Move> moves = new ArrayList<>();
     moves.add(
         new Move(
@@ -140,5 +142,10 @@ class AiPlayerTest {
             new Position(new Column(1), new Row(1)),
             null));
     assertTrue(moves.contains(aiPlayer.getMoveData()));
+  }
+
+  @Test
+  void emptyBoardTest() {
+    assertThrows(GameException.class, () -> aiPlayer.makeMove(board));
   }
 }

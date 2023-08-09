@@ -66,9 +66,4 @@ class KnightTest {
     Assertions.assertEquals(
         6, piece.getAllMoves(board, Position.getPositionFromString("e5")).size());
   }
-
-  @Test
-  void canReviveTest() {
-    Assertions.assertFalse(piece.canRevive(board, null));
-  }
 }

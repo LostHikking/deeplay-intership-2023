@@ -5,7 +5,7 @@ import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 
 /** Абстрактный класс, представляющий игрока. */
-public abstract class Player implements PlayerListener {
+public abstract class Player implements PlayerListener, PlayerInfo {
   /** Имя игрока. */
   private final String name;
   /** Ход игрока в виде строки. */
@@ -40,10 +40,6 @@ public abstract class Player implements PlayerListener {
 
   public void setMoveData(Move move) {
     this.moveData = move;
-  }
-
-  public void deleteLastMove() {
-    moveData = null;
   }
 
   @Override

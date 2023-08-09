@@ -41,7 +41,7 @@ public class GameHistory implements GameListener, GameHistoryListener {
     var toPos = move.to();
     var piece = board.getPiece(toPos);
     Piece pieceToBeforeMove =
-        !boards.isEmpty() ? boards.get(boards.size() - 1).getPiece(toPos) : null;
+        boards.isEmpty() ? null : boards.get(boards.size() - 1).getPiece(toPos);
 
     if (piece.getFigureType() == FigureType.PAWN
         || move.promotionPiece() != null
@@ -102,32 +102,19 @@ public class GameHistory implements GameListener, GameHistoryListener {
     return copyBoard;
   }
 
-  public Board getBoardByIndex(int index) {
+  private Board getBoardByIndex(int index) {
     return boards.get(index);
   }
 
-  /** Удаляет последнее состояние доски из списка состояний, если список состояний не пуст. */
-  public void removeLastStateBoard() {
-    if (!boards.isEmpty()) {
-      boards.remove(boards.size() - 1);
-    }
-  }
-
-  public Move getMoveByIndex(int index) {
+  private Move getMoveByIndex(int index) {
     return moves.get(index);
   }
 
-  public void removeLastMove() {
-    moves.remove(moves.size() - 1);
-  }
-
+  /** Делает откат доски на один ход назад. */
   @Override
   public void rollback(Board board) {
-    Boards.copyBoard(getBoardByIndex(boards.size() - 2)).accept(board);
-    board.setLastMove(getMoveByIndex(moves.size() - 2));
-
-    removeLastStateBoard();
-    removeLastMove();
+    Boards.copyBoard(getBoardByIndex(boards.size() - 1)).accept(board);
+    board.setLastMove(getMoveByIndex(moves.size() - 1));
   }
 
   /**

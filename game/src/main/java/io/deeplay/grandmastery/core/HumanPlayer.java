@@ -23,7 +23,9 @@ public class HumanPlayer extends Player {
 
   /** Метод, отвечающий за ввод хода игрока. */
   @Override
-  public void makeMove() throws GameException {
+  public void makeMove(Board board) throws GameException {
+    this.board = board;
+
     try {
       setMoveData(userInterface.inputMove(this.getName()));
     } catch (IOException e) {

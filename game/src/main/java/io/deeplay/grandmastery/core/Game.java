@@ -3,7 +3,6 @@ package io.deeplay.grandmastery.core;
 import static io.deeplay.grandmastery.domain.GameState.BLACK_MOVE;
 import static io.deeplay.grandmastery.domain.GameState.BLACK_WIN;
 import static io.deeplay.grandmastery.domain.GameState.IMPOSSIBLE_MOVE;
-import static io.deeplay.grandmastery.domain.GameState.INIT_STATE;
 import static io.deeplay.grandmastery.domain.GameState.ROLLBACK;
 import static io.deeplay.grandmastery.domain.GameState.STALEMATE;
 import static io.deeplay.grandmastery.domain.GameState.WHITE_MOVE;
@@ -36,16 +35,18 @@ public class Game implements GameListener {
   }
 
   private void notifyStateListeners() {
-    stateListener.changeGameState(gameState);
+    if (stateListener != null) {
+      stateListener.changeGameState(gameState);
+    }
   }
 
   @Override
   public void startup(Board board) {
-    gameState = INIT_STATE;
     Boards.defaultChess().accept(board);
+
     gameState = WHITE_MOVE;
     prevGameState = WHITE_MOVE;
-    //    notifyStateListeners();
+    notifyStateListeners();
   }
 
   @Override
@@ -53,6 +54,7 @@ public class Game implements GameListener {
     Piece piece = board.getPiece(move.from());
     if (piece == null) {
       gameState = IMPOSSIBLE_MOVE;
+      notifyStateListeners();
       return;
     }
 
@@ -60,6 +62,7 @@ public class Game implements GameListener {
       board.setLastMove(move);
     } else {
       gameState = IMPOSSIBLE_MOVE;
+      notifyStateListeners();
       return;
     }
 
@@ -76,6 +79,8 @@ public class Game implements GameListener {
     } else {
       gameState = currentColor == Color.WHITE ? BLACK_MOVE : WHITE_MOVE;
     }
+
+    notifyStateListeners();
   }
 
   @Override

@@ -12,6 +12,7 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.figures.Pawn;
+import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.ByteArrayInputStream;
@@ -232,8 +233,6 @@ public class ConsoleUiTest {
   public void printHelpTest() throws IOException {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.printHelp();
-    String helpPath = "src/main/resources/Help.txt";
-    String expect = "\n" + Files.readString(Path.of(helpPath), Charset.defaultCharset()) + "\n";
-    assertEquals(expect, output.toString(Charset.defaultCharset()));
+    assertEquals(ConsoleHelp.help + "\n", output.toString(Charset.defaultCharset()));
   }
 }

@@ -11,9 +11,9 @@ public interface UI {
 
   String inputPlayerName(Color color) throws IOException;
 
-  void showMove(Board board, PlayerListener movePlayer);
+  void showMove(Board board, PlayerInfo movePlayer);
 
-  void showResultGame(PlayerListener winPlayer);
+  void showResultGame(PlayerInfo winPlayer);
 
   void printHelp() throws IOException;
 
