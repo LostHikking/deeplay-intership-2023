@@ -1,41 +1,39 @@
 package io.deeplay.grandmastery;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import io.deeplay.grandmastery.domain.ChessType;
+import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.dto.StartGameRequestDto;
+import io.deeplay.grandmastery.dto.StartGameResponseDto;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Client {
+  private static final Logger logger = LoggerFactory.getLogger(Client.class);
+  private static final String HOST = "localhost";
+  private static final int PORT = 8080;
 
-  /** Метод запускает клиент.
+  private final Dao dao;
+
+  public Client(String host, int port) throws IOException {
+    this.dao = new Dao(new Socket(host, port));
+    logger.info("Клиент успешно создан");
+  }
+
+  /**
+   * Метод запускает клиент.
+   *
    * @throws IOException Неудачая попытка чтения/записи
-   * */
+   */
   public static void main(String[] args) throws IOException {
-    try (var socket = new Socket("localhost", 8080);
-        var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
-        var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
-        var reader = new BufferedReader(new InputStreamReader(System.in, UTF_8))) {
+    var client = new Client(HOST, PORT);
+    var request =
+        new StartGameRequestDto("Sergei", GameMode.HUMAN_VS_HUMAN, ChessType.CLASSIC, Color.WHITE);
 
-      while (true) {
-        System.out.println("Введите сообщение:");
-        var word = reader.readLine();
-
-        out.write(word + "\n");
-        out.flush();
-
-        if ("stop".equals(word)) {
-          break;
-        }
-
-        var serverWord = in.readLine();
-        System.out.println(serverWord);
-      }
-    } catch (IOException e) {
-      throw new IOException();
-    }
+    // Здесь должен быть запуск UI и взаимодействие через него
+    var response = client.dao.query(request, StartGameResponseDto.class);
+    System.out.println(response);
   }
 }

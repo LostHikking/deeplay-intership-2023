@@ -1,50 +1,45 @@
 package io.deeplay.grandmastery;
 
-import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Server {
+  private static final Logger logger = LoggerFactory.getLogger(Server.class);
   public static final int PORT = 8080;
-  public static final List<ServerThread> serverList =
-      Collections.synchronizedList(new ArrayList<>());
-  public static final ExecutorService pool = Executors.newSingleThreadExecutor();
+  public static final ExecutorService START_GAME = Executors.newFixedThreadPool(8);
+  public static final ExecutorService GAMES = Executors.newFixedThreadPool(8);
 
   /**
-   * Метод запускает сервер.
+   * Метод запускает сервер на указанном порту.
    *
-   * @throws IOException Неудачая попытка чтения/записи
+   * @throws RuntimeException В случае ошибки сервера
    */
-  public static void main(String[] args) throws IOException {
+  public static void run() {
     try (var serverSocket = new ServerSocket(PORT)) {
-      while (true) {
+      logger.info("Сервер запущен!");
+
+      while (!serverSocket.isClosed()) {
         var socket = serverSocket.accept();
+        socket.setSoTimeout((int) TimeUnit.MINUTES.toMillis(5));
 
-        pool.execute(
-            () -> {
-              try {
-                //                var in = new BufferedReader(new
-                // InputStreamReader(socket.getInputStream(), UTF_8));
-                //                var mode = GameMode.valueOf(in.readLine());
-                //
-                //                if (mode == GameMode.BOT_VS_BOT) {
-                //
-                //                } else if (mode == GameMode.HUMAN_VS_BOT) {
-                //
-                //                } else if (mode == GameMode.HUMAN_VS_HUMAN) {
-                //
-                //                }
-
-                serverList.add(new ServerThread(socket));
-              } catch (Exception e) {
-                Thread.currentThread().interrupt();
-              }
-            });
+        START_GAME.execute(new CreateGame(socket));
       }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      GAMES.shutdownNow();
+      START_GAME.shutdownNow();
+
+      logger.info("Сервер остановлен!");
     }
+  }
+
+  /** Метод запускает сервер. */
+  public static void main(String[] args) {
+    Server.run();
   }
 }
