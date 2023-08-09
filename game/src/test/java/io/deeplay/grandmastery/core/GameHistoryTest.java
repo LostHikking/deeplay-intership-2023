@@ -17,7 +17,7 @@ class GameHistoryTest {
     gameHistory = new GameHistory();
     board = new HashBoard();
     Boards.defaultChess().accept(board);
-    gameHistory.setBoard(board);
+    gameHistory.startup(board);
 
     var movesStr =
         "d2d4,d7d5,c2c4,d5c4,e2e4,b8c6,g1f3,g8f6,e4e5,f6d7,f1e2,e7e6,b1c3,c6b4,c3b1,b4c6";
