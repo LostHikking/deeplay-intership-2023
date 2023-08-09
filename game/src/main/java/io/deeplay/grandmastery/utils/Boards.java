@@ -152,6 +152,7 @@ public class Boards {
         throw GameErrorCode.NULL_POINTER_SOURCE_BOARD.asException();
       }
 
+      destinationBoard.clear();
       if (sourceBoard.getLastMove() != null) {
         destinationBoard.setLastMove(copyMove(sourceBoard.getLastMove()));
       }

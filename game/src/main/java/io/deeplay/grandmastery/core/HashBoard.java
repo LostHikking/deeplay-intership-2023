@@ -81,4 +81,13 @@ public class HashBoard extends Board {
   public List<Position> getAllPiecePosition() {
     return pieces.keySet().stream().toList();
   }
+
+  @Override
+  public void clear() {
+    super.clear();
+
+    pieces.clear();
+    blackKing = null;
+    whiteKing = null;
+  }
 }
