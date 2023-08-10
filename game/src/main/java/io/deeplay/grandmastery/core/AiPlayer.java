@@ -8,7 +8,11 @@ import java.util.List;
 
 public class AiPlayer extends Player {
   public AiPlayer(Board board, Color color) {
-    super("Bot", board, color);
+    super("Bot", board, color, new EmptyUi());
+  }
+
+  public AiPlayer(String name, Board board, Color color, UI ui) {
+    super(name, board, color, ui);
   }
 
   @Override

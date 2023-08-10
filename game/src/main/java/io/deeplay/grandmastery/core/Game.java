@@ -11,7 +11,6 @@ import static io.deeplay.grandmastery.domain.GameState.WHITE_WIN;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.figures.Piece;
-import io.deeplay.grandmastery.utils.Boards;
 
 public class Game implements GameListener {
   private GameState gameState;
@@ -42,8 +41,6 @@ public class Game implements GameListener {
 
   @Override
   public void startup(Board board) {
-    Boards.defaultChess().accept(board);
-
     gameState = WHITE_MOVE;
     prevGameState = WHITE_MOVE;
     notifyStateListeners();
@@ -57,7 +54,7 @@ public class Game implements GameListener {
       notifyStateListeners();
       return;
     }
-
+    
     if (piece.move(board, move)) {
       board.setLastMove(move);
     } else {

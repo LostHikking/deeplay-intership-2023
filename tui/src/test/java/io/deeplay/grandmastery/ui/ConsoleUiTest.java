@@ -3,6 +3,7 @@ package io.deeplay.grandmastery.ui;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.deeplay.grandmastery.ConsoleUi;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.HumanPlayer;
@@ -20,8 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

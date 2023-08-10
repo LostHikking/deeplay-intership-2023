@@ -1,28 +1,30 @@
 package io.deeplay.grandmastery.helps;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 public class ConsoleHelp {
-  public static final String help =
-      """
+  public static final String help;
 
-                     ####   ######     ##     ##   ##  #####    ##   ##    ##      #####   ######   #######  ######   ##  ##
-                    ##  ##   ##  ##   ####    ###  ##   ## ##   ### ###   ####    ##   ##  # ## #    ##   #   ##  ##  ##  ##
-                   ##        ##  ##  ##  ##   #### ##   ##  ##  #######  ##  ##   #          ##      ## #     ##  ##  ##  ##
-                   ##        #####   ##  ##   ## ####   ##  ##  #######  ##  ##    #####     ##      ####     #####    ####
-                   ##  ###   ## ##   ######   ##  ###   ##  ##  ## # ##  ######        ##    ##      ## #     ## ##     ##
-                    ##  ##   ##  ##  ##  ##   ##   ##   ## ##   ##   ##  ##  ##   ##   ##    ##      ##   #   ##  ##    ##
-                     #####  #### ##  ##  ##   ##   ##  #####    ##   ##  ##  ##    #####    ####    #######  #### ##   ####
+  static {
+    String temp;
 
-                  Памятка для игры в шахматы через консоль:
-                  1) Шахматная доска представляет собой сетку 8x8, где каждая клетка обозначается комбинацией буквы и цифры (например, a1, h8).
-                  2) Используйте латинские буквы от "a" до "h" для обозначения столбцов и цифры от "1" до "8" для обозначения строк.
-                  3) Обозначение фигур (k - король, q - ферзь, b - слон, r - ладья, n - конь, p - пешка).
-                  4) Для обозначения ходов используйте формат "откуда"-"куда".
-                  5) Если пешка доходит до последнего ряда противника (восьмой ряд для белых и первый ряд для черных),
-                     используйте дополнительное обозначение фигуры (например, "e7e8q", где "q" означает ферзь).
+    var stringBuilder = new StringBuilder("\n");
 
-                  Примеры ходов:
-                  e2e4: перемещение пешки с клетки e2 на клетку e4.
-                  e7e8q: перемещение пешки с клетки e7 на клетку e8, с последующим превращением в ферзя (q).
-                  e1c1: рокировка влево белого короля, если возможна.
-                  """;
+    try (var file =
+        new BufferedReader(
+            new InputStreamReader(
+                Objects.requireNonNull(ConsoleHelp.class.getResourceAsStream("/Help.txt")),
+                StandardCharsets.UTF_8))) {
+      file.lines().forEach(s -> stringBuilder.append(s).append("\n"));
+      temp = stringBuilder.toString();
+    } catch (IOException e) {
+      temp = "";
+    }
+
+    help = temp;
+  }
 }

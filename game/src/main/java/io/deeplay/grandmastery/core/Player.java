@@ -15,6 +15,8 @@ public abstract class Player implements PlayerListener, PlayerInfo {
   /** Цвет игрока. */
   protected Color color;
 
+  protected UI ui;
+
   /**
    * Конструктор для плеера.
    *
@@ -22,10 +24,11 @@ public abstract class Player implements PlayerListener, PlayerInfo {
    * @param board Доска
    * @param color Цвет
    */
-  public Player(String name, Board board, Color color) {
+  public Player(String name, Board board, Color color, UI ui) {
     this.name = name;
     this.board = board;
     this.color = color;
+    this.ui = ui;
   }
 
   /**
@@ -55,5 +58,9 @@ public abstract class Player implements PlayerListener, PlayerInfo {
   @Override
   public Color getColor() {
     return color;
+  }
+
+  public UI getUi() {
+    return ui;
   }
 }

@@ -1,9 +1,11 @@
 package io.deeplay.grandmastery.core;
 
+import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.utils.Boards;
 import java.io.IOException;
 
 /**
@@ -17,23 +19,34 @@ public class GameController implements StateListener {
 
   private final Board board;
 
-  private PlayerListener white;
+  private final Player white;
 
-  private PlayerListener black;
+  private final Player black;
 
   private GameState gameStatus;
-
-  private UI ui;
 
   private Move move;
 
   /** Дефолтный конструктор класса {@code GameController}. */
-  public GameController() {
+  public GameController(Player playerWhite, Player playerBlack, ChessType chessType) {
+    // Вот и не знаешь в каком порядке playerWhite и playerBlack выставить, чтобы ни в чём не
+    // обвинили...
     this.move = null;
-    this.white = null;
-    this.black = null;
-    this.ui = null;
+
+    if (playerWhite.getColor() == Color.WHITE) {
+      this.white = playerWhite;
+      this.black = playerBlack;
+    } else {
+      this.white = playerBlack;
+      this.black = playerWhite;
+    }
+
     this.board = new HashBoard();
+    if (chessType == ChessType.CLASSIC) {
+      Boards.defaultChess().accept(board);
+    } else {
+      Boards.fischerChess().accept(board);
+    }
 
     Game game = new Game();
     GameHistory gameHistory = new GameHistory();
@@ -42,10 +55,6 @@ public class GameController implements StateListener {
 
     this.gameListener = game;
     this.historyListener = gameHistory;
-  }
-
-  public void setUi(UI ui) {
-    this.ui = ui;
   }
 
   private void notifyPlayerMakeMove(PlayerListener player) throws GameException {
@@ -79,36 +88,14 @@ public class GameController implements StateListener {
    * @throws IOException если возникла ошибка ввода/вывода
    */
   public void beginPlay() throws GameException, IOException {
-    switch (ui.selectMode()) {
-      case BOT_VS_BOT -> {
-        white = new AiPlayer(board, Color.WHITE);
-        black = new AiPlayer(board, Color.BLACK);
-      }
-      case HUMAN_VS_BOT -> {
-        Color color = ui.selectColor();
-        String playerName = ui.inputPlayerName(color);
-
-        if (color == Color.WHITE) {
-          white = new HumanPlayer(playerName, board, Color.WHITE, ui);
-          black = new AiPlayer(board, Color.BLACK);
-        } else if (color == Color.BLACK) {
-          black = new HumanPlayer(playerName, board, Color.BLACK, ui);
-          white = new AiPlayer(board, Color.WHITE);
-        }
-      }
-      case HUMAN_VS_HUMAN -> {
-        white = new HumanPlayer(ui.inputPlayerName(Color.WHITE), board, Color.WHITE, ui);
-        black = new HumanPlayer(ui.inputPlayerName(Color.BLACK), board, Color.BLACK, ui);
-      }
-      default -> throw GameErrorCode.UNKNOWN_GAME_MODE.asException();
-    }
-
     notifyGameStartup();
     if (board.getWhiteKingPosition() == null || board.getBlackKingPosition() == null) {
       throw GameErrorCode.ERROR_START_GAME.asException();
     } else {
-      ui.printHelp();
-      ui.showBoard(board);
+      white.getUi().printHelp();
+      white.getUi().showBoard(board);
+      black.getUi().printHelp();
+      black.getUi().showBoard(board);
     }
   }
 
@@ -116,15 +103,17 @@ public class GameController implements StateListener {
    * Выполняет следующий игровой ход в соответствии с текущим состоянием игры.
    *
    * @throws GameException если возникла ошибка во время игры
-   * @throws IOException если возникла ошибка ввода/вывода
    */
-  public void nextMove() throws GameException, IOException {
-    PlayerListener currentPlayer;
+  public void nextMove() throws GameException {
+    Player currentPlayer;
+    Player otherPlayer;
     GameState prevStatus = gameStatus;
     if (this.gameStatus == GameState.WHITE_MOVE) {
       currentPlayer = white;
+      otherPlayer = black;
     } else if (this.gameStatus == GameState.BLACK_MOVE) {
       currentPlayer = black;
+      otherPlayer = white;
     } else {
       isGameOver();
       return;
@@ -134,20 +123,20 @@ public class GameController implements StateListener {
       try {
         notifyPlayerMakeMove(currentPlayer);
       } catch (GameException e) {
-        ui.incorrectMove();
+        currentPlayer.getUi().incorrectMove();
       }
     }
     notifyGameMakeMove();
 
     if (gameStatus == GameState.IMPOSSIBLE_MOVE) {
-      ui.moveImpossible(move);
+      currentPlayer.getUi().moveImpossible(move);
       gameStatus = prevStatus;
     } else if (gameStatus == GameState.ROLLBACK) {
       notifyGameRollBack();
-      ui.moveImpossible(move);
+      currentPlayer.getUi().moveImpossible(move);
       gameStatus = prevStatus;
     } else {
-      ui.showMove(board, currentPlayer);
+      otherPlayer.getUi().showMove(board, currentPlayer);
     }
 
     this.move = null;
@@ -157,23 +146,29 @@ public class GameController implements StateListener {
    * Проверяет, завершилась ли игра.
    *
    * @return {@code true}, если игра завершилась, иначе {@code false}
-   * @throws IOException если возникла ошибка ввода/вывода
    */
-  public boolean isGameOver() throws IOException {
+  public boolean isGameOver() {
     switch (gameStatus) {
       case WHITE_WIN -> {
-        ui.showResultGame(white);
-        ui.close();
+        white.getUi().showResultGame(white);
+        white.getUi().close();
+        black.getUi().showResultGame(white);
+        black.getUi().close();
+
         return true;
       }
       case BLACK_WIN -> {
-        ui.showResultGame(black);
-        ui.close();
+        white.getUi().showResultGame(black);
+        white.getUi().close();
+        black.getUi().showResultGame(black);
+        black.getUi().close();
         return true;
       }
       case STALEMATE -> {
-        ui.showResultGame(null);
-        ui.close();
+        white.getUi().showResultGame(null);
+        white.getUi().close();
+        black.getUi().showResultGame(null);
+        black.getUi().close();
         return true;
       }
       default -> {

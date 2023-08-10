@@ -1,4 +1,4 @@
-package io.deeplay.grandmastery.ui;
+package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.BoardRender;
@@ -32,9 +32,8 @@ public class ConsoleUi implements UI {
    *
    * @param inputStream Входной поток данных.
    * @param outputStream Выходной поток данных.
-   * @throws IOException Возникает при ошибках ввода-вывода.
    */
-  public ConsoleUi(InputStream inputStream, OutputStream outputStream) throws IOException {
+  public ConsoleUi(InputStream inputStream, OutputStream outputStream) {
     this.bufferedReader =
         new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()));
     this.printStream = new PrintStream(outputStream);
