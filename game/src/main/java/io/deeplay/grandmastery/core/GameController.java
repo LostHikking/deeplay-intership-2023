@@ -96,6 +96,7 @@ public class GameController {
     }
     notifyGameStartup(board);
     gameStatus = GameState.WHITE_MOVE;
+    this.currentPlayer = white;
   }
 
   /**

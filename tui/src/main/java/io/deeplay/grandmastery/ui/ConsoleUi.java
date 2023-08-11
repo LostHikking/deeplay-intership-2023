@@ -154,7 +154,7 @@ public class ConsoleUi implements UI {
             + movePlayer.getLastMove());
     printStream.println("\\―――――――――――――――――――――――――――――――――――――――――――――――――――/");
 
-    showBoard(board);
+    showBoard(board, movePlayer.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
     printStream.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     printStream.flush();
   }
@@ -198,8 +198,8 @@ public class ConsoleUi implements UI {
    * @param board доска, которую необходимо отобразить.
    */
   @Override
-  public void showBoard(Board board) {
-    BoardRender.showBoard(printStream, board);
+  public void showBoard(Board board, Color color) {
+    BoardRender.showBoard(printStream, board, color);
   }
 
   @Override

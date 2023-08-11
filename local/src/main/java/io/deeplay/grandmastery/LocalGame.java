@@ -50,21 +50,25 @@ public class LocalGame {
    * Локальная игра в шахматы.
    *
    * @param args Аргументы командной строки (не используются).
-   * @throws IOException Ошибка ввода/вывода
    */
-  public static void main(String[] args) throws IOException {
-    GameController gameController = createGameController();
-    gameController.beginPlay(consoleUi.selectChessType());
-    consoleUi.printHelp();
-    consoleUi.showBoard(gameController.getBoard());
-    while (!gameController.isGameOver()) {
-      try {
-        gameController.nextMove();
-        consoleUi.showMove(gameController.getBoard(), gameController.getCurrentPlayer());
-      } catch (GameException e) {
-        consoleUi.incorrectMove();
+  public static void main(String[] args) {
+    try {
+      GameController gameController = createGameController();
+      gameController.beginPlay(consoleUi.selectChessType());
+      consoleUi.printHelp();
+      consoleUi.showBoard(gameController.getBoard(), Color.WHITE);
+      while (!gameController.isGameOver()) {
+        try {
+          gameController.nextMove();
+          consoleUi.showMove(gameController.getBoard(), gameController.getCurrentPlayer());
+        } catch (GameException e) {
+          consoleUi.incorrectMove();
+        }
       }
+      consoleUi.showResultGame(gameController.getWinPlayer());
+    } catch (GameException | IOException e) {
+      System.out.println(e.getMessage());
+      e.printStackTrace();
     }
-    consoleUi.showResultGame(gameController.getWinPlayer());
   }
 }

@@ -21,7 +21,7 @@ public interface UI extends InputListener {
 
   void printHelp() throws IOException;
 
-  void showBoard(Board board);
+  void showBoard(Board board, Color color);
 
   void incorrectMove();
 
