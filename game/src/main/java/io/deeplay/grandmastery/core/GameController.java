@@ -9,6 +9,7 @@ import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 /**
  * Класс {@code GameController} управляет игровым процессом, обеспечивая взаимодействие между
@@ -27,12 +28,15 @@ public class GameController {
 
   private final Game game;
 
+  @Getter
   private GameState gameStatus;
 
   private Player currentPlayer;
 
+  @Getter
   private PlayerInfo winPlayer;
 
+  @Getter
   private Move move;
 
   /** Дефолтный конструктор класса {@code GameController}. */
@@ -170,14 +174,6 @@ public class GameController {
     return black;
   }
 
-  public GameState getGameStatus() {
-    return gameStatus;
-  }
-
-  public Move getMove() {
-    return move;
-  }
-
   public Board getBoard() {
     return game.getCopyBoard();
   }
@@ -186,7 +182,4 @@ public class GameController {
     return currentPlayer;
   }
 
-  public PlayerInfo getWinPlayer() {
-    return winPlayer;
-  }
 }

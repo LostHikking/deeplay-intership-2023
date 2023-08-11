@@ -3,16 +3,18 @@ plugins {
     id("jacoco")
     id("net.ltgt.errorprone") version "3.1.0"
     id("checkstyle")
+    id("io.freefair.lombok") version "8.2.1"
 }
 
 group = "io.deeplay.grandmastery"
 version = "1.0-SNAPSHOT"
 
-subprojects {
+allprojects {
     apply(plugin = "java")
     apply(plugin = "net.ltgt.errorprone")
     apply(plugin = "jacoco")
     apply(plugin = "checkstyle")
+    apply(plugin = "io.freefair.lombok")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17

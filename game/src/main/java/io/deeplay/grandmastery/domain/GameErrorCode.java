@@ -1,7 +1,9 @@
 package io.deeplay.grandmastery.domain;
 
 import io.deeplay.grandmastery.exceptions.GameException;
+import lombok.Getter;
 
+@Getter
 public enum GameErrorCode {
   MOVE_NOT_FOUND("Ход не найден"),
   INCORRECT_MOVE_FORMAT("Неверный формат записи хода"),
@@ -21,10 +23,6 @@ public enum GameErrorCode {
 
   GameErrorCode(String description) {
     this.description = description;
-  }
-
-  public String getDescription() {
-    return description;
   }
 
   public GameException asException() {

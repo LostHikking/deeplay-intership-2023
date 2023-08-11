@@ -11,12 +11,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Dao {
-  private static final Logger logger = LoggerFactory.getLogger(Dao.class);
-
   private final Socket socket;
   private final BufferedReader in;
   private final BufferedWriter out;
@@ -32,7 +30,7 @@ public class Dao {
     this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
     this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
 
-    logger.info("Создали DAO класс");
+    log.info("Создали DAO класс");
   }
 
   /**
@@ -45,7 +43,7 @@ public class Dao {
    */
   public <T extends IDto> T query(IDto dto, Class<T> clazz) throws QueryException {
     try {
-      logger.info("Отправка запроса на сервер - " + dto);
+      log.info("Отправка запроса на сервер - " + dto);
       var json = ConversationService.serialize(dto);
 
       out.write(json);
@@ -55,7 +53,7 @@ public class Dao {
       var response = in.readLine();
       return ConversationService.deserialize(response, clazz);
     } catch (IOException e) {
-      logger.error("Во время выполнения запроса возникла ошибка - " + e.getMessage());
+      log.error("Во время выполнения запроса возникла ошибка - " + e.getMessage());
       throw new QueryException(e.getMessage());
     }
   }
@@ -67,6 +65,6 @@ public class Dao {
    */
   public void close() throws IOException {
     socket.close();
-    logger.info("Закрыли соединение");
+    log.info("Закрыли соединение");
   }
 }

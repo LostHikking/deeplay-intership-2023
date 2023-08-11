@@ -9,11 +9,10 @@ import io.deeplay.grandmastery.ui.ConsoleUi;
 import io.deeplay.grandmastery.utils.Boards;
 import java.io.IOException;
 import java.net.Socket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Client {
-  private static final Logger logger = LoggerFactory.getLogger(Client.class);
   private static final String HOST = "localhost";
   private static final int PORT = 8080;
   private final Dao dao;
@@ -21,7 +20,7 @@ public class Client {
 
   public Client(String host, int port) throws IOException {
     this.dao = new Dao(new Socket(host, port));
-    logger.info("Клиент успешно создан");
+    log.info("Клиент успешно создан");
   }
 
   /**

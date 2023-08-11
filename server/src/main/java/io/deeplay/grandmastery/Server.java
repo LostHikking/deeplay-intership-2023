@@ -5,11 +5,10 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Server {
-  private static final Logger logger = LoggerFactory.getLogger(Server.class);
   public static final int PORT = 8080;
   public static final ExecutorService START_GAME = Executors.newFixedThreadPool(8);
   public static final ExecutorService GAMES = Executors.newFixedThreadPool(8);
@@ -22,7 +21,7 @@ public class Server {
    */
   public static void run() throws IOException {
     try (var serverSocket = new ServerSocket(PORT)) {
-      logger.info("Сервер запущен!");
+      log.info("Сервер запущен!");
 
       while (!serverSocket.isClosed()) {
         var socket = serverSocket.accept();
@@ -40,7 +39,7 @@ public class Server {
         player.socket().close();
       }
 
-      logger.info("Сервер остановлен!");
+      log.info("Сервер остановлен!");
     }
   }
 

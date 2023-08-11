@@ -36,7 +36,7 @@ public class Queen extends Piece {
     }
 
     if (toCol == fromCol) {
-      return !Figures.hasFigureOnVerticalBetweenRowPosition(board, toCol, toRow, fromRow);
+      return Figures.hasNotFigureOnVerticalBetweenRowPosition(board, toCol, toRow, fromRow);
     } else if (toRow == fromRow) {
       return !Figures.hasFigureOnHorizontalBetweenColPosition(board, toRow, toCol, fromCol);
     } else if (abs(toCol - fromCol) == abs(toRow - fromRow)) {

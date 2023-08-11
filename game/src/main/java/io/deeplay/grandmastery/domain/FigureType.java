@@ -7,7 +7,9 @@ import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.figures.Queen;
 import io.deeplay.grandmastery.figures.Rook;
+import lombok.Getter;
 
+@Getter
 public enum FigureType {
   KING('k'),
   QUEEN('q'),
@@ -20,10 +22,6 @@ public enum FigureType {
 
   FigureType(char symbol) {
     this.symbol = symbol;
-  }
-
-  public char getSymbol() {
-    return symbol;
   }
 
   /**

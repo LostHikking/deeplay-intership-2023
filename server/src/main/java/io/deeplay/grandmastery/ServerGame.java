@@ -2,12 +2,10 @@ package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.Board;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ServerGame implements Runnable {
-  private static final Logger logger = LoggerFactory.getLogger(ServerGame.class);
-
   private final ServerPlayer playerA;
   private final ServerPlayer playerB;
   private final Board board;
@@ -18,17 +16,17 @@ public class ServerGame implements Runnable {
     this.playerB = playerB;
     this.board = board;
 
-    logger.info("Игра создана");
+    log.info("Игра создана");
   }
 
   @Override
   public void run() {
-    logger.info("Игра запущенна");
+    log.info("Игра запущенна");
     
     try {
       close();
     } catch (IOException e) {
-      logger.error("Во время закрытия соединения возникли проблемы - " + e.getMessage());
+      log.error("Во время закрытия соединения возникли проблемы - " + e.getMessage());
       throw new RuntimeException(e);
     }
   }
@@ -42,6 +40,6 @@ public class ServerGame implements Runnable {
     playerA.socket().close();
     playerB.socket().close();
 
-    logger.info("Соединение успешно закрыто!");
+    log.info("Соединение успешно закрыто!");
   }
 }

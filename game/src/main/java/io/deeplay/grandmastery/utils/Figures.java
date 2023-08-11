@@ -69,14 +69,14 @@ public class Figures {
    * @param endRow Конечная позиция по row
    * @return Есть ли фигура
    */
-  public static boolean hasFigureOnVerticalBetweenRowPosition(
+  public static boolean hasNotFigureOnVerticalBetweenRowPosition(
       Board board, int colNumber, int startRow, int endRow) {
     for (var pos = Math.min(startRow, endRow) + 1; pos < Math.max(startRow, endRow); pos++) {
       if (board.getPiece(colNumber, pos) != null) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   /**

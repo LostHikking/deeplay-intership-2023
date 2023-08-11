@@ -210,13 +210,14 @@ public class Boards {
 
   /**
    * Метод возвращает строку из доски.
+   *
    * @param board Board
    * @return String
-   * */
+   */
   public static String getStringFromBoard(Board board) {
     var result = new StringBuilder();
 
-    for (int i = 7; i >= 0; i--) {
+    for (int i = 0; i < 8; i++) {
       for (int j = 7; j >= 0; j--) {
         var piece = board.getPiece(i, j);
         if (piece != null) {
@@ -237,33 +238,55 @@ public class Boards {
 
   /**
    * Метод возвращает доску из строки.
+   *
    * @param string String
    * @return Board
-   * */
+   */
   public static Board getBoardFromString(String string) {
     var board = new HashBoard();
 
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        var character = String.valueOf(string.charAt(i * 8 + j));
-        if (!character.equals("_")) {
-          var color =
-              character.equals(character.toLowerCase(Locale.ROOT)) ? Color.BLACK : Color.WHITE;
-          var piece =
-              Objects.requireNonNull(
-                      Arrays.stream(FigureType.values())
-                          .filter(
-                              type ->
-                                  String.valueOf(type.getSymbol())
-                                      .equals(character.toLowerCase(Locale.ROOT)))
-                          .findAny()
-                          .orElse(null))
-                  .getPiece(color);
-          board.setPiece(new Position(new Column(i), new Row(j)), piece);
-        }
+    for (int i = 0; i < string.length(); i++) {
+      var character = String.valueOf(string.charAt(i));
+      if (!character.equals("_")) {
+        var color =
+            character.equals(character.toLowerCase(Locale.ROOT)) ? Color.BLACK : Color.WHITE;
+        var piece =
+            Objects.requireNonNull(
+                    Arrays.stream(FigureType.values())
+                        .filter(
+                            type ->
+                                String.valueOf(type.getSymbol())
+                                    .equals(character.toLowerCase(Locale.ROOT)))
+                        .findAny()
+                        .orElse(null))
+                .getPiece(color);
+        board.setPiece(new Position(new Column(i / 8), new Row(i % 8)), piece);
       }
     }
 
     return board;
+  }
+
+  /**
+   * Функция проверяет равны ли доски.
+   *
+   * @param first Первая доска
+   * @param second Вторая доска
+   * @return Равны ли доски
+   */
+  public static boolean isEqualsBoards(Board first, Board second) {
+    List<Position> allOldPosition = first.getAllPiecePosition();
+
+    for (Position position : allOldPosition) {
+      Piece historyBoardPiece = first.getPiece(position);
+      Piece boardPiece = second.getPiece(position);
+      if (historyBoardPiece != null && !historyBoardPiece.equals(boardPiece)) {
+        return false;
+      } else if (boardPiece != null && !boardPiece.equals(historyBoardPiece)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

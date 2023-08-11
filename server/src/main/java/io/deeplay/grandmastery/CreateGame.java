@@ -22,12 +22,11 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CreateGame implements Runnable {
   private static final Object MUTEX = new Object();
-  private static final Logger logger = LoggerFactory.getLogger(CreateGame.class);
   public static final List<ServerPlayer> players = new ArrayList<>();
 
   private final Socket socket;
@@ -39,7 +38,7 @@ public class CreateGame implements Runnable {
   @Override
   public void run() {
     try {
-      logger.info("Запущен таск CreateGame");
+      log.info("Запущен таск CreateGame");
 
       var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
       var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
@@ -59,7 +58,7 @@ public class CreateGame implements Runnable {
             try {
               gameController.nextMove();
             } catch (GameException e) {
-              logger.error(e.getMessage());
+              log.error(e.getMessage());
             }
           }
 
@@ -137,7 +136,7 @@ public class CreateGame implements Runnable {
         default -> throw new RuntimeException("Неизвестный GameMode " + requestDto.getGameMode());
       }
     } catch (Exception e) {
-      logger.error("В таске CreateGame возникла ошибка - " + e.getMessage());
+      log.error("В таске CreateGame возникла ошибка - " + e.getMessage());
       throw new RuntimeException();
     }
   }
@@ -170,6 +169,6 @@ public class CreateGame implements Runnable {
     bufferedWriter.newLine();
     bufferedWriter.flush();
 
-    logger.info("Отправили данные на клиент - " + text);
+    log.info("Отправили данные на клиент - " + text);
   }
 }

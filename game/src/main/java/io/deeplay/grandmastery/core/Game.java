@@ -6,7 +6,9 @@ import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
+import lombok.Getter;
 
+@Getter
 public class Game implements GameListener {
   private Color colorMove;
 
@@ -45,16 +47,8 @@ public class Game implements GameListener {
     gameOver = true;
   }
 
-  public Color getColorMove() {
-    return colorMove;
-  }
-
   public void setColorMove(Color colorMove) {
     this.colorMove = colorMove;
-  }
-
-  public boolean isGameOver() {
-    return gameOver;
   }
 
   /**
