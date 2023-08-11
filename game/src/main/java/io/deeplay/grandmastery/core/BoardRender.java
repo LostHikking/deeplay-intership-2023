@@ -9,9 +9,9 @@ import java.io.PrintStream;
 /** Класс, отвечающий за отображение доски. */
 public class BoardRender {
 
-  public static void showBoard(OutputStream outputStream, Board board) {
+  public static void showBoard(OutputStream outputStream, Board board, Color color) {
     PrintStream printStream = new PrintStream(outputStream);
-    showBoard(printStream, board);
+    showBoard(printStream, board, color);
   }
 
   /**
@@ -19,28 +19,44 @@ public class BoardRender {
    *
    * @param printStream Поток вывода
    * @param board Доска
+   * @param color цвет игрока
    */
-  public static void showBoard(PrintStream printStream, Board board) {
+  public static void showBoard(PrintStream printStream, Board board, Color color) {
     printStream.println("┏━━━━━━━━━━━━━━━━━━━━━━┓");
-    for (int i = 7; i >= 0; i--) {
-      printStream.print("┃ " + (i + 1) + " ");
+    int startIndex;
+    int endIndex;
+    int direction;
+
+    if (color == Color.WHITE) {
+      startIndex = 7;
+      endIndex = 0;
+      direction = -1;
+    } else {
+      startIndex = 0;
+      endIndex = 7;
+      direction = 1;
+    }
+
+    for (int i = startIndex; i != endIndex + direction; i += direction) {
+      printStream.print(color == Color.WHITE ? "┃ " + (i + 1) + " " : "┃  ");
       for (int j = 0; j < 8; j++) {
-        Piece piece = board.getPiece(j, i);
+        int horizontalIndex = (color == Color.WHITE) ? j : 7 - j;
+        Piece piece = board.getPiece(horizontalIndex, i);
         if (piece != null) {
           printStream.print("│" + pieceSymbol(piece));
         } else {
           printStream.print("│ ");
         }
       }
-      printStream.print("│  ┃\n");
+      printStream.print(color == Color.WHITE ? "│  ┃\n" : "│ " + (i + 1) + " ┃\n");
     }
 
-    printStream.print("┃    ");
+    printStream.print(color == Color.WHITE ? "┃    " : "┃   ");
     for (int i = 0; i < 8; i++) {
-      printStream.print((char) (97 + i) + " ");
+      printStream.print(color == Color.WHITE ? (char) (97 + i) + " " : (char) (104 - i) + " ");
     }
 
-    printStream.println("  ┃");
+    printStream.println(color == Color.WHITE ? "  ┃" : "   ┃");
     printStream.println("┗━━━━━━━━━━━━━━━━━━━━━━┛");
     printStream.flush();
   }

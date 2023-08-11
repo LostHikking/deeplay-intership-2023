@@ -54,7 +54,8 @@ class GameStateCheckerTest {
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertTrue(GameStateChecker.isDraw(board, gameHistory));
@@ -69,7 +70,8 @@ class GameStateCheckerTest {
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertTrue(GameStateChecker.isDraw(board, gameHistory));
@@ -84,7 +86,8 @@ class GameStateCheckerTest {
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertTrue(GameStateChecker.isDraw(board, gameHistory));
@@ -100,7 +103,8 @@ class GameStateCheckerTest {
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertTrue(GameStateChecker.isDraw(board, gameHistory));
@@ -115,7 +119,8 @@ class GameStateCheckerTest {
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertFalse(GameStateChecker.isDraw(board, gameHistory));
@@ -130,7 +135,8 @@ class GameStateCheckerTest {
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertFalse(GameStateChecker.isDraw(board, gameHistory));
@@ -143,9 +149,10 @@ class GameStateCheckerTest {
     board.setPiece(Position.getPositionFromString("h8"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("h5h6");
-    new King(Color.WHITE).move(board, move);
+    board.getPiece(Position.getPositionFromString("h5")).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertAll(
@@ -160,9 +167,10 @@ class GameStateCheckerTest {
     board.setPiece(Position.getPositionFromString("h8"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("h4h5");
-    new King(Color.WHITE).move(board, move);
+    board.getPiece(Position.getPositionFromString("h4")).move(board, move);
 
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
     board.setLastMove(move);
 
     Assertions.assertAll(

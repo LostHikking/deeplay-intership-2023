@@ -3,11 +3,13 @@ package io.deeplay.grandmastery.ui;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.Move;
-import io.deeplay.grandmastery.core.PlayerListener;
+import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.UI;
+import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 /** Класс для взаимодействия с пользователем через консоль. */
@@ -28,21 +28,38 @@ public class ConsoleUi implements UI {
   /** printStream для вывода. */
   private final PrintStream printStream;
 
-  /** Справка. */
-  private final String help;
-
   /**
    * Конструктор класса ConsoleUi.
    *
    * @param inputStream Входной поток данных.
    * @param outputStream Выходной поток данных.
-   * @throws IOException Возникает при ошибках ввода-вывода.
    */
-  public ConsoleUi(InputStream inputStream, OutputStream outputStream) throws IOException {
+  public ConsoleUi(InputStream inputStream, OutputStream outputStream) {
     this.bufferedReader =
         new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()));
     this.printStream = new PrintStream(outputStream);
-    help = writeHelp();
+  }
+
+  /**
+   * Выводит на консоль текст с инструкцией для выбора типа шахмат. Ожидает ввода от пользователя и
+   * возвращает выбранный тип шахмат.
+   *
+   * @return выбранный тип шахмат.
+   * @throws IOException если возникла ошибка при чтении ввода.
+   */
+  @Override
+  public ChessType selectChessType() throws IOException {
+    printStream.println("Выберите начальную расстановку шахмат");
+    printStream.println("1. Классические");
+    printStream.println("2. Фишера");
+
+    String type = expectInput(List.of("1", "2"));
+
+    if ("1".equals(type)) {
+      return ChessType.CLASSIC;
+    } else {
+      return ChessType.FISHERS;
+    }
   }
 
   /**
@@ -126,7 +143,7 @@ public class ConsoleUi implements UI {
    * @param movePlayer игрок, выполняющий ход.
    */
   @Override
-  public void showMove(Board board, PlayerListener movePlayer) {
+  public void showMove(Board board, PlayerInfo movePlayer) {
     printStream.println("/―――――――――――――――――――――――――――――――――――――――――――――――――――\\");
     printStream.println(
         " Ход игрока: "
@@ -134,10 +151,10 @@ public class ConsoleUi implements UI {
             + "("
             + movePlayer.getColor()
             + ") "
-            + LongAlgebraicNotation.moveToString(movePlayer.getMoveData()));
+            + movePlayer.getLastMove());
     printStream.println("\\―――――――――――――――――――――――――――――――――――――――――――――――――――/");
 
-    showBoard(board);
+    showBoard(board, movePlayer.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
     printStream.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     printStream.flush();
   }
@@ -148,7 +165,7 @@ public class ConsoleUi implements UI {
    * @param winPlayer победитель игры, может быть null, если игра закончилась вничью.
    */
   @Override
-  public void showResultGame(PlayerListener winPlayer) {
+  public void showResultGame(PlayerInfo winPlayer) {
     if (winPlayer == null) {
       printStream.println("Stalemate!");
     } else {
@@ -159,22 +176,7 @@ public class ConsoleUi implements UI {
   /** Метод для вывода справки в консоль. */
   @Override
   public void printHelp() {
-    printStream.println(help);
-  }
-
-  /**
-   * Метод для считывания справки из файла в константу HELP.
-   *
-   * @throws IOException если произошла ошибка при считывании из файла.
-   */
-  private String writeHelp() throws IOException {
-    StringBuilder stringBuilder = new StringBuilder("\n");
-    final String helpPath = "src/main/resources/Help.txt";
-    try (BufferedReader file =
-        Files.newBufferedReader(Paths.get(helpPath), Charset.defaultCharset())) {
-      file.lines().forEach(s -> stringBuilder.append(s).append("\n"));
-    }
-    return stringBuilder.toString();
+    printStream.println(ConsoleHelp.help);
   }
 
   /**
@@ -196,8 +198,8 @@ public class ConsoleUi implements UI {
    * @param board доска, которую необходимо отобразить.
    */
   @Override
-  public void showBoard(Board board) {
-    BoardRender.showBoard(printStream, board);
+  public void showBoard(Board board, Color color) {
+    BoardRender.showBoard(printStream, board, color);
   }
 
   @Override

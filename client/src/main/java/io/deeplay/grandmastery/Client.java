@@ -11,9 +11,11 @@ import java.net.Socket;
 
 public class Client {
 
-  /** Метод запускает клиент.
+  /**
+   * Метод запускает клиент.
+   *
    * @throws IOException Неудачая попытка чтения/записи
-   * */
+   */
   public static void main(String[] args) throws IOException {
     try (var socket = new Socket("localhost", 8080);
         var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));

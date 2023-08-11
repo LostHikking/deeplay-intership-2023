@@ -23,6 +23,7 @@ class KnightTest {
     board.setPiece(Position.getPositionFromString("d3"), new Bishop(Color.WHITE));
     board.setPiece(Position.getPositionFromString("d7"), new Bishop(Color.BLACK));
     board.setPiece(Position.getPositionFromString("f7"), new King(Color.BLACK));
+    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
   }
 
   @ParameterizedTest
@@ -65,10 +66,5 @@ class KnightTest {
   void getAllMovesTest() {
     Assertions.assertEquals(
         6, piece.getAllMoves(board, Position.getPositionFromString("e5")).size());
-  }
-
-  @Test
-  void canReviveTest() {
-    Assertions.assertFalse(piece.canRevive(board, null));
   }
 }

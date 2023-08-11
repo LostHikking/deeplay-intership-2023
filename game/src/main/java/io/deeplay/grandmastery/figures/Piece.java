@@ -1,6 +1,7 @@
 package io.deeplay.grandmastery.figures;
 
 import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.GameStateChecker;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
@@ -22,10 +23,6 @@ public abstract class Piece {
     return color;
   }
 
-  public boolean isMoved() {
-    return isMoved;
-  }
-
   public void setMoved() {
     isMoved = true;
   }
@@ -43,11 +40,21 @@ public abstract class Piece {
    *     не удалось переместить фигуру
    */
   public boolean move(Board board, Move move) {
-    if (canMove(board, move, true)) {
+    if (canMove(board, move)) {
       Piece piece = board.getPiece(move.from());
       board.removePiece(move.from());
-      board.removePiece(move.to());
+      Piece removePiece = board.removePiece(move.to());
       board.setPiece(move.to(), piece);
+
+      if (GameStateChecker.isCheck(board, this.color)) {
+        board.removePiece(move.to());
+        board.setPiece(move.from(), piece);
+        if (removePiece != null) {
+          board.setPiece(move.to(), removePiece);
+        }
+
+        return false;
+      }
 
       this.isMoved = true;
       return true;
@@ -65,6 +72,10 @@ public abstract class Piece {
    */
   public abstract boolean canMove(Board board, Move move, boolean withKingCheck);
 
+  public boolean canMove(Board board, Move move) {
+    return canMove(board, move, true);
+  }
+
   /**
    * Получает все возможные ходы для фигуры с указанной позиции на доске.
    *
@@ -73,24 +84,6 @@ public abstract class Piece {
    * @return {@code List<Move>} список всех возможных ходов
    */
   public abstract List<Move> getAllMoves(Board board, Position position);
-
-  /**
-   * Превращение пешки. Этот метод реализован только у пешки.
-   *
-   * @param board доска
-   * @param move ход
-   */
-  public abstract void revive(Board board, Move move);
-
-  /**
-   * Проверяет, может ли пешка превратится. Этот метод реализован только у пешки. Остальные фигуры
-   * по умолчанию возвращают false
-   *
-   * @param board доска
-   * @param move ход
-   * @return true, если пешка может быть превращена, иначе false
-   */
-  public abstract boolean canRevive(Board board, Move move);
 
   @Override
   public boolean equals(Object o) {

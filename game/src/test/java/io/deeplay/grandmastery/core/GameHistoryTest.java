@@ -26,7 +26,8 @@ class GameHistoryTest {
     for (Move move : moves) {
       var piece = board.getPiece(move.from());
       piece.move(board, move);
-      gameHistory.makeMove(move, board);
+      gameHistory.addBoard(board);
+      gameHistory.makeMove(move);
     }
   }
 
@@ -34,8 +35,8 @@ class GameHistoryTest {
   void setBoardTest() {
     var newGameHistory = new GameHistory();
     Assertions.assertAll(
-        () -> Assertions.assertNull(newGameHistory.getBoard()),
-        () -> Assertions.assertNotNull(gameHistory.getBoard()));
+        () -> Assertions.assertNull(newGameHistory.getCurBoard()),
+        () -> Assertions.assertNotNull(gameHistory.getCurBoard()));
   }
 
   @Test
@@ -50,7 +51,8 @@ class GameHistoryTest {
 
     var piece = board.getPiece(move.from());
     piece.move(board, move);
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
 
     Assertions.assertEquals(0, gameHistory.getMovesWithoutTakingAndAdvancingPawns());
   }
@@ -65,7 +67,8 @@ class GameHistoryTest {
     for (Move move : moves) {
       var piece = board.getPiece(move.from());
       piece.move(board, move);
-      gameHistory.makeMove(move, board);
+      gameHistory.addBoard(board);
+      gameHistory.makeMove(move);
     }
 
     Assertions.assertEquals(0, gameHistory.getMovesWithoutTakingAndAdvancingPawns());
@@ -101,7 +104,8 @@ class GameHistoryTest {
     for (Move move : moves) {
       var piece = board.getPiece(move.from());
       piece.move(board, move);
-      gameHistory.makeMove(move, board);
+      gameHistory.addBoard(board);
+      gameHistory.makeMove(move);
     }
 
     Assertions.assertEquals(1, gameHistory.getMaxRepeatPosition(board));
@@ -112,7 +116,8 @@ class GameHistoryTest {
     var move = LongAlgebraicNotation.getMoveFromString("b1c3");
     var piece = board.getPiece(move.from());
     piece.move(board, move);
-    gameHistory.makeMove(move, board);
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
 
     Assertions.assertEquals(2, gameHistory.getMaxRepeatPosition(board));
   }

@@ -2,30 +2,32 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 
 /** Абстрактный класс, представляющий игрока. */
-public abstract class Player implements PlayerListener {
+public abstract class Player implements GameListener, PlayerInfo {
   /** Имя игрока. */
   private final String name;
   /** Ход игрока в виде строки. */
-  private Move moveData;
-  /** Доска. */
-  protected Board board;
+  private String lastMove;
+
+  protected Game game;
   /** Цвет игрока. */
   protected Color color;
+
+  protected boolean gameOver;
 
   /**
    * Конструктор для плеера.
    *
    * @param name Имя
-   * @param board Доска
    * @param color Цвет
    */
-  public Player(String name, Board board, Color color) {
+  public Player(String name, Color color) {
     this.name = name;
-    this.board = board;
     this.color = color;
+    this.game = new Game();
   }
 
   /**
@@ -34,17 +36,15 @@ public abstract class Player implements PlayerListener {
    * @param move Ход игрока
    * @throws GameException Если ход не валиден.
    */
-  public void setMoveData(String move) throws GameException {
-    this.moveData = LongAlgebraicNotation.getMoveFromString(move);
+  public void setLastMove(Move move) throws GameException {
+    this.lastMove = LongAlgebraicNotation.moveToString(move);
   }
 
-  public void setMoveData(Move move) {
-    this.moveData = move;
+  public void setLastMove(String move) throws GameException {
+    this.lastMove = move;
   }
 
-  public void deleteLastMove() {
-    moveData = null;
-  }
+  public abstract Move createMove() throws GameException;
 
   @Override
   public String getName() {
@@ -52,12 +52,28 @@ public abstract class Player implements PlayerListener {
   }
 
   @Override
-  public Move getMoveData() {
-    return moveData;
+  public String getLastMove() {
+    return lastMove;
   }
 
   @Override
   public Color getColor() {
     return color;
+  }
+
+  @Override
+  public void startup(Board board) {
+    game.startup(board);
+    gameOver = false;
+  }
+
+  @Override
+  public void makeMove(Move move) {
+    game.makeMove(move);
+  }
+
+  @Override
+  public void gameOver() {
+    gameOver = true;
   }
 }
