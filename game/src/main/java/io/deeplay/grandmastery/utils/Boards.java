@@ -2,10 +2,12 @@ package io.deeplay.grandmastery.utils;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
+import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
@@ -15,7 +17,10 @@ import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.figures.Queen;
 import io.deeplay.grandmastery.figures.Rook;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -201,5 +206,64 @@ public class Boards {
       }
       default -> throw GameErrorCode.UNKNOWN_FIGURE_TYPE.asException();
     }
+  }
+
+  /**
+   * Метод возвращает строку из доски.
+   * @param board Board
+   * @return String
+   * */
+  public static String getStringFromBoard(Board board) {
+    var result = new StringBuilder();
+
+    for (int i = 7; i >= 0; i--) {
+      for (int j = 7; j >= 0; j--) {
+        var piece = board.getPiece(i, j);
+        if (piece != null) {
+          var symbol = String.valueOf(piece.getFigureType().getSymbol());
+
+          if (piece.getColor() == Color.WHITE) {
+            result.append(symbol);
+          } else {
+            result.append(symbol.toUpperCase(Locale.ROOT));
+          }
+        } else {
+          result.append("_");
+        }
+      }
+    }
+    return result.toString();
+  }
+
+  /**
+   * Метод возвращает доску из строки.
+   * @param string String
+   * @return Board
+   * */
+  public static Board getBoardFromString(String string) {
+    var board = new HashBoard();
+
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        var character = String.valueOf(string.charAt(i * 8 + j));
+        if (!character.equals("_")) {
+          var color =
+              character.equals(character.toLowerCase(Locale.ROOT)) ? Color.BLACK : Color.WHITE;
+          var piece =
+              Objects.requireNonNull(
+                      Arrays.stream(FigureType.values())
+                          .filter(
+                              type ->
+                                  String.valueOf(type.getSymbol())
+                                      .equals(character.toLowerCase(Locale.ROOT)))
+                          .findAny()
+                          .orElse(null))
+                  .getPiece(color);
+          board.setPiece(new Position(new Column(i), new Row(j)), piece);
+        }
+      }
+    }
+
+    return board;
   }
 }

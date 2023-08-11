@@ -1,43 +1,60 @@
 package io.deeplay.grandmastery;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import io.deeplay.grandmastery.core.UI;
+import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.dto.StartGameRequestDto;
+import io.deeplay.grandmastery.dto.StartGameResponseDto;
+import io.deeplay.grandmastery.ui.ConsoleUi;
+import io.deeplay.grandmastery.utils.Boards;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Client {
+  private static final Logger logger = LoggerFactory.getLogger(Client.class);
+  private static final String HOST = "localhost";
+  private static final int PORT = 8080;
+
+  private final Dao dao;
+
+  public Client(String host, int port) throws IOException {
+    this.dao = new Dao(new Socket(host, port));
+    logger.info("Клиент успешно создан");
+  }
+
+  /**
+   * Запускает клиент с определённым UI.
+   *
+   * @param ui UI
+   * @throws IOException ошибка ввода/вывода
+   */
+  public void start(UI ui) throws IOException {
+    var gameMode = ui.selectMode();
+    var isBotVsBotGame = gameMode == GameMode.BOT_VS_BOT;
+    var color = isBotVsBotGame ? null : ui.selectColor();
+    var name = isBotVsBotGame ? null : ui.inputPlayerName(color);
+    var chessType = ui.selectChessType();
+
+    var request = new StartGameRequestDto(name, gameMode, chessType, color);
+    var response = dao.query(request, StartGameResponseDto.class);
+
+    ui.printHelp();
+    ui.showBoard(Boards.getBoardFromString(response.getBoard()));
+
+    if (isBotVsBotGame) {
+      return;
+    }
+
+    System.out.println("Continue...");
+  }
 
   /**
    * Метод запускает клиент.
    *
-   * @throws IOException Неудачая попытка чтения/записи
+   * @throws IOException Неудачная попытка чтения/записи
    */
   public static void main(String[] args) throws IOException {
-    try (var socket = new Socket("localhost", 8080);
-        var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
-        var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
-        var reader = new BufferedReader(new InputStreamReader(System.in, UTF_8))) {
-
-      while (true) {
-        System.out.println("Введите сообщение:");
-        var word = reader.readLine();
-
-        out.write(word + "\n");
-        out.flush();
-
-        if ("stop".equals(word)) {
-          break;
-        }
-
-        var serverWord = in.readLine();
-        System.out.println(serverWord);
-      }
-    } catch (IOException e) {
-      throw new IOException();
-    }
+    new Client(HOST, PORT).start(new ConsoleUi(System.in, System.out));
   }
 }

@@ -6,7 +6,6 @@ import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class GameHistoryTest {
@@ -41,7 +40,6 @@ class GameHistoryTest {
   }
 
   @Test
-  @Disabled
   void getMovesWithoutTakingAndAdvancingPawnsTest() {
     Assertions.assertEquals(4, gameHistory.getMovesWithoutTakingAndAdvancingPawns());
   }
@@ -97,7 +95,6 @@ class GameHistoryTest {
   }
 
   @Test
-  @Disabled
   void getMaxRepeatPositionTestWithNewPosition() {
     var moves =
         List.of(
@@ -115,7 +112,6 @@ class GameHistoryTest {
   }
 
   @Test
-  @Disabled
   void getMaxRepeatPositionTest() {
     var move = LongAlgebraicNotation.getMoveFromString("b1c3");
     var piece = board.getPiece(move.from());

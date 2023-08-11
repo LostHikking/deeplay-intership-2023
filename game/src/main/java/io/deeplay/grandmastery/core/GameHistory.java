@@ -115,7 +115,7 @@ public class GameHistory implements GameListener {
   public void addBoard(Board board) {
     Board copyBoard = new HashBoard();
     Boards.copyBoard(board).accept(copyBoard);
-    boards.add(board);
+    boards.add(copyBoard);
   }
 
   /**
