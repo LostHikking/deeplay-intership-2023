@@ -4,6 +4,7 @@ import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
+import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.utils.Figures;
@@ -31,13 +32,14 @@ public class King extends Piece {
       return false;
     }
 
-    int deltaRow = deltaRow(move);
-    int deltaCol = deltaCol(move);
+    final int deltaRow = deltaRow(move);
+    final int deltaCol = deltaCol(move);
 
     if (!isMoved && deltaRow == 0 && deltaCol == 2) {
       return canCastling(board, move);
     }
 
+    rookCastlingPos = null;
     return deltaRow < 2 && deltaCol < 2;
   }
 
@@ -50,8 +52,12 @@ public class King extends Piece {
   }
 
   private boolean canCastling(Board board, Move move) {
+    final int toCol = move.to().col().value();
+    final int row = move.from().row().value();
+    final int fromCol = move.from().col().value();
+
     int rookCol;
-    switch (move.to().col().value()) {
+    switch (toCol) {
       case 2 -> rookCol = 0;
       case 6 -> rookCol = 7;
       default -> {
@@ -59,13 +65,16 @@ public class King extends Piece {
       }
     }
 
-    Position rookPos = new Position(new Column(rookCol), move.from().row());
+    if (row != 0 && row != 7) {
+      return false;
+    }
+
+    Position rookPos = new Position(new Column(rookCol), new Row(row));
     Piece rook = board.getPiece(rookPos);
     if (rook == null || rook.isMoved || rook.color != this.color) {
       return false;
     }
-    if (Figures.hasFigureOnHorizontalBetweenColPosition(
-        board, move.to().row().value(), move.from().col().value(), rookCol)) {
+    if (Figures.hasFigureOnHorizontalBetweenColPosition(board, row, fromCol, rookCol)) {
       return false;
     }
 
@@ -73,9 +82,7 @@ public class King extends Piece {
         board.getAllPieceByColorPosition(this.color == Color.WHITE ? Color.BLACK : Color.WHITE);
 
     Move tmpMove;
-    for (int i = Math.min(move.from().col().value(), move.to().col().value());
-        i < Math.max(move.from().col().value(), move.to().col().value());
-        i++) {
+    for (int i = Math.min(fromCol, toCol); i < Math.max(fromCol, toCol); i++) {
       for (Position position : positions) {
         tmpMove = new Move(position, new Position(new Column(i), move.to().row()), null);
         if (board.getPiece(position).canMove(board, tmpMove)) {
@@ -102,6 +109,7 @@ public class King extends Piece {
         newRookPos = new Position(new Column(5), rookCastlingPos.row());
       }
       board.setPiece(newRookPos, rook);
+      rookCastlingPos = null;
     }
 
     return result;

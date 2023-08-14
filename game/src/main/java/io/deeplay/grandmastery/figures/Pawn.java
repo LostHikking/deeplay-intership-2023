@@ -30,6 +30,7 @@ public class Pawn extends Piece {
       return false;
     }
 
+    captureEnPassant = false;
     if (move.promotionPiece() != null) {
       return (canMoveForward(move, board) || canCapture(move, board)) && canRevive(move);
     }
@@ -37,10 +38,10 @@ public class Pawn extends Piece {
     if (move.from().col().value() == move.to().col().value()) {
       return canMoveForward(move, board);
     } else if (areOnDiagonal(move)) {
-      if (board.getLastMove() != null) {
-        checkCaptureEnPassant(move, board);
+      if (board.getLastMove() != null && !board.hasPiece(move.to())) {
+        return checkCaptureEnPassant(move, board);
       }
-      return captureEnPassant || canCapture(move, board);
+      return canCapture(move, board);
     }
     return false;
   }
@@ -73,17 +74,19 @@ public class Pawn extends Piece {
     }
   }
 
-  private void checkCaptureEnPassant(Move move, Board board) {
+  private boolean checkCaptureEnPassant(Move move, Board board) {
     int lastDeltaRow =
         deltaRowByColor(board.getLastMove(), board.getPiece(board.getLastMove().to()).color);
     FigureType figure = board.getPiece(board.getLastMove().to()).figureType;
+
     int deltaCol = Math.abs(move.from().col().value() - board.getLastMove().to().col().value());
     int deltaRow = move.from().row().value() - board.getLastMove().to().row().value();
 
     if (deltaCol == 1 && deltaRow == 0 && lastDeltaRow == 2 && figure == FigureType.PAWN) {
-      this.captureEnPassant =
-          Math.abs(deltaRowByColor(move, this.color)) == 1 && !board.hasPiece(move.to());
+      this.captureEnPassant = Math.abs(deltaRowByColor(move, this.color)) == 1;
     }
+
+    return captureEnPassant;
   }
 
   private int deltaRowByColor(Move move, Color color) {
@@ -103,9 +106,9 @@ public class Pawn extends Piece {
 
     if (this.captureEnPassant) {
       board.removePiece(board.getLastMove().to());
-      this.captureEnPassant = false;
     }
 
+    this.captureEnPassant = false;
     return result;
   }
 

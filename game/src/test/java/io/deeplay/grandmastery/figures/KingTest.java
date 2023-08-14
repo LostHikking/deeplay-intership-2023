@@ -310,6 +310,24 @@ public class KingTest {
   }
 
   @Test
+  public void skipCastlingTest() {
+    Piece king = new King(Color.WHITE);
+    Piece rook = new Rook(Color.WHITE);
+    board.setPiece(Position.getPositionFromString("e1"), king);
+    board.setPiece(Position.getPositionFromString("a1"), rook);
+
+    Move move = LongAlgebraicNotation.getMoveFromString("e1e2");
+    king.getAllMoves(board, Position.getPositionFromString("e1"));
+
+    Assertions.assertAll(
+        () -> assertTrue(king.move(board, move)),
+        () -> assertSame(king, board.getPiece(move.to()), "Check king pos"),
+        () ->
+            assertSame(
+                rook, board.getPiece(Position.getPositionFromString("a1")), "Check rook pos"));
+  }
+
+  @Test
   public void friendPieceNoBlockCastlingTest() {
     Move move = LongAlgebraicNotation.getMoveFromString("e1g1");
     Piece king = new King(Color.WHITE);
