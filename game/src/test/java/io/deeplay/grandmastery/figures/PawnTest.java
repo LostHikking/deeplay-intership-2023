@@ -2,6 +2,7 @@ package io.deeplay.grandmastery.figures;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -425,6 +426,25 @@ public class PawnTest {
                 move.promotionPiece(),
                 board.getPiece(move.to()).getFigureType(),
                 "Check pawn revive"));
+  }
+
+  @Test
+  public void skipCaptureEnPassatTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.getPositionFromString("e2");
+
+    board.setPiece(position, pawn);
+    board.setPiece(Position.getPositionFromString("d2"), new Pawn(Color.BLACK));
+    board.setLastMove(LongAlgebraicNotation.getMoveFromString("d4d2"));
+
+    Move move = LongAlgebraicNotation.getMoveFromString("e2e3");
+    pawn.getAllMoves(board, position);
+    pawn.move(board, move);
+
+    Assertions.assertAll(
+        () -> assertEquals(pawn, board.getPiece(move.to())),
+        () -> assertNull(board.getPiece(move.from())),
+        () -> assertNotNull(board.getPiece(Position.getPositionFromString("d2"))));
   }
 
   @Test
