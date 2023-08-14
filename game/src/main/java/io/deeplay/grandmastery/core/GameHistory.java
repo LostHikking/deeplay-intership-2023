@@ -7,10 +7,13 @@ import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 /** Класс для сохранения истории партии. */
+@Getter
 public class GameHistory implements GameListener {
   private final List<Move> moves = new ArrayList<>();
+
   private int movesWithoutTakingAndAdvancingPawns = 0;
   private boolean gameOver;
   private final List<Board> boards = new ArrayList<>();
@@ -80,15 +83,6 @@ public class GameHistory implements GameListener {
   }
 
   /**
-   * * Метод возвращает все ходы в партии.
-   *
-   * @return Все ходы партии
-   */
-  public List<Move> getMoves() {
-    return moves;
-  }
-
-  /**
    * * Метод возвращает текущую доску.
    *
    * @return Доску
@@ -119,15 +113,6 @@ public class GameHistory implements GameListener {
   }
 
   /**
-   * Метод возвращает количество ходов без взятий и продвижения пешек.
-   *
-   * @return Количество ходов без взятий и продвижения пешек
-   */
-  public int getMovesWithoutTakingAndAdvancingPawns() {
-    return movesWithoutTakingAndAdvancingPawns;
-  }
-
-  /**
    * Метод возвращает количество повторений позиции на доске в истории.
    *
    * @param checkBoard Доска
@@ -136,22 +121,7 @@ public class GameHistory implements GameListener {
   public int getMaxRepeatPosition(Board checkBoard) {
     return (int)
         boards.stream()
-            .filter(
-                historyBoard -> {
-                  List<Position> allOldPosition = historyBoard.getAllPiecePosition();
-
-                  for (Position position : allOldPosition) {
-                    Piece historyBoardPiece = historyBoard.getPiece(position);
-                    Piece boardPiece = checkBoard.getPiece(position);
-                    if (historyBoardPiece != null && !historyBoardPiece.equals(boardPiece)) {
-                      return false;
-                    } else if (boardPiece != null && !boardPiece.equals(historyBoardPiece)) {
-                      return false;
-                    }
-                  }
-
-                  return true;
-                })
+            .filter(historyBoard -> Boards.isEqualsBoards(historyBoard, checkBoard))
             .count();
   }
 }

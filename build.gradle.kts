@@ -3,16 +3,18 @@ plugins {
     id("jacoco")
     id("net.ltgt.errorprone") version "3.1.0"
     id("checkstyle")
+    id("io.freefair.lombok") version "8.2.1"
 }
 
 group = "io.deeplay.grandmastery"
 version = "1.0-SNAPSHOT"
 
-subprojects {
+allprojects {
     apply(plugin = "java")
     apply(plugin = "net.ltgt.errorprone")
     apply(plugin = "jacoco")
     apply(plugin = "checkstyle")
+    apply(plugin = "io.freefair.lombok")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -24,6 +26,9 @@ subprojects {
     }
 
     dependencies {
+        implementation("org.slf4j:slf4j-api:2.0.7")
+        implementation("org.slf4j:slf4j-simple:2.0.7")
+
         errorprone("com.google.errorprone:error_prone_core:2.20.0")
 
         testImplementation(platform("org.junit:junit-bom:5.9.3"))

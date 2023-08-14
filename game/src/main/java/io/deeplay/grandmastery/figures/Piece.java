@@ -8,7 +8,9 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
 
+@Getter
 public abstract class Piece {
   protected final Color color;
   protected boolean isMoved;
@@ -19,16 +21,8 @@ public abstract class Piece {
     isMoved = false;
   }
 
-  public Color getColor() {
-    return color;
-  }
-
   public void setMoved() {
     isMoved = true;
-  }
-
-  public FigureType getFigureType() {
-    return figureType;
   }
 
   /**

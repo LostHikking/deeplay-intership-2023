@@ -9,8 +9,10 @@ import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.ui.ConsoleUi;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 
 /** Главный класс, который запускает локальную игру в шахматы. */
+@Slf4j
 public class LocalGame {
   private static final ConsoleUi consoleUi = new ConsoleUi(System.in, System.out);
 
@@ -67,8 +69,7 @@ public class LocalGame {
       }
       consoleUi.showResultGame(gameController.getWinPlayer());
     } catch (GameException | IOException e) {
-      System.out.println(e.getMessage());
-      e.printStackTrace();
+      log.error(e.getMessage());
     }
   }
 }

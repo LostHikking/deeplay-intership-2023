@@ -6,9 +6,4 @@ public class GameException extends RuntimeException {
   public GameException(GameErrorCode gameErrorCode) {
     super(gameErrorCode.getDescription());
   }
-
-  @Override
-  public void printStackTrace() {
-    super.printStackTrace();
-  }
 }

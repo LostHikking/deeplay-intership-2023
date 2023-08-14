@@ -90,4 +90,34 @@ public class BoardsTest {
     Board copyBoard = new HashBoard();
     assertThrows(GameException.class, () -> Boards.copyBoard(null).accept(copyBoard));
   }
+
+  @Test
+  void equalsTwoClassicBoards() {
+    Boards.defaultChess().accept(board);
+
+    var string = Boards.getStringFromBoard(board);
+    var newBoard = Boards.getBoardFromString(string);
+
+    Assertions.assertTrue(Boards.isEqualsBoards(board, newBoard));
+  }
+
+  @Test
+  void equalsTwoFisherBoards() {
+    Boards.fischerChess().accept(board);
+
+    var string = Boards.getStringFromBoard(board);
+    var newBoard = Boards.getBoardFromString(string);
+
+    Assertions.assertTrue(Boards.isEqualsBoards(board, newBoard));
+  }
+
+  @Test
+  void notEqualsBoards() {
+    Boards.fischerChess().accept(board);
+
+    var newBoard = new HashBoard();
+    Boards.fischerChess().accept(newBoard);
+
+    Assertions.assertFalse(Boards.isEqualsBoards(board, newBoard));
+  }
 }

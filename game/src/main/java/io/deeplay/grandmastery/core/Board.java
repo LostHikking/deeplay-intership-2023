@@ -3,27 +3,18 @@ package io.deeplay.grandmastery.core;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.figures.Piece;
 import java.util.List;
+import lombok.Getter;
 
 /**
  * Абстрактный класс, представляющий игровую доску. Данный класс определяет общий интерфейс для
  * игровых досок различных типов.
  */
+@Getter
 public abstract class Board {
-
-  /** Последний совершенный ход на доске. */
   private Move lastMove;
 
   public Board() {
     lastMove = null;
-  }
-
-  /**
-   * Метод возвращает последний сделанный в партии ход.
-   *
-   * @return последний ход
-   */
-  public Move getLastMove() {
-    return lastMove;
   }
 
   /**
