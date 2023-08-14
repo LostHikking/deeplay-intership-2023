@@ -36,7 +36,7 @@ public class Server {
       START_GAME.shutdownNow();
 
       for (ServerPlayer player : CreateGame.players) {
-        player.socket().close();
+        player.getSocket().close();
       }
 
       log.info("Сервер остановлен!");

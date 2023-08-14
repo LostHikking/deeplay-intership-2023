@@ -12,6 +12,7 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.Boards;
@@ -207,17 +208,16 @@ public class ConsoleUiTest {
   @Test
   public void showResulWinnerGameTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
-    Player winner = new HumanPlayer("Dima", Color.WHITE, consoleUi);
-    consoleUi.showResultGame(winner);
+    consoleUi.showResultGame(GameState.WHITE_WIN);
 
-    assertEquals("Win WHITE: Dima\n", output.toString(Charset.defaultCharset()));
+    assertEquals("Белые выиграли\n", output.toString(Charset.defaultCharset()));
   }
 
   @Test
   public void showResulStalemateTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
-    consoleUi.showResultGame(null);
-    assertEquals("Stalemate!\n", output.toString(Charset.defaultCharset()));
+    consoleUi.showResultGame(GameState.DRAW);
+    assertEquals("Ничья\n", output.toString(Charset.defaultCharset()));
   }
 
   @Test

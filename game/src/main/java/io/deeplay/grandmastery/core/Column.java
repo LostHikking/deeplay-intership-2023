@@ -1,10 +1,13 @@
 package io.deeplay.grandmastery.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import java.util.Map;
 import java.util.Objects;
 
 /** Класс для сохранения позиции столбца фигуры на шахматной доске. */
+@JsonSerialize
 public record Column(int value) {
   private static final Map<Character, Integer> VALID_CHARACTERS =
       Map.of('a', 0, 'b', 1, 'c', 2, 'd', 3, 'e', 4, 'f', 5, 'g', 6, 'h', 7);
@@ -35,6 +38,7 @@ public record Column(int value) {
    * @return Символ столбца, соответствующий значению value, или null, если значение не найдено в
    *     VALID_CHARACTERS.
    */
+  @JsonIgnore
   public String getChar() {
     return Objects.requireNonNull(
             VALID_CHARACTERS.keySet().stream()

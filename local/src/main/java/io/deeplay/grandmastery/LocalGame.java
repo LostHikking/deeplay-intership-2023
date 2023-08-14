@@ -67,7 +67,7 @@ public class LocalGame {
           consoleUi.incorrectMove();
         }
       }
-      consoleUi.showResultGame(gameController.getWinPlayer());
+      consoleUi.showResultGame(gameController.getGameStatus());
     } catch (GameException | IOException e) {
       log.error(e.getMessage());
     }

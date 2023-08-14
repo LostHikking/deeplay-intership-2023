@@ -1,8 +1,11 @@
 package io.deeplay.grandmastery.core;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import lombok.ToString;
 
 /** Класс для сохранения позиции фигуры на шахматной доске. */
+@JsonSerialize
 public record Position(Column col, Row row) {
 
   /*** Метод возвращает позицию по строке.

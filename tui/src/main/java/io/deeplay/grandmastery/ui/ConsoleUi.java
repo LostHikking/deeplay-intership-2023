@@ -9,6 +9,7 @@ import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
@@ -162,14 +163,16 @@ public class ConsoleUi implements UI {
   /**
    * Метод для отображения результата игры на консоли.
    *
-   * @param winPlayer победитель игры, может быть null, если игра закончилась вничью.
+   * @param gameState Состояние игры.
    */
   @Override
-  public void showResultGame(PlayerInfo winPlayer) {
-    if (winPlayer == null) {
-      printStream.println("Stalemate!");
+  public void showResultGame(GameState gameState) {
+    if (gameState == GameState.WHITE_WIN) {
+      printStream.println("Белые выиграли");
+    } else if (gameState == GameState.BLACK_WIN) {
+      printStream.println("Чёрные выиграли");
     } else {
-      printStream.println("Win " + winPlayer.getColor() + ": " + winPlayer.getName());
+      printStream.println("Ничья");
     }
   }
 

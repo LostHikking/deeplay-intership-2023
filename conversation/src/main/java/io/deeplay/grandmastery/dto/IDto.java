@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = StartGameResponseDto.class),
-  @JsonSubTypes.Type(value = StartGameRequestDto.class),
-  @JsonSubTypes.Type(value = ErrorDtoResponse.class)
+  @JsonSubTypes.Type(value = StartGameResponse.class),
+  @JsonSubTypes.Type(value = StartGameRequest.class),
+  @JsonSubTypes.Type(value = ResultGame.class),
+  @JsonSubTypes.Type(value = WaitMove.class),
+  @JsonSubTypes.Type(value = SendMove.class),
+  @JsonSubTypes.Type(value = WrongMove.class),
+  @JsonSubTypes.Type(value = AcceptMove.class)
 })
 public class IDto {
   public IDto() {}

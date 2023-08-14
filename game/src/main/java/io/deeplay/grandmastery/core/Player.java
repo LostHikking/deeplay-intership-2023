@@ -19,6 +19,15 @@ public abstract class Player implements GameListener, PlayerInfo {
   protected boolean gameOver;
 
   /**
+   * Конструктор по умолчанию.
+   * */
+  public Player() {
+    this.name = "";
+    this.color = Color.WHITE;
+    this.game = new Game();
+  }
+
+  /**
    * Конструктор для плеера.
    *
    * @param name Имя

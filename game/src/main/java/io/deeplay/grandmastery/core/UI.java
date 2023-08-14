@@ -3,6 +3,7 @@ package io.deeplay.grandmastery.core;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.listeners.InputListener;
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ public interface UI extends InputListener {
 
   void showMove(Board board, PlayerInfo movePlayer);
 
-  void showResultGame(PlayerInfo winPlayer);
+  void showResultGame(GameState gameState);
 
   void printHelp() throws IOException;
 

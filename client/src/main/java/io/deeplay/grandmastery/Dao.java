@@ -11,13 +11,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Dao {
   private final Socket socket;
-  private final BufferedReader in;
-  private final BufferedWriter out;
+  @Getter private final BufferedReader in;
+  @Getter private final BufferedWriter out;
 
   /**
    * Конструктор DAO.
@@ -37,11 +38,10 @@ public class Dao {
    * Функция отправляет запрос на сервер и возвращает ответ от него.
    *
    * @param dto Request Dto
-   * @param clazz Response Dto class
    * @return Response Dto
    * @throws QueryException Ошибка выполнения запроса
    */
-  public <T extends IDto> T query(IDto dto, Class<T> clazz) throws QueryException {
+  public IDto query(IDto dto) throws QueryException {
     try {
       log.info("Отправка запроса на сервер - " + dto);
       var json = ConversationService.serialize(dto);
@@ -51,11 +51,25 @@ public class Dao {
       out.flush();
 
       var response = in.readLine();
-      return ConversationService.deserialize(response, clazz);
+      log.info("Получили ответ от сервера - " + response);
+
+      return ConversationService.deserialize(response);
     } catch (IOException e) {
       log.error("Во время выполнения запроса возникла ошибка - " + e.getMessage());
       throw new QueryException(e.getMessage());
     }
+  }
+
+  /**
+   * Метод отправляет строку в BufferedWriter.
+   *
+   * @param text Json text
+   * @throws IOException Ошибка ввода/вывода
+   */
+  public void send(String text) throws IOException {
+    out.write(text);
+    out.newLine();
+    out.flush();
   }
 
   /**

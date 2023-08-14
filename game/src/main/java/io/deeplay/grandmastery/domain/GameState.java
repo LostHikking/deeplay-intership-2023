@@ -8,5 +8,5 @@ public enum GameState {
   IMPOSSIBLE_MOVE,
   WHITE_WIN,
   BLACK_WIN,
-  STALEMATE
+  DRAW
 }

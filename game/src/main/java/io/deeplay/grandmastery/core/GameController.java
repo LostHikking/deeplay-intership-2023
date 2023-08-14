@@ -24,6 +24,7 @@ public class GameController {
 
   private final Player black;
 
+  @Getter
   private final GameHistory gameHistory;
 
   private final Game game;
@@ -130,7 +131,7 @@ public class GameController {
     if (GameStateChecker.isMate(game.getCopyBoard(), enemyColor)) {
       gameStatus = gameStatus == GameState.WHITE_MOVE ? GameState.WHITE_WIN : GameState.BLACK_WIN;
     } else if (GameStateChecker.isDraw(game.getCopyBoard(), gameHistory)) {
-      gameStatus = GameState.STALEMATE;
+      gameStatus = GameState.DRAW;
     } else {
       gameStatus = gameStatus == GameState.WHITE_MOVE ? GameState.BLACK_MOVE : GameState.WHITE_MOVE;
     }
@@ -155,7 +156,7 @@ public class GameController {
         notifyGameOver();
         return true;
       }
-      case STALEMATE -> {
+      case DRAW -> {
         winPlayer = null;
         notifyGameOver();
         return true;

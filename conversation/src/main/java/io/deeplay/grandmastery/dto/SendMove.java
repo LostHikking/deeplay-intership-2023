@@ -1,6 +1,7 @@
 package io.deeplay.grandmastery.dto;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.deeplay.grandmastery.core.Move;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,6 +16,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @JsonTypeName
-public class ErrorDtoResponse extends IDto {
-  String description;
+public class SendMove extends IDto {
+  Move move;
 }
