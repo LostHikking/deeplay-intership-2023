@@ -95,7 +95,7 @@ public class GameControllerTest {
   }
 
   @Test
-  public void rollbackMoveTest() throws IOException {
+  public void kingCheckAfterMoveTest() throws IOException {
     when(testUi.inputMove(anyString())).thenReturn("e2e4", "e7e5", "d1h5", "f7f6");
 
     gameController.beginPlay(ChessType.CLASSIC);
@@ -121,8 +121,7 @@ public class GameControllerTest {
 
     Assertions.assertAll(
         () -> assertTrue(gameController.isGameOver()),
-        () -> assertEquals(GameState.WHITE_WIN, gameController.getGameStatus()),
-        () -> assertEquals(gameController.getWhite(), gameController.getWinPlayer()));
+        () -> assertEquals(GameState.WHITE_WIN, gameController.getGameStatus()));
   }
 
   @Test
@@ -136,8 +135,7 @@ public class GameControllerTest {
 
     Assertions.assertAll(
         () -> assertTrue(gameController.isGameOver()),
-        () -> assertEquals(GameState.BLACK_WIN, gameController.getGameStatus()),
-        () -> assertEquals(gameController.getBlack(), gameController.getWinPlayer()));
+        () -> assertEquals(GameState.BLACK_WIN, gameController.getGameStatus()));
   }
 
   @Test
@@ -152,5 +150,21 @@ public class GameControllerTest {
     Assertions.assertAll(
         () -> assertEquals(GameState.WHITE_WIN, gameController.getGameStatus()),
         () -> assertTrue(gameController.isGameOver()));
+  }
+
+  @Test
+  public void isGameOverStalemateTest() throws IOException {
+    when(testUi.inputMove("White"))
+        .thenReturn("e2e3", "d1h5", "h5a5", "a5c7", "h2h4", "c7d7", "d7b7", "b7b8", "b8c8", "c8e6");
+    when(testUi.inputMove("Black"))
+        .thenReturn("a7a5", "a8a6", "h7h5", "a6h6", "f7f6", "e8f7", "d8d3", "d3h7", "f7g6");
+    gameController.beginPlay(ChessType.CLASSIC);
+    for (int i = 0; i < 19; i++) {
+      gameController.nextMove();
+    }
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.DRAW, gameController.getGameStatus()));
   }
 }

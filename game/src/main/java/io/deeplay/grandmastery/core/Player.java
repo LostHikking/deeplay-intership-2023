@@ -1,34 +1,34 @@
 package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.listeners.GameListener;
+import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 
 /** Абстрактный класс, представляющий игрока. */
 public abstract class Player implements GameListener, PlayerInfo {
-  /** Имя игрока. */
   private final String name;
-  /** Ход игрока в виде строки. */
+
+  private final Color color;
+
+  private final Board board;
+
   private String lastMove;
 
-  protected Game game;
-  /** Цвет игрока. */
-  protected Color color;
+  private boolean gameOver;
 
-  protected boolean gameOver;
-
-  /**
-   * Конструктор по умолчанию.
-   * */
+  /** Конструктор по умолчанию. */
   public Player() {
     this.name = "";
     this.color = Color.WHITE;
-    this.game = new Game();
+    this.board = new HashBoard();
   }
 
   /**
-   * Конструктор для плеера.
+   * Конструктор с параметрами.
    *
    * @param name Имя
    * @param color Цвет
@@ -36,7 +36,7 @@ public abstract class Player implements GameListener, PlayerInfo {
   public Player(String name, Color color) {
     this.name = name;
     this.color = color;
-    this.game = new Game();
+    this.board = new HashBoard();
   }
 
   /**
@@ -72,17 +72,39 @@ public abstract class Player implements GameListener, PlayerInfo {
 
   @Override
   public void startup(Board board) {
-    game.startup(board);
+    Boards.copyBoard(board).accept(this.board);
     gameOver = false;
   }
 
   @Override
   public void makeMove(Move move) {
-    game.makeMove(move);
+    Piece piece = board.getPiece(move.from());
+
+    if (piece.getFigureType() == FigureType.KING) {
+      piece.move(board, move);
+    } else {
+      board.removePiece(move.from());
+      board.removePiece(move.to());
+
+      if (move.promotionPiece() != null) {
+        board.setPiece(move.to(), move.promotionPiece().getPiece(piece.getColor()));
+      } else {
+        board.setPiece(move.to(), piece);
+      }
+      piece.setMoved(true);
+    }
   }
 
   @Override
   public void gameOver() {
     gameOver = true;
+  }
+
+  public Board getBoard() {
+    return board;
+  }
+
+  public boolean isGameOver() {
+    return gameOver;
   }
 }

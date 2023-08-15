@@ -19,7 +19,7 @@ public class Rook extends Piece {
    */
   public Rook(Color color) {
     super(color);
-    this.figureType = FigureType.ROOK;
+    this.setFigureType(FigureType.ROOK);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class Rook extends Piece {
   }
 
   @Override
-  public List<Move> getAllMoves(Board board, Position position) {
+  public List<Move> generateAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
 
     for (int i = 0; i < 8; i++) {
@@ -51,6 +51,8 @@ public class Rook extends Piece {
       listMove.add(new Move(position, new Position(new Column(i), position.row()), null));
     }
 
-    return listMove.stream().filter(move -> canMove(board, move)).toList();
+    return listMove.stream()
+        .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+        .toList();
   }
 }

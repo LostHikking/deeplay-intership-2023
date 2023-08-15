@@ -13,13 +13,13 @@ public class AiPlayer extends Player {
 
   @Override
   public Move createMove() throws GameException {
-    if (gameOver) {
+    if (this.isGameOver()) {
       throw GameErrorCode.GAME_ALREADY_OVER.asException();
     }
-    Board board = game.getCopyBoard();
 
+    Board board = this.getBoard();
     List<Move> possibleMove = new ArrayList<>();
-    List<Position> positions = board.getAllPieceByColorPosition(this.color);
+    List<Position> positions = board.getAllPieceByColorPosition(this.getColor());
 
     for (Position position : positions) {
       possibleMove.addAll(board.getPiece(position).getAllMoves(board, position));

@@ -17,7 +17,7 @@ public class Knight extends Piece {
    */
   public Knight(Color color) {
     super(color);
-    this.figureType = FigureType.KNIGHT;
+    this.setFigureType(FigureType.KNIGHT);
   }
 
   @Override
@@ -33,7 +33,7 @@ public class Knight extends Piece {
   }
 
   @Override
-  public List<Move> getAllMoves(Board board, Position position) {
+  public List<Move> generateAllMoves(Board board, Position position) {
     var moveList = new ArrayList<Move>();
 
     moveList.add(Figures.getMoveByPositionAndDeltas(position, -2, -1));
@@ -45,6 +45,8 @@ public class Knight extends Piece {
     moveList.add(Figures.getMoveByPositionAndDeltas(position, 2, -1));
     moveList.add(Figures.getMoveByPositionAndDeltas(position, 2, 1));
 
-    return moveList.stream().filter(move -> canMove(board, move)).toList();
+    return moveList.stream()
+        .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+        .toList();
   }
 }

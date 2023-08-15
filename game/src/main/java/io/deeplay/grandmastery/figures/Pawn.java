@@ -20,7 +20,7 @@ public class Pawn extends Piece {
    */
   public Pawn(Color color) {
     super(color);
-    this.figureType = FigureType.PAWN;
+    this.setFigureType(FigureType.PAWN);
     captureEnPassant = false;
   }
 
@@ -47,13 +47,13 @@ public class Pawn extends Piece {
   }
 
   private boolean canMoveForward(Move move, Board board) {
-    int deltaRow = deltaRowByColor(move, this.color);
+    int deltaRow = deltaRowByColor(move, this.getColor());
 
     if (deltaRow == 1 && board.getPiece(move.to()) == null) {
       return true;
     } else {
       return deltaRow == 2
-          && !isMoved
+          && !isMoved()
           && !board.hasPiece(move.to())
           && !board.hasPiece(
               move.from().col().value(), (move.from().row().value() + move.to().row().value()) / 2);
@@ -67,8 +67,8 @@ public class Pawn extends Piece {
   }
 
   private boolean canCapture(Move move, Board board) {
-    if (deltaRowByColor(move, this.color) == 1 && board.hasPiece(move.to())) {
-      return board.getPiece(move.to()).getColor() != this.color;
+    if (deltaRowByColor(move, this.getColor()) == 1 && board.hasPiece(move.to())) {
+      return board.getPiece(move.to()).getColor() != this.getColor();
     } else {
       return false;
     }
@@ -76,14 +76,14 @@ public class Pawn extends Piece {
 
   private boolean checkCaptureEnPassant(Move move, Board board) {
     int lastDeltaRow =
-        deltaRowByColor(board.getLastMove(), board.getPiece(board.getLastMove().to()).color);
-    FigureType figure = board.getPiece(board.getLastMove().to()).figureType;
+        deltaRowByColor(board.getLastMove(), board.getPiece(board.getLastMove().to()).getColor());
+    FigureType figure = board.getPiece(board.getLastMove().to()).getFigureType();
 
     int deltaCol = Math.abs(move.from().col().value() - board.getLastMove().to().col().value());
     int deltaRow = move.from().row().value() - board.getLastMove().to().row().value();
 
     if (deltaCol == 1 && deltaRow == 0 && lastDeltaRow == 2 && figure == FigureType.PAWN) {
-      this.captureEnPassant = Math.abs(deltaRowByColor(move, this.color)) == 1;
+      this.captureEnPassant = Math.abs(deltaRowByColor(move, this.getColor())) == 1;
     }
 
     return captureEnPassant;
@@ -104,7 +104,7 @@ public class Pawn extends Piece {
       return true;
     }
 
-    if (this.captureEnPassant) {
+    if (this.captureEnPassant && result) {
       board.removePiece(board.getLastMove().to());
     }
 
@@ -113,7 +113,22 @@ public class Pawn extends Piece {
   }
 
   @Override
-  public List<Move> getAllMoves(Board board, Position position) {
+  protected boolean simulationMoveAndCheck(Board board, Move move) {
+    Piece removePiece = null;
+    if (this.captureEnPassant) {
+      removePiece = board.removePiece(board.getLastMove().to());
+    }
+
+    boolean isCheck = !super.simulationMoveAndCheck(board, move);
+    if (removePiece != null) {
+      board.setPiece(board.getLastMove().to(), removePiece);
+    }
+
+    return !isCheck;
+  }
+
+  @Override
+  public List<Move> generateAllMoves(Board board, Position position) {
     List<Move> defaultMoves = new ArrayList<>();
 
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, 0, 1));
@@ -124,17 +139,20 @@ public class Pawn extends Piece {
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, -1, 1));
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, 1, -1));
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, -1, -1));
-    defaultMoves = defaultMoves.stream().filter(move -> canMove(board, move)).toList();
+    defaultMoves =
+        defaultMoves.stream()
+            .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+            .toList();
 
     List<Move> resultMoves = new ArrayList<>();
     for (Move move : defaultMoves) {
-      if (this.color == Color.WHITE) {
+      if (this.getColor() == Color.WHITE) {
         if (move.to().row().value() == 7) {
           generateReviveMoves(resultMoves, move);
         } else {
           resultMoves.add(move);
         }
-      } else if (this.color == Color.BLACK) {
+      } else if (this.getColor() == Color.BLACK) {
         if (move.to().row().value() == 0) {
           generateReviveMoves(resultMoves, move);
         } else {
@@ -163,24 +181,23 @@ public class Pawn extends Piece {
     board.removePiece(move.to());
 
     switch (move.promotionPiece()) {
-      case ROOK -> board.setPiece(move.to(), new Rook(this.color));
-      case QUEEN -> board.setPiece(move.to(), new Queen(this.color));
-      case KNIGHT -> board.setPiece(move.to(), new Knight(this.color));
-      case BISHOP -> board.setPiece(move.to(), new Bishop(this.color));
+      case ROOK -> board.setPiece(move.to(), new Rook(this.getColor()));
+      case QUEEN -> board.setPiece(move.to(), new Queen(this.getColor()));
+      case KNIGHT -> board.setPiece(move.to(), new Knight(this.getColor()));
+      case BISHOP -> board.setPiece(move.to(), new Bishop(this.getColor()));
       default -> throw GameErrorCode.IMPOSSIBLE_PAWN_REVIVE.asException();
     }
   }
 
   /**
-   * Проверяет, может ли пешка превратится. Этот метод реализован только у пешки. Остальные фигуры
-   * по умолчанию возвращают false
+   * Проверяет, может ли пешка превратится.
    *
    * @param move ход
    * @return true, если пешка может быть превращена, иначе false
    */
   private boolean canRevive(Move move) {
     if (move.promotionPiece() != FigureType.PAWN && move.promotionPiece() != FigureType.KING) {
-      return this.color == Color.WHITE
+      return this.getColor() == Color.WHITE
           ? move.to().row().value() == 7
           : move.to().row().value() == 0;
     }

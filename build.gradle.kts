@@ -33,7 +33,7 @@ allprojects {
         errorprone("com.google.errorprone:error_prone_core:2.20.0")
 
         testImplementation(platform("org.junit:junit-bom:5.9.3"))
-        testImplementation("org.junit.jupiter:junit-jupiter")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
         testImplementation("org.mockito:mockito-core:5.2.0")
     }
 

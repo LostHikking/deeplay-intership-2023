@@ -15,7 +15,9 @@ public class GameHistory implements GameListener {
   private final List<Move> moves = new ArrayList<>();
 
   private int movesWithoutTakingAndAdvancingPawns = 0;
+
   private boolean gameOver;
+
   private final List<Board> boards = new ArrayList<>();
 
   /**

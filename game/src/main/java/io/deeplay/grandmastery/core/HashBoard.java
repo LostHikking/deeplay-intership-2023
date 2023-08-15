@@ -60,6 +60,7 @@ public class HashBoard extends Board {
         blackKing = null;
       }
     }
+
     return piece;
   }
 

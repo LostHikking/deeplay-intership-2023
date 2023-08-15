@@ -213,7 +213,7 @@ public class KingTest {
     Move move = LongAlgebraicNotation.getMoveFromString("e1g1");
     Piece king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
-    king.setMoved();
+    king.setMoved(true);
     board.setPiece(move.from(), king);
     board.setPiece(Position.getPositionFromString("h1"), rook);
 
@@ -230,7 +230,7 @@ public class KingTest {
     Move move = LongAlgebraicNotation.getMoveFromString("e1c1");
     Piece king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
-    rook.setMoved();
+    rook.setMoved(true);
     board.setPiece(move.from(), king);
     board.setPiece(Position.getPositionFromString("a1"), rook);
 
@@ -311,7 +311,7 @@ public class KingTest {
 
   @Test
   public void skipCastlingTest() {
-    Piece king = new King(Color.WHITE);
+    King king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
     board.setPiece(Position.getPositionFromString("e1"), king);
     board.setPiece(Position.getPositionFromString("a1"), rook);
@@ -322,6 +322,7 @@ public class KingTest {
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king pos"),
+        () -> assertFalse(king.isCastling(), "isCastling"),
         () ->
             assertSame(
                 rook, board.getPiece(Position.getPositionFromString("a1")), "Check rook pos"));
