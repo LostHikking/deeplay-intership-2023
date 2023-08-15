@@ -17,7 +17,7 @@ public enum GameErrorCode {
   UNKNOWN_GAME_MODE("Неизвестный мод игры."),
   IMPOSSIBLE_MOVE("Ход невозможен"),
   GAME_ALREADY_OVER("Игра уже завершена"),
-  ERROR_PLAYER_MAKE_MOVE("Ошибка при запросе хода у игрока, MoveData пустой");
+  ERROR_PLAYER_MAKE_MOVE("Ошибка при запросе хода у игрока");
 
   private final String description;
 

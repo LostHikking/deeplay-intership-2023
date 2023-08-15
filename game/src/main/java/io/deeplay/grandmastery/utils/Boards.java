@@ -218,7 +218,7 @@ public class Boards {
     var result = new StringBuilder();
 
     for (int i = 0; i < 8; i++) {
-      for (int j = 7; j >= 0; j--) {
+      for (int j = 0; j < 8; j++) {
         var piece = board.getPiece(i, j);
         if (piece != null) {
           var symbol = String.valueOf(piece.getFigureType().getSymbol());
@@ -249,7 +249,7 @@ public class Boards {
       var character = String.valueOf(string.charAt(i));
       if (!character.equals("_")) {
         var color =
-            character.equals(character.toLowerCase(Locale.ROOT)) ? Color.BLACK : Color.WHITE;
+            character.equals(character.toLowerCase(Locale.ROOT)) ? Color.WHITE : Color.BLACK;
         var piece =
             Objects.requireNonNull(
                     Arrays.stream(FigureType.values())

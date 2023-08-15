@@ -28,6 +28,7 @@ allprojects {
     dependencies {
         implementation("org.slf4j:slf4j-api:2.0.7")
         implementation("org.slf4j:slf4j-simple:2.0.7")
+        implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
 
         errorprone("com.google.errorprone:error_prone_core:2.20.0")
 
