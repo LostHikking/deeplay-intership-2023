@@ -11,9 +11,17 @@ import io.deeplay.grandmastery.utils.Figures;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class King extends Piece {
-  private Position rookCastlingPos;
+  private Position rookFromCastling;
+
+  private Position rookToCastling;
+
+  private boolean isCastling;
 
   /**
    * Конструктор для короля.
@@ -22,8 +30,10 @@ public class King extends Piece {
    */
   public King(Color color) {
     super(color);
-    this.figureType = FigureType.KING;
-    rookCastlingPos = null;
+    this.setFigureType(FigureType.KING);
+    rookToCastling = null;
+    rookFromCastling = null;
+    isCastling = false;
   }
 
   @Override
@@ -35,11 +45,11 @@ public class King extends Piece {
     final int deltaRow = deltaRow(move);
     final int deltaCol = deltaCol(move);
 
-    if (!isMoved && deltaRow == 0 && deltaCol == 2) {
+    if (!isMoved() && deltaRow == 0 && deltaCol == 2) {
       return canCastling(board, move);
     }
 
-    rookCastlingPos = null;
+    isCastling = false;
     return deltaRow < 2 && deltaCol < 2;
   }
 
@@ -69,9 +79,9 @@ public class King extends Piece {
       return false;
     }
 
-    Position rookPos = new Position(new Column(rookCol), new Row(row));
-    Piece rook = board.getPiece(rookPos);
-    if (rook == null || rook.isMoved || rook.color != this.color) {
+    rookFromCastling = new Position(new Column(rookCol), new Row(row));
+    Piece rook = board.getPiece(rookFromCastling);
+    if (rook == null || rook.isMoved() || rook.getColor() != this.getColor()) {
       return false;
     }
     if (Figures.hasFigureOnHorizontalBetweenColPosition(board, row, fromCol, rookCol)) {
@@ -79,7 +89,8 @@ public class King extends Piece {
     }
 
     List<Position> positions =
-        board.getAllPieceByColorPosition(this.color == Color.WHITE ? Color.BLACK : Color.WHITE);
+        board.getAllPieceByColorPosition(
+            this.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
 
     Move tmpMove;
     for (int i = Math.min(fromCol, toCol); i < Math.max(fromCol, toCol); i++) {
@@ -91,32 +102,30 @@ public class King extends Piece {
       }
     }
 
-    rookCastlingPos = rookPos;
+    if (rookFromCastling.col().value() == 0) {
+      rookToCastling = new Position(new Column(3), rookFromCastling.row());
+    } else {
+      rookToCastling = new Position(new Column(5), rookFromCastling.row());
+    }
+    isCastling = true;
     return true;
   }
 
   @Override
   public boolean move(Board board, Move move) {
     boolean result = super.move(board, move);
-    if (result && rookCastlingPos != null) {
-      Piece rook = board.getPiece(rookCastlingPos);
-      board.removePiece(rookCastlingPos);
+    if (result && isCastling) {
+      Piece rook = board.removePiece(rookFromCastling);
+      board.setPiece(rookToCastling, rook);
 
-      Position newRookPos;
-      if (rookCastlingPos.col().value() == 0) {
-        newRookPos = new Position(new Column(3), rookCastlingPos.row());
-      } else {
-        newRookPos = new Position(new Column(5), rookCastlingPos.row());
-      }
-      board.setPiece(newRookPos, rook);
-      rookCastlingPos = null;
+      isCastling = false;
     }
 
     return result;
   }
 
   @Override
-  public List<Move> getAllMoves(Board board, Position position) {
+  public List<Move> generateAllMoves(Board board, Position position) {
     List<Move> moves = new ArrayList<>();
 
     moves.add(Figures.getMoveByPositionAndDeltas(position, 0, 1));
@@ -128,8 +137,8 @@ public class King extends Piece {
     moves.add(Figures.getMoveByPositionAndDeltas(position, -1, 0));
     moves.add(Figures.getMoveByPositionAndDeltas(position, -1, 1));
 
-    if (!this.isMoved) {
-      if (this.color == Color.WHITE) {
+    if (!this.isMoved()) {
+      if (this.getColor() == Color.WHITE) {
         moves.add(LongAlgebraicNotation.getMoveFromString("e1c1"));
         moves.add(LongAlgebraicNotation.getMoveFromString("e1g1"));
       } else {
@@ -138,6 +147,8 @@ public class King extends Piece {
       }
     }
 
-    return moves.stream().filter(move -> canMove(board, move)).toList();
+    return moves.stream()
+        .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+        .toList();
   }
 }

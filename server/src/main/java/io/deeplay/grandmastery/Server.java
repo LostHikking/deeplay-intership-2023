@@ -43,9 +43,11 @@ public class Server {
     }
   }
 
-  /** Метод запускает сервер.
+  /**
+   * Метод запускает сервер.
+   *
    * @throws IOException Ошибка ввода/вывода
-   * */
+   */
   public static void main(String[] args) throws IOException {
     Server.run();
   }

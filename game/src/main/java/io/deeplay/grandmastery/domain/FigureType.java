@@ -26,9 +26,10 @@ public enum FigureType {
 
   /**
    * Функция возвращает фигуру по FigureType.
+   *
    * @param color Цвет
    * @return Фигура
-   * */
+   */
   public Piece getPiece(Color color) {
     return switch (this) {
       case KING -> new King(color);

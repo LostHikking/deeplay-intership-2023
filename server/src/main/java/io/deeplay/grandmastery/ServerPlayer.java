@@ -55,7 +55,7 @@ public class ServerPlayer extends Player {
   @Override
   public Move createMove() throws GameException {
     try {
-      if (gameOver) {
+      if (this.isGameOver()) {
         throw GameErrorCode.GAME_ALREADY_OVER.asException();
       }
 

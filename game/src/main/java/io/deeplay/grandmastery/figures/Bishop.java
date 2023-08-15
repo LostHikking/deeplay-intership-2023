@@ -21,7 +21,7 @@ public class Bishop extends Piece {
    */
   public Bishop(Color color) {
     super(color);
-    this.figureType = FigureType.BISHOP;
+    this.setFigureType(FigureType.BISHOP);
   }
 
   @Override
@@ -41,7 +41,7 @@ public class Bishop extends Piece {
   }
 
   @Override
-  public List<Move> getAllMoves(Board board, Position position) {
+  public List<Move> generateAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
     int[] dx = {1, -1, 1, -1};
     int[] dy = {1, -1, -1, 1};
@@ -55,6 +55,8 @@ public class Bishop extends Piece {
         y += dy[dir];
       }
     }
-    return listMove.stream().filter(move -> canMove(board, move)).toList();
+    return listMove.stream()
+        .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+        .toList();
   }
 }

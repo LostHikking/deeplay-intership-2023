@@ -21,7 +21,7 @@ public class Queen extends Piece {
    */
   public Queen(Color color) {
     super(color);
-    this.figureType = FigureType.QUEEN;
+    this.setFigureType(FigureType.QUEEN);
   }
 
   @Override
@@ -46,9 +46,8 @@ public class Queen extends Piece {
   }
 
   @Override
-  public List<Move> getAllMoves(Board board, Position position) {
+  public List<Move> generateAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
-    // диагонали
     int[] dx = {1, -1, 1, -1};
     int[] dy = {1, -1, -1, 1};
     for (int dir = 0; dir < 4; dir++) {
@@ -66,6 +65,8 @@ public class Queen extends Piece {
       listMove.add(new Move(position, new Position(new Column(i), position.row()), null));
     }
 
-    return listMove.stream().filter(move -> canMove(board, move)).toList();
+    return listMove.stream()
+        .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+        .toList();
   }
 }

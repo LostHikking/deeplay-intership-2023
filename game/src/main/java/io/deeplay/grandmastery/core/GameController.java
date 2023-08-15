@@ -24,21 +24,15 @@ public class GameController {
 
   private final Player black;
 
-  @Getter
-  private final GameHistory gameHistory;
+  @Getter private final GameHistory gameHistory;
 
   private final Game game;
 
-  @Getter
-  private GameState gameStatus;
+  @Getter private GameState gameStatus;
 
   private Player currentPlayer;
 
-  @Getter
-  private PlayerInfo winPlayer;
-
-  @Getter
-  private Move move;
+  @Getter private Move move;
 
   /** Дефолтный конструктор класса {@code GameController}. */
   public GameController(Player firstPlayer, Player secondPlayer) {
@@ -146,18 +140,7 @@ public class GameController {
    */
   public boolean isGameOver() {
     switch (gameStatus) {
-      case WHITE_WIN -> {
-        winPlayer = white;
-        notifyGameOver();
-        return true;
-      }
-      case BLACK_WIN -> {
-        winPlayer = black;
-        notifyGameOver();
-        return true;
-      }
-      case DRAW -> {
-        winPlayer = null;
+      case WHITE_WIN, BLACK_WIN, DRAW -> {
         notifyGameOver();
         return true;
       }
@@ -182,5 +165,4 @@ public class GameController {
   public PlayerInfo getCurrentPlayer() {
     return currentPlayer;
   }
-
 }

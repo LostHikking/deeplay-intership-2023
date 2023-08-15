@@ -9,14 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.GameStateChecker;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+import jdk.jfr.Description;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,13 +32,17 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class PawnTest {
   private Board board;
+  private Position defaultWhiteKingPosition;
 
   /** Создание новой доски. */
   @BeforeEach
   public void init() {
     board = new HashBoard();
-    board.setPiece(Position.getPositionFromString("a8"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("a1"), new King(Color.BLACK));
+
+    defaultWhiteKingPosition = Position.getPositionFromString("a1");
+    Position defaultBlackKingPosition = Position.getPositionFromString("a8");
+    board.setPiece(defaultWhiteKingPosition, new King(Color.WHITE));
+    board.setPiece(defaultBlackKingPosition, new King(Color.BLACK));
   }
 
   /**
@@ -445,6 +452,57 @@ public class PawnTest {
         () -> assertEquals(pawn, board.getPiece(move.to())),
         () -> assertNull(board.getPiece(move.from())),
         () -> assertNotNull(board.getPiece(Position.getPositionFromString("d2"))));
+  }
+
+  @Test
+  public void checkKingAfterCaptureEnPassatTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Piece enemyPawn = new Pawn(Color.BLACK);
+    Position pawnPosition = Position.getPositionFromString("d5");
+    Position enemyPawnPosition = Position.getPositionFromString("c5");
+
+    board.setPiece(pawnPosition, pawn);
+    board.setPiece(enemyPawnPosition, enemyPawn);
+    board.setPiece(Position.getPositionFromString("b6"), new Bishop(Color.BLACK));
+
+    Piece whiteKing = board.removePiece(defaultWhiteKingPosition);
+    board.setPiece(Position.getPositionFromString("g1"), whiteKing);
+    board.setLastMove(LongAlgebraicNotation.getMoveFromString("c7c5"));
+
+    Move move = LongAlgebraicNotation.getMoveFromString("d5c6");
+    pawn.move(board, move);
+
+    Assertions.assertAll(
+        () -> assertSame(pawn, board.getPiece(move.from()), "White pawn"),
+        () -> assertNull(board.getPiece(move.to()), "Position to empty"),
+        () -> assertSame(enemyPawn, board.getPiece(enemyPawnPosition), "Black pawn"),
+        () -> assertFalse(GameStateChecker.isCheck(board, Color.WHITE), "No check by white"));
+  }
+
+  @Test
+  public void getAllMovesEmptyPositionPawnTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.getPositionFromString("e2");
+
+    board.setPiece(position, pawn);
+    pawn.move(board, LongAlgebraicNotation.getMoveFromString("e2e3"));
+
+    assertEquals(Collections.emptyList(), pawn.getAllMoves(board, position));
+  }
+
+  @Test
+  @Description("Check getAllMoves, two squares forward, when pawn already moved")
+  public void getAllMovesPawnTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.getPositionFromString("e2");
+
+    board.setPiece(position, pawn);
+    pawn.move(board, LongAlgebraicNotation.getMoveFromString("e2e3"));
+
+    List<Move> expectMoves = new ArrayList<>();
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e3e4"));
+
+    assertEquals(expectMoves, pawn.getAllMoves(board, Position.getPositionFromString("e3")));
   }
 
   @Test

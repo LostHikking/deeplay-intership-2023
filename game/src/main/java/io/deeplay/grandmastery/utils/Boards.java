@@ -187,22 +187,34 @@ public class Boards {
   private static Piece copyPiece(Piece sourcePiece) {
     switch (sourcePiece.getFigureType()) {
       case KING -> {
-        return new King(sourcePiece.getColor());
+        Piece king = new King(sourcePiece.getColor());
+        king.setMoved(sourcePiece.isMoved());
+        return king;
       }
       case PAWN -> {
-        return new Pawn(sourcePiece.getColor());
+        Piece pawn = new Pawn(sourcePiece.getColor());
+        pawn.setMoved(sourcePiece.isMoved());
+        return pawn;
       }
       case ROOK -> {
-        return new Rook(sourcePiece.getColor());
+        Piece rook = new Rook(sourcePiece.getColor());
+        rook.setMoved(sourcePiece.isMoved());
+        return rook;
       }
       case QUEEN -> {
-        return new Queen(sourcePiece.getColor());
+        Queen queen = new Queen(sourcePiece.getColor());
+        queen.setMoved(sourcePiece.isMoved());
+        return queen;
       }
       case BISHOP -> {
-        return new Bishop(sourcePiece.getColor());
+        Bishop bishop = new Bishop(sourcePiece.getColor());
+        bishop.setMoved(sourcePiece.isMoved());
+        return bishop;
       }
       case KNIGHT -> {
-        return new Knight(sourcePiece.getColor());
+        Knight knight = new Knight(sourcePiece.getColor());
+        knight.setMoved(sourcePiece.isMoved());
+        return knight;
       }
       default -> throw GameErrorCode.UNKNOWN_FIGURE_TYPE.asException();
     }

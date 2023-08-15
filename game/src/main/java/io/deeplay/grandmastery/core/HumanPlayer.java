@@ -33,7 +33,7 @@ public class HumanPlayer extends Player {
    */
   @Override
   public Move createMove() throws GameException {
-    if (gameOver) {
+    if (this.isGameOver()) {
       throw GameErrorCode.GAME_ALREADY_OVER.asException();
     }
     try {
