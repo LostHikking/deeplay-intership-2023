@@ -36,6 +36,9 @@ public class ServerUtils {
       sb.append(in.readLine());
     }
 
-    return sb.toString();
+    var result = sb.toString();
+    log.info("Получили данные от клиента - " + result);
+
+    return result;
   }
 }

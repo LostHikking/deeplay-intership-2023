@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.utils.Boards;
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -26,17 +26,17 @@ class BoardRenderTest {
     String expectedOutput =
         """
 ┏━━━━━━━━━━━━━━━━━━━━━━┓
-┃ 8 │♖│♘│♗│♕│♔│♗│♘│♖│  ┃
-┃ 7 │♙│♙│♙│♙│♙│♙│♙│♙│  ┃
-┃ 6 │ │ │ │ │ │ │ │ │  ┃
-┃ 5 │ │ │ │ │ │ │ │ │  ┃
-┃ 4 │ │ │ │ │ │ │ │ │  ┃
-┃ 3 │ │ │ │ │ │ │ │ │  ┃
-┃ 2 │♟│♟│♟│♟│♟│♟│♟│♟│  ┃
-┃ 1 │♜│♞│♝│♛│♚│♝│♞│♜│  ┃
+┃ 8 ┃♖┃♘┃♗┃♕┃♔┃♗┃♘┃♖┃  ┃
+┃ 7 ┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃  ┃
+┃ 6 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
+┃ 5 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
+┃ 4 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
+┃ 3 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
+┃ 2 ┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃  ┃
+┃ 1 ┃♜┃♞┃♝┃♛┃♚┃♝┃♞┃♜┃  ┃
 ┃    a b c d e f g h   ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━┛""";
-    assertEquals(expectedOutput, outContent.toString(StandardCharsets.UTF_8).trim());
+    assertEquals(expectedOutput, outContent.toString(Charset.defaultCharset()).trim());
   }
 
   @Test
@@ -47,16 +47,16 @@ class BoardRenderTest {
     String expectedOutput =
         """
 ┏━━━━━━━━━━━━━━━━━━━━━━┓
-┃  │♜│♞│♝│♚│♛│♝│♞│♜│ 1 ┃
-┃  │♟│♟│♟│♟│♟│♟│♟│♟│ 2 ┃
-┃  │ │ │ │ │ │ │ │ │ 3 ┃
-┃  │ │ │ │ │ │ │ │ │ 4 ┃
-┃  │ │ │ │ │ │ │ │ │ 5 ┃
-┃  │ │ │ │ │ │ │ │ │ 6 ┃
-┃  │♙│♙│♙│♙│♙│♙│♙│♙│ 7 ┃
-┃  │♖│♘│♗│♔│♕│♗│♘│♖│ 8 ┃
+┃  ┃♜┃♞┃♝┃♚┃♛┃♝┃♞┃♜┃ 1 ┃
+┃  ┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃ 2 ┃
+┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 3 ┃
+┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 4 ┃
+┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 5 ┃
+┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 6 ┃
+┃  ┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃ 7 ┃
+┃  ┃♖┃♘┃♗┃♔┃♕┃♗┃♘┃♖┃ 8 ┃
 ┃   h g f e d c b a    ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━┛""";
-    assertEquals(expectedOutput, outContent.toString(StandardCharsets.UTF_8).trim());
+    assertEquals(expectedOutput, outContent.toString(Charset.defaultCharset()).trim());
   }
 }

@@ -70,6 +70,21 @@ public class Dao {
     out.write(text);
     out.newLine();
     out.flush();
+
+    log.info("Отправили данные на сервер - " + text);
+  }
+
+  /**
+   * Функция читает Json из BufferedReader.
+   *
+   * @return Json
+   * @throws IOException Ошибка ввода-вывода
+   */
+  public String getJsonFromServer() throws IOException {
+    var result = in.readLine();
+    log.info("Получили данные от сервера - " + result);
+
+    return result;
   }
 
   /**

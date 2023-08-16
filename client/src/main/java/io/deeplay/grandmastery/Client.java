@@ -1,7 +1,7 @@
 package io.deeplay.grandmastery;
 
+import io.deeplay.grandmastery.core.Game;
 import io.deeplay.grandmastery.core.GameHistory;
-import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
@@ -28,7 +28,8 @@ public class Client {
   private static final int PORT = 8080;
   private final Dao dao;
   private final UI ui;
-  private static final GameHistory gameHistory = new GameHistory();
+  private final GameHistory gameHistory = new GameHistory();
+  private final Game game = new Game();
 
   /**
    * Конструктор для класса Client.
@@ -49,6 +50,7 @@ public class Client {
    * Запускает клиент с определённым UI.
    *
    * @throws IOException ошибка ввода/вывода
+   * @throws RuntimeException неизвестный тип ответа от сервера
    */
   public void run() throws IOException {
     var gameMode = ui.selectMode();
@@ -60,69 +62,75 @@ public class Client {
 
     var request = new StartGameRequest(name, gameMode, chessType, color);
 
-    startGame(dao.query(request), color, name);
-  }
+    var response = dao.query(request);
 
-  private void startGame(IDto response, Color color, String name) throws IOException {
     if (response instanceof ResultGame resultGame) {
-      for (String board : resultGame.getBoards()) {
-        ui.showBoard(Boards.getBoardFromString(board), color);
-      }
+      var boards = resultGame.getBoards();
+      var stringBoard = boards.get(boards.size() - 1);
+
+      ui.showBoard(Boards.getBoardFromString(stringBoard), color);
       ui.showResultGame(resultGame.getGameState());
     } else if (response instanceof StartGameResponse responseDto) {
-      gameHistory.startup(Boards.getBoardFromString(responseDto.getBoard()));
+      var board = Boards.getBoardFromString(responseDto.getBoard());
+      gameHistory.startup(board);
+      game.startup(board);
 
       ui.printHelp();
       ui.showBoard(gameHistory.getCurBoard(), color);
 
-      IDto serverDto;
-
-      do {
-        var serverResponse = dao.getIn().readLine();
-        serverDto = ConversationService.deserialize(serverResponse);
-
-        if (serverDto instanceof WaitMove) {
-          while (true) {
-            try {
-              var move = LongAlgebraicNotation.getMoveFromString(ui.inputMove(name));
-
-              var json = ConversationService.serialize(new SendMove(move));
-              dao.send(json);
-
-              var tempBoard = new HashBoard();
-              Boards.copyBoard(gameHistory.getCurBoard()).accept(tempBoard);
-
-              var piece = tempBoard.getPiece(move.from());
-              piece.move(tempBoard, move);
-
-              gameHistory.addBoard(tempBoard);
-              break;
-            } catch (GameException e) {
-              ui.incorrectMove();
-            }
-          }
-          ui.showBoard(gameHistory.getCurBoard(), color);
-        } else if (serverDto instanceof WrongMove) {
-          gameHistory.getBoards().remove(gameHistory.getBoards().size() - 1);
-
-          ui.showBoard(gameHistory.getCurBoard(), color);
-          ui.incorrectMove();
-        } else if (serverDto instanceof AcceptMove acceptMove) {
-          var tempBoard = new HashBoard();
-          Boards.copyBoard(gameHistory.getCurBoard()).accept(tempBoard);
-
-          var piece = tempBoard.getPiece(acceptMove.getMove().from());
-          piece.move(tempBoard, acceptMove.getMove());
-
-          gameHistory.addBoard(tempBoard);
-          ui.showBoard(gameHistory.getCurBoard(), color);
-        }
-      } while (!(serverDto instanceof ResultGame));
-
-      ui.showResultGame(((ResultGame) serverDto).getGameState());
+      startGame(color, name);
+    } else {
+      throw new RuntimeException("Неизвестный тип ответа от сервера - " + response);
     }
+  }
 
+  private void startGame(Color color, String name) throws IOException {
+    IDto serverDto;
+
+    do {
+      var serverResponse = dao.getJsonFromServer();
+      serverDto = ConversationService.deserialize(serverResponse);
+
+      if (serverDto instanceof WaitMove) {
+        makeMove(name);
+        ui.showBoard(gameHistory.getCurBoard(), color);
+      } else if (serverDto instanceof WrongMove) {
+        gameHistory.getBoards().remove(gameHistory.getBoards().size() - 1);
+        game.startup(gameHistory.getCurBoard());
+        game.setColorMove(color);
+
+        ui.showBoard(gameHistory.getCurBoard(), color);
+        ui.incorrectMove();
+      } else if (serverDto instanceof AcceptMove acceptMove) {
+        game.makeMove(acceptMove.getMove());
+        gameHistory.addBoard(game.getCopyBoard());
+
+        ui.showBoard(gameHistory.getCurBoard(), color);
+      }
+    } while (!(serverDto instanceof ResultGame));
+
+    game.gameOver();
+    gameHistory.gameOver();
+
+    ui.showResultGame(((ResultGame) serverDto).getGameState());
     dao.close();
+  }
+
+  private void makeMove(String name) throws IOException {
+    while (true) {
+      try {
+        var move = LongAlgebraicNotation.getMoveFromString(ui.inputMove(name));
+        game.makeMove(move);
+
+        var json = ConversationService.serialize(new SendMove(move));
+        dao.send(json);
+
+        gameHistory.addBoard(game.getCopyBoard());
+        break;
+      } catch (GameException e) {
+        ui.incorrectMove();
+      }
+    }
   }
 
   /**
