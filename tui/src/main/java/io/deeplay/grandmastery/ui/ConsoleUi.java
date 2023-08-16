@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /** Класс для взаимодействия с пользователем через консоль. */
@@ -37,8 +37,8 @@ public class ConsoleUi implements UI {
    */
   public ConsoleUi(InputStream inputStream, OutputStream outputStream) {
     this.bufferedReader =
-        new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()));
-    this.printStream = new PrintStream(outputStream);
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+    this.printStream = new PrintStream(outputStream, true, StandardCharsets.UTF_8);
   }
 
   /**
@@ -157,7 +157,6 @@ public class ConsoleUi implements UI {
 
     showBoard(board, movePlayer.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
     printStream.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    printStream.flush();
   }
 
   /**

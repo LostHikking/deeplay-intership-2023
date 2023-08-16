@@ -64,22 +64,22 @@ public class BoardRender {
   private static char pieceSymbol(Piece piece) {
     switch (piece.getFigureType()) {
       case KING -> {
-        return (piece.getColor() == Color.WHITE) ? '♚' : '♔';
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265A : 0x2654);
       }
       case QUEEN -> {
-        return (piece.getColor() == Color.WHITE) ? '♛' : '♕';
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265B : 0x2655);
       }
       case ROOK -> {
-        return (piece.getColor() == Color.WHITE) ? '♜' : '♖';
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265C : 0x2656);
       }
       case BISHOP -> {
-        return (piece.getColor() == Color.WHITE) ? '♝' : '♗';
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265D : 0x2657);
       }
       case KNIGHT -> {
-        return (piece.getColor() == Color.WHITE) ? '♞' : '♘';
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265E : 0x2658);
       }
       case PAWN -> {
-        return (piece.getColor() == Color.WHITE) ? '♟' : '♙';
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265F : 0x2659);
       }
       default -> throw GameErrorCode.INCORRECT_FIGURE_CHARACTER.asException();
     }
