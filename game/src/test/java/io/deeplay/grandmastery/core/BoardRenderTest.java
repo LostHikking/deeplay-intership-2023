@@ -36,6 +36,7 @@ class BoardRenderTest {
 ┃ 1 ┃♜┃♞┃♝┃♛┃♚┃♝┃♞┃♜┃  ┃
 ┃    a b c d e f g h   ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━┛""";
+    expectedOutput = expectedOutput.replaceAll(" ", " ");
     assertEquals(expectedOutput, outContent.toString(Charset.defaultCharset()).trim());
   }
 
@@ -57,6 +58,7 @@ class BoardRenderTest {
 ┃  ┃♖┃♘┃♗┃♔┃♕┃♗┃♘┃♖┃ 8 ┃
 ┃   h g f e d c b a    ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━┛""";
+    expectedOutput = expectedOutput.replaceAll(" ", " ");
     assertEquals(expectedOutput, outContent.toString(Charset.defaultCharset()).trim());
   }
 }

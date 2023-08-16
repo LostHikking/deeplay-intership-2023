@@ -22,8 +22,8 @@ public class BoardRender {
    * @param color цвет игрока
    */
   public static void showBoard(PrintStream printStream, Board board, Color color) {
-    printStream.println("┏━━━━━━━━━━━━━━━━━━━━━━┓");
-    String space = String.valueOf((char) 0x20);
+    printStream.println("┏╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍┓");
+    String space = " ";
     int startIndex;
     int endIndex;
     int direction;
@@ -62,7 +62,7 @@ public class BoardRender {
     }
 
     printStream.println(color == Color.WHITE ? space.repeat(2) + "┃" : space.repeat(3) + "┃");
-    printStream.println("┗━━━━━━━━━━━━━━━━━━━━━━┛");
+    printStream.println("┗╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍┛");
     printStream.flush();
   }
 
