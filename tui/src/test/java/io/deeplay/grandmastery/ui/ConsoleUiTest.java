@@ -1,14 +1,6 @@
 package io.deeplay.grandmastery.ui;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.HashBoard;
-import io.deeplay.grandmastery.core.HumanPlayer;
-import io.deeplay.grandmastery.core.Move;
-import io.deeplay.grandmastery.core.Player;
-import io.deeplay.grandmastery.core.Position;
+import io.deeplay.grandmastery.core.*;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
@@ -17,17 +9,21 @@ import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsoleUiTest {
   private ByteArrayOutputStream output;
@@ -56,7 +52,7 @@ public class ConsoleUiTest {
   public void selectModeTest(String testInput, String mode) throws IOException {
     testInput += "\n";
     InputStream inputStream =
-        new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
+        new ByteArrayInputStream(testInput.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
     GameMode selectedMode = consoleUi.selectMode();
     String expect =
@@ -69,7 +65,7 @@ public class ConsoleUiTest {
 
     Assertions.assertAll(
         () -> assertEquals(GameMode.valueOf(mode), selectedMode),
-        () -> assertEquals(expect, output.toString(Charset.defaultCharset())));
+        () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8)));
   }
 
   /**
@@ -84,7 +80,7 @@ public class ConsoleUiTest {
   public void selectColorTest(String testInput, String color) throws IOException {
     testInput += "\n";
     InputStream inputStream =
-        new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
+        new ByteArrayInputStream(testInput.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
     Color selectedColor = consoleUi.selectColor();
@@ -94,7 +90,7 @@ public class ConsoleUiTest {
         () ->
             assertEquals(
                 "Выберете цвет: 1 - Белые, 2 - Черные\n",
-                output.toString(Charset.defaultCharset())));
+                output.toString(StandardCharsets.UTF_8)));
   }
 
   /**
@@ -109,7 +105,7 @@ public class ConsoleUiTest {
   public void selectChessTypeTest(String testInput, String type) throws IOException {
     testInput += "\n";
     InputStream inputStream =
-        new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
+        new ByteArrayInputStream(testInput.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
     ChessType selectedColor = consoleUi.selectChessType();
@@ -121,14 +117,14 @@ public class ConsoleUiTest {
 
     Assertions.assertAll(
         () -> assertEquals(ChessType.valueOf(type), selectedColor),
-        () -> assertEquals(expect, output.toString(Charset.defaultCharset())));
+        () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8)));
   }
 
   @Test
   public void incorrectSelectTest() throws IOException {
     String testInput = "3\n2\n";
     InputStream inputStream =
-        new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
+        new ByteArrayInputStream(testInput.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
     Color selectedColor = consoleUi.selectColor();
@@ -138,7 +134,7 @@ public class ConsoleUiTest {
         () ->
             assertTrue(
                 output
-                    .toString(Charset.defaultCharset())
+                    .toString(StandardCharsets.UTF_8)
                     .contains("Пожалуйста, введите одно из возможных значений [1, 2]")));
   }
 
@@ -146,7 +142,7 @@ public class ConsoleUiTest {
   public void inputPlayerNameTest() throws IOException {
     String testInput = "Dima\n";
     InputStream inputStream =
-        new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
+        new ByteArrayInputStream(testInput.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
     String playerName = consoleUi.inputPlayerName(Color.WHITE);
@@ -155,21 +151,21 @@ public class ConsoleUiTest {
         () -> assertEquals("Dima", playerName),
         () ->
             assertEquals(
-                "Игрок WHITE введите ваше имя: \n", output.toString(Charset.defaultCharset())));
+                "Игрок WHITE введите ваше имя: \n", output.toString(StandardCharsets.UTF_8)));
   }
 
   @Test
   public void inputMoveTest() throws IOException {
     String testInput = "e2e4\n";
     InputStream inputStream =
-        new ByteArrayInputStream(testInput.getBytes(Charset.defaultCharset()));
+        new ByteArrayInputStream(testInput.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
     String inputMove = consoleUi.inputMove("Dima");
 
     Assertions.assertAll(
         () -> assertEquals("e2e4", inputMove),
-        () -> assertEquals("Dima введите ваш ход: ", output.toString(Charset.defaultCharset())));
+        () -> assertEquals("Dima введите ваш ход: ", output.toString(StandardCharsets.UTF_8)));
   }
 
   @Test
@@ -202,7 +198,7 @@ public class ConsoleUiTest {
 ┗━━━━━━━━━━━━━━━━━━━━━━┛
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         """;
-    assertEquals(expect, output.toString(Charset.defaultCharset()));
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8));
   }
 
   @Test
@@ -210,14 +206,14 @@ public class ConsoleUiTest {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.showResultGame(GameState.WHITE_WIN);
 
-    assertEquals("Белые выиграли\n", output.toString(Charset.defaultCharset()));
+    assertEquals("Белые выиграли\n", output.toString(StandardCharsets.UTF_8));
   }
 
   @Test
   public void showResulStalemateTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.showResultGame(GameState.DRAW);
-    assertEquals("Ничья\n", output.toString(Charset.defaultCharset()));
+    assertEquals("Ничья\n", output.toString(StandardCharsets.UTF_8));
   }
 
   @Test
@@ -225,7 +221,7 @@ public class ConsoleUiTest {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.incorrectMove();
     String expect = "Некорректный ход! Пожалуйста, введите ход правильно.\nПример хода: e2e4.\n";
-    assertEquals(expect, output.toString(Charset.defaultCharset()));
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8));
   }
 
   @Test
@@ -234,7 +230,7 @@ public class ConsoleUiTest {
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.emptyStartPosition(move);
     String expect = "На клетке e2 пусто!\n";
-    assertEquals(expect, output.toString(Charset.defaultCharset()));
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8));
   }
 
   @Test
@@ -243,7 +239,7 @@ public class ConsoleUiTest {
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.moveImpossible(move);
     String expect = "Ход e2e4 невозможен\n";
-    assertEquals(expect, output.toString(Charset.defaultCharset()));
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8));
   }
 
   @Test
@@ -252,13 +248,13 @@ public class ConsoleUiTest {
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
     consoleUi.warningYourKingInCheck(move);
     String expect = "Ваш король все еще под шахом, после хода: e2e4\n";
-    assertEquals(expect, output.toString(Charset.defaultCharset()));
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8));
   }
 
   @Test
   public void printHelpTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.printHelp();
-    assertEquals(ConsoleHelp.help + "\n", output.toString(Charset.defaultCharset()));
+    assertEquals(ConsoleHelp.help + "\n", output.toString(StandardCharsets.UTF_8));
   }
 }
