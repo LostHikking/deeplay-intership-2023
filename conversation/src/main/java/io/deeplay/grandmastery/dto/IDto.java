@@ -11,7 +11,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   @JsonSubTypes.Type(value = WaitMove.class),
   @JsonSubTypes.Type(value = SendMove.class),
   @JsonSubTypes.Type(value = WrongMove.class),
-  @JsonSubTypes.Type(value = AcceptMove.class)
+  @JsonSubTypes.Type(value = AcceptMove.class),
+  @JsonSubTypes.Type(WaitAnswerDraw.class),
+  @JsonSubTypes.Type(SendAnswerDraw.class)
 })
 public class IDto {
   public IDto() {}

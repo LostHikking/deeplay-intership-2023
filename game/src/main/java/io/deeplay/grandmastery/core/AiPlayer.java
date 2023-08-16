@@ -32,4 +32,9 @@ public class AiPlayer extends Player {
     this.setLastMove(possibleMove.get(ind));
     return possibleMove.get(ind);
   }
+
+  @Override
+  public boolean answerDraw() {
+    return false;
+  }
 }

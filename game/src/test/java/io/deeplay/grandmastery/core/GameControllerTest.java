@@ -43,7 +43,7 @@ public class GameControllerTest {
 
     Assertions.assertAll(
         () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()),
-        () -> assertEquals(expectBoard, gameController.getBoard()),
+        () -> assertTrue(Boards.isEqualsBoards(expectBoard, gameController.getBoard())),
         () -> assertEquals("White", gameController.getWhite().getName()),
         () -> assertEquals("Black", gameController.getBlack().getName()),
         () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
@@ -107,7 +107,7 @@ public class GameControllerTest {
     Assertions.assertAll(
         () -> assertThrows(GameException.class, gameController::nextMove),
         () -> assertEquals(GameState.BLACK_MOVE, gameController.getGameStatus()),
-        () -> assertEquals(expectBoard, gameController.getBoard()));
+        () -> assertTrue(Boards.isEqualsBoards(expectBoard, gameController.getBoard())));
   }
 
   @Test
@@ -166,5 +166,56 @@ public class GameControllerTest {
     Assertions.assertAll(
         () -> assertTrue(gameController.isGameOver()),
         () -> assertEquals(GameState.DRAW, gameController.getGameStatus()));
+  }
+
+  @Test
+  public void whiteSurrenderTest() throws IOException {
+    when(testUi.inputMove("White")).thenReturn("sur");
+    when(testUi.confirmSur()).thenReturn(true);
+    gameController.beginPlay(ChessType.CLASSIC);
+    gameController.nextMove();
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.BLACK_WIN, gameController.getGameStatus()));
+  }
+
+  @Test
+  public void blackSurrenderTest() throws IOException {
+    when(testUi.inputMove("White")).thenReturn("e2e4");
+    when(testUi.inputMove("Black")).thenReturn("sur");
+    when(testUi.confirmSur()).thenReturn(true);
+
+    gameController.beginPlay(ChessType.CLASSIC);
+    gameController.nextMove();
+    gameController.nextMove();
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.WHITE_WIN, gameController.getGameStatus()));
+  }
+
+  @Test
+  public void whiteOfferDrawAndBlackAcceptTest() throws IOException {
+    when(testUi.inputMove("White")).thenReturn("draw");
+    when(testUi.answerDraw()).thenReturn(true);
+    gameController.beginPlay(ChessType.CLASSIC);
+    gameController.nextMove();
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.DRAW, gameController.getGameStatus()));
+  }
+
+  @Test
+  public void whiteOfferDrawAndBlackRefusedTest() throws IOException {
+    when(testUi.inputMove("White")).thenReturn("draw");
+    when(testUi.answerDraw()).thenReturn(false);
+    gameController.beginPlay(ChessType.CLASSIC);
+    gameController.nextMove();
+
+    Assertions.assertAll(
+        () -> assertFalse(gameController.isGameOver()),
+        () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()));
   }
 }

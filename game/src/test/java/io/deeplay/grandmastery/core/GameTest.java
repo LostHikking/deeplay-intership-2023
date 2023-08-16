@@ -71,4 +71,13 @@ public class GameTest {
 
     assertThrows(GameException.class, () -> game.makeMove(move));
   }
+
+  @Test
+  public void ifGameOverTest() {
+    game.startup(board);
+    game.gameOver();
+
+    Move move = LongAlgebraicNotation.getMoveFromString("e2e5");
+    assertThrows(GameException.class, () -> game.makeMove(move));
+  }
 }

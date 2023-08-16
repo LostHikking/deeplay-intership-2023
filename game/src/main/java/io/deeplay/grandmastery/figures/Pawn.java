@@ -30,20 +30,24 @@ public class Pawn extends Piece {
       return false;
     }
 
+    int toRow = move.to().row().value();
     captureEnPassant = false;
     if (move.promotionPiece() != null) {
       return (canMoveForward(move, board) || canCapture(move, board)) && canRevive(move);
     }
 
+    if (toRow == 0 || toRow == 7) {
+      return false;
+    }
+
     if (move.from().col().value() == move.to().col().value()) {
       return canMoveForward(move, board);
-    } else if (areOnDiagonal(move)) {
+    } else {
       if (board.getLastMove() != null && !board.hasPiece(move.to())) {
         return checkCaptureEnPassant(move, board);
       }
       return canCapture(move, board);
     }
-    return false;
   }
 
   private boolean canMoveForward(Move move, Board board) {
@@ -60,14 +64,10 @@ public class Pawn extends Piece {
     }
   }
 
-  private boolean areOnDiagonal(Move move) {
-    int diffRow = Math.abs(move.to().row().value() - move.from().row().value());
-    int diffCol = Math.abs(move.to().col().value() - move.from().col().value());
-    return diffCol == diffRow;
-  }
-
   private boolean canCapture(Move move, Board board) {
-    if (deltaRowByColor(move, this.getColor()) == 1 && board.hasPiece(move.to())) {
+    if (deltaCol(move) == 1
+        && deltaRowByColor(move, this.getColor()) == 1
+        && board.hasPiece(move.to())) {
       return board.getPiece(move.to()).getColor() != this.getColor();
     } else {
       return false;
@@ -87,6 +87,10 @@ public class Pawn extends Piece {
     }
 
     return captureEnPassant;
+  }
+
+  private int deltaCol(Move move) {
+    return Math.abs(move.from().col().value() - move.to().col().value());
   }
 
   private int deltaRowByColor(Move move, Color color) {
@@ -139,10 +143,6 @@ public class Pawn extends Piece {
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, -1, 1));
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, 1, -1));
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, -1, -1));
-    defaultMoves =
-        defaultMoves.stream()
-            .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
-            .toList();
 
     List<Move> resultMoves = new ArrayList<>();
     for (Move move : defaultMoves) {
@@ -161,6 +161,10 @@ public class Pawn extends Piece {
       }
     }
 
+    resultMoves =
+        resultMoves.stream()
+            .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+            .toList();
     return resultMoves;
   }
 

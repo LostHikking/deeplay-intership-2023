@@ -2,15 +2,19 @@ package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.Game;
 import io.deeplay.grandmastery.core.GameHistory;
+import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.dto.IDto;
 import io.deeplay.grandmastery.dto.ResultGame;
+import io.deeplay.grandmastery.dto.SendAnswerDraw;
 import io.deeplay.grandmastery.dto.SendMove;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.dto.StartGameResponse;
+import io.deeplay.grandmastery.dto.WaitAnswerDraw;
 import io.deeplay.grandmastery.dto.WaitMove;
 import io.deeplay.grandmastery.dto.WrongMove;
 import io.deeplay.grandmastery.exceptions.GameException;
@@ -60,7 +64,6 @@ public class Client {
     var name = isBotVsBotGame ? "AI" : clientController.inputPlayerName(color);
     var chessType = clientController.selectChessType();
 
-
     var request = new StartGameRequest(name, gameMode, chessType, color);
 
     var response = clientController.query(request);
@@ -107,6 +110,10 @@ public class Client {
         gameHistory.addBoard(game.getCopyBoard());
 
         clientController.showBoard(gameHistory.getCurBoard(), color);
+      } else if (serverDto instanceof WaitAnswerDraw) {
+        String json =
+            ConversationService.serialize(new SendAnswerDraw(clientController.answerDraw()));
+        clientController.send(json);
       }
     } while (!(serverDto instanceof ResultGame));
 
@@ -120,13 +127,21 @@ public class Client {
   private void makeMove(String name) throws IOException {
     while (true) {
       try {
-        var move = LongAlgebraicNotation.getMoveFromString(clientController.inputMove(name));
-        game.makeMove(move);
+        String input = clientController.inputMove(name);
+        Move move;
+        if (("sur".equalsIgnoreCase(input) || "surrender".equalsIgnoreCase(input))
+            && clientController.confirmSur()) {
+          move = new Move(null, null, null, MoveType.SURRENDER);
+        } else if ("draw".equalsIgnoreCase(input)) {
+          move = new Move(null, null, null, MoveType.DRAW_OFFER);
+        } else {
+          move = LongAlgebraicNotation.getMoveFromString(input);
+          game.makeMove(move);
+          gameHistory.addBoard(game.getCopyBoard());
+        }
 
         var json = ConversationService.serialize(new SendMove(move));
         clientController.send(json);
-
-        gameHistory.addBoard(game.getCopyBoard());
         break;
       } catch (GameException e) {
         clientController.incorrectMove();

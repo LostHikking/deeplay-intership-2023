@@ -126,4 +126,15 @@ class GameHistoryTest {
   void getMovesTest() {
     Assertions.assertEquals(16, gameHistory.getMoves().size());
   }
+
+  @Test
+  void ifGameOverTest() {
+    Move move = LongAlgebraicNotation.getMoveFromString("b1c3");
+    gameHistory.gameOver();
+
+    Assertions.assertAll(
+            () -> Assertions.assertTrue(gameHistory.isGameOver()),
+            () -> Assertions.assertThrows(GameException.class, () -> gameHistory.makeMove(move))
+    );
+  }
 }

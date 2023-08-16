@@ -33,6 +33,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class PawnTest {
   private Board board;
   private Position defaultWhiteKingPosition;
+  private Position defaultBlackKingPosition;
 
   /** Создание новой доски. */
   @BeforeEach
@@ -40,7 +41,7 @@ public class PawnTest {
     board = new HashBoard();
 
     defaultWhiteKingPosition = Position.getPositionFromString("a1");
-    Position defaultBlackKingPosition = Position.getPositionFromString("a8");
+    defaultBlackKingPosition = Position.getPositionFromString("a8");
     board.setPiece(defaultWhiteKingPosition, new King(Color.WHITE));
     board.setPiece(defaultBlackKingPosition, new King(Color.BLACK));
   }
@@ -436,6 +437,39 @@ public class PawnTest {
   }
 
   @Test
+  public void impossibleReviveByDeltaRowTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Move move = LongAlgebraicNotation.getMoveFromString("e2e8q");
+    board.setPiece(move.from(), pawn);
+
+    Assertions.assertAll(
+        () -> assertFalse(pawn.move(board, move)),
+        () -> assertTrue(board.hasPiece(move.from()), "Check pawn"));
+  }
+
+  @Test
+  public void impossibleReviveByDeltaColTest() {
+    Piece pawn = new Pawn(Color.BLACK);
+    Move move = LongAlgebraicNotation.getMoveFromString("e2a1q");
+    board.setPiece(move.from(), pawn);
+
+    Assertions.assertAll(
+            () -> assertFalse(pawn.move(board, move)),
+            () -> assertTrue(board.hasPiece(move.from()), "Check pawn"));
+  }
+
+  @Test
+  public void promotionPieceNullWhenReviveTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Move move = LongAlgebraicNotation.getMoveFromString("e7e8");
+    board.setPiece(move.from(), pawn);
+
+    Assertions.assertAll(
+        () -> assertFalse(pawn.move(board, move)),
+        () -> assertTrue(board.hasPiece(move.from()), "Check pawn"));
+  }
+
+  @Test
   public void skipCaptureEnPassatTest() {
     Piece pawn = new Pawn(Color.WHITE);
     Position position = Position.getPositionFromString("e2");
@@ -451,7 +485,7 @@ public class PawnTest {
     Assertions.assertAll(
         () -> assertEquals(pawn, board.getPiece(move.to())),
         () -> assertNull(board.getPiece(move.from())),
-        () -> assertNotNull(board.getPiece(Position.getPositionFromString("d2"))));
+        () -> assertNotNull(board.getPiece(Position.getPositionFromString("d2")), "Enemy pawn"));
   }
 
   @Test
@@ -595,6 +629,24 @@ public class PawnTest {
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("e2d1r"));
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("e2d1q"));
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("e2d1n"));
+
+    assertEquals(expectMoves, pawn.getAllMoves(board, position));
+  }
+
+  @Test
+  public void allMovesReviveBlockTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.getPositionFromString("h7");
+
+    Piece king = board.removePiece(defaultBlackKingPosition);
+    board.setPiece(position, pawn);
+    board.setPiece(Position.getPositionFromString("h8"), king);
+
+    List<Move> expectMoves = new ArrayList<>();
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8b"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8r"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8q"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8n"));
 
     assertEquals(expectMoves, pawn.getAllMoves(board, position));
   }

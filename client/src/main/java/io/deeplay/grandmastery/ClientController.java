@@ -40,6 +40,14 @@ public record ClientController(ClientDao clientDao, UI ui) {
     ui.showResultGame(gameState);
   }
 
+  public boolean answerDraw() throws IOException {
+    return ui.answerDraw();
+  }
+
+  public boolean confirmSur() throws IOException {
+    return ui.confirmSur();
+  }
+
   public void printHelp() throws IOException {
     ui.printHelp();
   }

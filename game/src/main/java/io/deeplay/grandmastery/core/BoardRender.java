@@ -43,15 +43,15 @@ public class BoardRender {
         int horizontalIndex = (color == Color.WHITE) ? j : 7 - j;
         Piece piece = board.getPiece(horizontalIndex, i);
         if (piece != null) {
-          printStream.print("┃" + pieceSymbol(piece));
+          printStream.print("│" + pieceSymbol(piece));
         } else {
-          printStream.print("┃" + space);
+          printStream.print("│" + space);
         }
       }
       printStream.print(
           color == Color.WHITE
-              ? "┃\n"
-              : "┃" + space + (i + 1) + "\n");
+              ? "│\n"
+              : "│" + space + (i + 1) + "\n");
     }
 
     printStream.print(" " + space.repeat(2));

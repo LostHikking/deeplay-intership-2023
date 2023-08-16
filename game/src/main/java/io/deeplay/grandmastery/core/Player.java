@@ -53,7 +53,21 @@ public abstract class Player implements GameListener, PlayerInfo {
     this.lastMove = move;
   }
 
+  /**
+   * Метод, который создает ход.
+   *
+   * @return {@code Move} ход игрока.
+   * @throws GameException Если ход не валиден.
+   */
   public abstract Move createMove() throws GameException;
+
+  /**
+   * Метод для принятия/отказа ничьи игроком.
+   *
+   * @return {@code true} если принял, {@code false} если отказался.
+   * @throws GameException Если произошла ошибка ввода.
+   */
+  public abstract boolean answerDraw() throws GameException;
 
   @Override
   public String getName() {

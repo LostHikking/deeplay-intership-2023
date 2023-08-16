@@ -62,7 +62,9 @@ public class LocalGame {
       while (!gameController.isGameOver()) {
         try {
           gameController.nextMove();
-          consoleUi.showMove(gameController.getBoard(), gameController.getCurrentPlayer());
+          consoleUi.showMove(gameController.getOpponentPlayer());
+          consoleUi.showBoard(
+              gameController.getBoard(), gameController.getCurrentPlayer().getColor());
         } catch (GameException e) {
           consoleUi.incorrectMove();
         }

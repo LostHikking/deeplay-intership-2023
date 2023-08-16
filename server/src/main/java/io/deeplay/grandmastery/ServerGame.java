@@ -2,6 +2,7 @@ package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.exceptions.GameException;
 import java.io.IOException;
@@ -31,14 +32,21 @@ public class ServerGame implements Runnable {
 
       while (!gameController.isGameOver()) {
         try {
+          PlayerInfo currentPlayer = gameController.getCurrentPlayer();
           gameController.nextMove();
+          if (gameController.isGameOver()) {
+            break;
+          }
 
-          var color = gameController.getCurrentPlayer().getColor();
-          serverController.notifySuccessMove(color, gameController.getGameHistory().getLastMove());
+          if (currentPlayer != gameController.getCurrentPlayer()) {
+            var color = gameController.getOpponentPlayer().getColor();
+            serverController.notifySuccessMove(
+                color, gameController.getGameHistory().getLastMove());
 
-          log.info("Сделан ход цветом - " + color);
+            log.info("Сделан ход цветом - " + color);
+          }
         } catch (GameException e) {
-          var color = gameController.getCurrentPlayer().getColor();
+          var color = gameController.getOpponentPlayer().getColor();
           serverController.notifyWrongMove(color);
 
           log.error("Некорректный ход цветом - " + color);

@@ -39,4 +39,9 @@ class PositionTest {
     Position position = Position.getPositionFromString("e2");
     assertEquals("e2", Position.positionToString(position));
   }
+
+  @Test
+  void incorrectPositionTest() {
+    assertThrows(GameException.class, () -> Position.getPositionFromString("eee"));
+  }
 }
