@@ -28,8 +28,6 @@ public class ServerGame implements Runnable {
   private final Player playerTwo;
   private final ChessType chessType;
   private GameController gameController;
-
-  // Нужен для отправки результата при игре Bot VS Bot
   private final Socket socket;
 
   /** Конструктор для объектов типа ServerGame. */
