@@ -23,6 +23,7 @@ public class BoardRender {
    */
   public static void showBoard(PrintStream printStream, Board board, Color color) {
     printStream.println("┏━━━━━━━━━━━━━━━━━━━━━━┓");
+    String space = String.valueOf((char) 0x20);
     int startIndex;
     int endIndex;
     int direction;
@@ -38,25 +39,29 @@ public class BoardRender {
     }
 
     for (int i = startIndex; i != endIndex + direction; i += direction) {
-      printStream.print(color == Color.WHITE ? "┃ " + (i + 1) + " " : "┃  ");
+      printStream.print(
+          color == Color.WHITE ? "┃" + space + (i + 1) + space : "┃" + space.repeat(2));
       for (int j = 0; j < 8; j++) {
         int horizontalIndex = (color == Color.WHITE) ? j : 7 - j;
         Piece piece = board.getPiece(horizontalIndex, i);
         if (piece != null) {
-          printStream.print("│" + pieceSymbol(piece));
+          printStream.print("┃" + pieceSymbol(piece));
         } else {
-          printStream.print("│ ");
+          printStream.print("┃" + space);
         }
       }
-      printStream.print(color == Color.WHITE ? "│  ┃\n" : "│ " + (i + 1) + " ┃\n");
+      printStream.print(
+          color == Color.WHITE
+              ? "┃" + space.repeat(2) + "┃\n"
+              : "┃" + space + (i + 1) + space + "┃\n");
     }
 
-    printStream.print(color == Color.WHITE ? "┃    " : "┃   ");
+    printStream.print(color == Color.WHITE ? "┃" + space.repeat(4) : "┃" + space.repeat(3));
     for (int i = 0; i < 8; i++) {
-      printStream.print(color == Color.WHITE ? (char) (97 + i) + " " : (char) (104 - i) + " ");
+      printStream.print(color == Color.WHITE ? (char) (97 + i) + space : (char) (104 - i) + space);
     }
 
-    printStream.println(color == Color.WHITE ? "  ┃" : "   ┃");
+    printStream.println(color == Color.WHITE ? space.repeat(2) + "┃" : space.repeat(3) + "┃");
     printStream.println("┗━━━━━━━━━━━━━━━━━━━━━━┛");
     printStream.flush();
   }
