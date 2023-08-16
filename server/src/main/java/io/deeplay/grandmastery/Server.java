@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Server {
   public static final int PORT = 8080;
-  public static final ExecutorService START_GAME = Executors.newFixedThreadPool(8);
+  public static final ExecutorService START_GAME = Executors.newSingleThreadExecutor();
   public static final ExecutorService GAMES = Executors.newFixedThreadPool(8);
 
   /**
