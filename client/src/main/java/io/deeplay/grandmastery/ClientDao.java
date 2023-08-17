@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Dao {
+public class ClientDao {
   private final Socket socket;
   @Getter private final BufferedReader in;
   @Getter private final BufferedWriter out;
@@ -26,7 +26,7 @@ public class Dao {
    * @param socket Socket
    * @throws IOException Ошибка чтения/записи
    */
-  public Dao(Socket socket) throws IOException {
+  public ClientDao(Socket socket) throws IOException {
     this.socket = socket;
     this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
     this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));

@@ -26,10 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 public class Client {
   private static final String HOST = "localhost";
   private static final int PORT = 8080;
-  private final Dao dao;
-  private final UI ui;
+
   private final GameHistory gameHistory = new GameHistory();
   private final Game game = new Game();
+
+  private final ClientController clientController;
 
   /**
    * Конструктор для класса Client.
@@ -40,8 +41,7 @@ public class Client {
    * @throws IOException Ошибка ввода/вывода
    */
   public Client(String host, int port, UI ui) throws IOException {
-    this.dao = new Dao(new Socket(host, port));
-    this.ui = ui;
+    this.clientController = new ClientController(new ClientDao(new Socket(host, port)), ui);
 
     log.info("Клиент успешно создан");
   }
@@ -53,30 +53,31 @@ public class Client {
    * @throws RuntimeException неизвестный тип ответа от сервера
    */
   public void run() throws IOException {
-    var gameMode = ui.selectMode();
+    var gameMode = clientController.selectMode();
     var isBotVsBotGame = gameMode == GameMode.BOT_VS_BOT;
 
-    var color = isBotVsBotGame ? Color.WHITE : ui.selectColor();
-    var name = isBotVsBotGame ? "AI" : ui.inputPlayerName(color);
-    var chessType = ui.selectChessType();
+    var color = isBotVsBotGame ? Color.WHITE : clientController.selectColor();
+    var name = isBotVsBotGame ? "AI" : clientController.inputPlayerName(color);
+    var chessType = clientController.selectChessType();
+
 
     var request = new StartGameRequest(name, gameMode, chessType, color);
 
-    var response = dao.query(request);
+    var response = clientController.query(request);
 
     if (response instanceof ResultGame resultGame) {
       var boards = resultGame.getBoards();
       var stringBoard = boards.get(boards.size() - 1);
 
-      ui.showBoard(Boards.getBoardFromString(stringBoard), color);
-      ui.showResultGame(resultGame.getGameState());
+      clientController.showBoard(Boards.getBoardFromString(stringBoard), color);
+      clientController.showResultGame(resultGame.getGameState());
     } else if (response instanceof StartGameResponse responseDto) {
       var board = Boards.getBoardFromString(responseDto.getBoard());
       gameHistory.startup(board);
       game.startup(board);
 
-      ui.printHelp();
-      ui.showBoard(gameHistory.getCurBoard(), color);
+      clientController.printHelp();
+      clientController.showBoard(gameHistory.getCurBoard(), color);
 
       startGame(color, name);
     } else {
@@ -88,47 +89,47 @@ public class Client {
     IDto serverDto;
 
     do {
-      var serverResponse = dao.getJsonFromServer();
+      var serverResponse = clientController.getJsonFromServer();
       serverDto = ConversationService.deserialize(serverResponse);
 
       if (serverDto instanceof WaitMove) {
         makeMove(name);
-        ui.showBoard(gameHistory.getCurBoard(), color);
+        clientController.showBoard(gameHistory.getCurBoard(), color);
       } else if (serverDto instanceof WrongMove) {
         gameHistory.getBoards().remove(gameHistory.getBoards().size() - 1);
         game.startup(gameHistory.getCurBoard());
         game.setColorMove(color);
 
-        ui.showBoard(gameHistory.getCurBoard(), color);
-        ui.incorrectMove();
+        clientController.showBoard(gameHistory.getCurBoard(), color);
+        clientController.incorrectMove();
       } else if (serverDto instanceof AcceptMove acceptMove) {
         game.makeMove(acceptMove.getMove());
         gameHistory.addBoard(game.getCopyBoard());
 
-        ui.showBoard(gameHistory.getCurBoard(), color);
+        clientController.showBoard(gameHistory.getCurBoard(), color);
       }
     } while (!(serverDto instanceof ResultGame));
 
     game.gameOver();
     gameHistory.gameOver();
 
-    ui.showResultGame(((ResultGame) serverDto).getGameState());
-    dao.close();
+    clientController.showResultGame(((ResultGame) serverDto).getGameState());
+    clientController.close();
   }
 
   private void makeMove(String name) throws IOException {
     while (true) {
       try {
-        var move = LongAlgebraicNotation.getMoveFromString(ui.inputMove(name));
+        var move = LongAlgebraicNotation.getMoveFromString(clientController.inputMove(name));
         game.makeMove(move);
 
         var json = ConversationService.serialize(new SendMove(move));
-        dao.send(json);
+        clientController.send(json);
 
         gameHistory.addBoard(game.getCopyBoard());
         break;
       } catch (GameException e) {
-        ui.incorrectMove();
+        clientController.incorrectMove();
       }
     }
   }
