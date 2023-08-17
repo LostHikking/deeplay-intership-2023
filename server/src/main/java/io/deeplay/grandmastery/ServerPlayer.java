@@ -60,11 +60,11 @@ public class ServerPlayer extends Player {
       }
 
       var json = ConversationService.serialize(new WaitMove());
-      ServerUtils.send(out, json);
+      ServerDao.send(out, json);
 
       log.info("Отправили клиенту запрос о ходе");
 
-      var stringQuery = ServerUtils.getJsonFromClient(in);
+      var stringQuery = ServerDao.getJsonFromClient(in);
       var move = ConversationService.deserialize(stringQuery, SendMove.class).getMove();
 
       log.info("Получили ход от клиента - " + move);

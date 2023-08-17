@@ -33,7 +33,7 @@ public class CreateGame implements Runnable {
       var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
       var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
 
-      var startJson = ServerUtils.getJsonFromClient(in);
+      var startJson = ServerDao.getJsonFromClient(in);
       var requestDto = ConversationService.deserialize(startJson, StartGameRequest.class);
 
       switch (requestDto.getGameMode()) {
