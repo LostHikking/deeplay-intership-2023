@@ -22,7 +22,6 @@ public class BoardRender {
    * @param color цвет игрока
    */
   public static void showBoard(PrintStream printStream, Board board, Color color) {
-    printStream.println("┏╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍┓");
     String space = " ";
     int startIndex;
     int endIndex;
@@ -39,8 +38,7 @@ public class BoardRender {
     }
 
     for (int i = startIndex; i != endIndex + direction; i += direction) {
-      printStream.print(
-          color == Color.WHITE ? "┃" + space + (i + 1) + space : "┃" + space.repeat(2));
+      printStream.print(color == Color.WHITE ? (i + 1) + space : space + " ");
       for (int j = 0; j < 8; j++) {
         int horizontalIndex = (color == Color.WHITE) ? j : 7 - j;
         Piece piece = board.getPiece(horizontalIndex, i);
@@ -52,17 +50,15 @@ public class BoardRender {
       }
       printStream.print(
           color == Color.WHITE
-              ? "┃" + space.repeat(2) + "┃\n"
-              : "┃" + space + (i + 1) + space + "┃\n");
+              ? "┃\n"
+              : "┃" + space + (i + 1) + "\n");
     }
 
-    printStream.print(color == Color.WHITE ? "┃" + space.repeat(4) : "┃" + space.repeat(3));
+    printStream.print(" " + space.repeat(2));
     for (int i = 0; i < 8; i++) {
       printStream.print(color == Color.WHITE ? (char) (97 + i) + space : (char) (104 - i) + space);
     }
-
-    printStream.println(color == Color.WHITE ? space.repeat(2) + "┃" : space.repeat(3) + "┃");
-    printStream.println("┗╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍┛");
+    printStream.println();
     printStream.flush();
   }
 
