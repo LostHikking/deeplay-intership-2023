@@ -25,18 +25,17 @@ class BoardRenderTest {
     showBoard(outContent, board, Color.WHITE);
     String expectedOutput =
         """
-┏━━━━━━━━━━━━━━━━━━━━━━┓
-┃ 8 ┃♖┃♘┃♗┃♕┃♔┃♗┃♘┃♖┃  ┃
-┃ 7 ┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃  ┃
-┃ 6 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
-┃ 5 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
-┃ 4 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
-┃ 3 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃  ┃
-┃ 2 ┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃  ┃
-┃ 1 ┃♜┃♞┃♝┃♛┃♚┃♝┃♞┃♜┃  ┃
-┃    a b c d e f g h   ┃
-┗━━━━━━━━━━━━━━━━━━━━━━┛""";
+8 ┃♖┃♘┃♗┃♕┃♔┃♗┃♘┃♖┃
+7 ┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃
+6 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃
+5 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃
+4 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃
+3 ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃
+2 ┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃
+1 ┃♜┃♞┃♝┃♛┃♚┃♝┃♞┃♜┃
+   a b c d e f g h""";
     expectedOutput = expectedOutput.replaceAll(" ", " ");
+    expectedOutput += " ";
     assertEquals(expectedOutput, outContent.toString(Charset.defaultCharset()).trim());
   }
 
@@ -46,19 +45,18 @@ class BoardRenderTest {
 
     showBoard(outContent, board, Color.BLACK);
     String expectedOutput =
-        """
-┏━━━━━━━━━━━━━━━━━━━━━━┓
-┃  ┃♜┃♞┃♝┃♚┃♛┃♝┃♞┃♜┃ 1 ┃
-┃  ┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃ 2 ┃
-┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 3 ┃
-┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 4 ┃
-┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 5 ┃
-┃  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 6 ┃
-┃  ┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃ 7 ┃
-┃  ┃♖┃♘┃♗┃♔┃♕┃♗┃♘┃♖┃ 8 ┃
-┃   h g f e d c b a    ┃
-┗━━━━━━━━━━━━━━━━━━━━━━┛""";
+            """
+                      ┃♜┃♞┃♝┃♚┃♛┃♝┃♞┃♜┃ 1
+                      ┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃♟┃ 2
+                      ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 3
+                      ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 4
+                      ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 5
+                      ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ 6
+                      ┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃♙┃ 7
+                      ┃♖┃♘┃♗┃♔┃♕┃♗┃♘┃♖┃ 8
+                     \s\sh g f e d c b a""";
     expectedOutput = expectedOutput.replaceAll(" ", " ");
+    expectedOutput += " ";
     assertEquals(expectedOutput, outContent.toString(Charset.defaultCharset()).trim());
   }
 }
