@@ -21,19 +21,13 @@ import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.Boards;
 
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.BoxLayout;
-import javax.swing.Box;
+import javax.swing.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.io.IOException;
 
 public class GameGui implements UI {
-
+  private char promotionPiece;
   private Point firstClick = null;
 
   /** Контейнер с компонентами графического интерфейса. */
@@ -210,16 +204,8 @@ public class GameGui implements UI {
    */
   @Override
   public void showMove(Board board, PlayerInfo movePlayer) {
-    String messageBuilder =
-        movePlayer.getName()
-            + "("
-            + movePlayer.getColor()
-            + "): "
-            + movePlayer.getLastMove()
-            + "\n";
-    showBoard(board, movePlayer.getColor() == Color.WHITE ? Color.WHITE : Color.BLACK);
-    setMovingPlayer(movePlayer.getName());
-    gameGuiContainer.printMessage(messageBuilder);
+ showBoard(board, movePlayer.getColor() == Color.WHITE ? Color.WHITE : Color.BLACK);
+ setMovingPlayer(movePlayer.getName());
   }
   /**
    * Метод для вывода результата игры.
@@ -261,6 +247,10 @@ public class GameGui implements UI {
       stringBuilder.append(new Row(firstClick.y).getChar());
       stringBuilder.append(new Column(secondClick.x).getChar());
       stringBuilder.append(new Row(secondClick.y).getChar());
+      if(promotionPiece!='\0'){
+        stringBuilder.append(promotionPiece);
+        promotionPiece='\0';
+      }
       move = stringBuilder.toString();
     } catch (InterruptedException e) {
       System.err.println("Thread was interrupted");
@@ -268,6 +258,8 @@ public class GameGui implements UI {
     } finally {
       clickQueue.clear();
     }
+    String messageBuilder = playerName + ": " + move + "\n";
+    gameGuiContainer.printMessage(messageBuilder);
     return move;
   }
   /**
@@ -391,14 +383,14 @@ public class GameGui implements UI {
                 // Если это второй клик, скрываем возможные ходы
                 else if (clickQueue.size() == 2) {
                   //Проверка для подмены пешки
-//                  Piece piece = board.getPiece(firstClick.x, firstClick.y);
-//                  if(piece.getFigureType().getSymbol()=='p'){
-//                    int row = piece.getColor() == Color.WHITE? 6:1;
-//                    int dir = piece.getColor() == Color.WHITE? 1:-1;
-//                    if(firstClick.y==row&&point.y==row+dir){
-//                      System.out.println("СЮДА НАХУЙ");
-//                    }
-//                  }
+                  Piece piece = board.getPiece(firstClick.x, firstClick.y);
+                  if(piece.getFigureType().getSymbol()=='p'){
+                    int row = piece.getColor() == Color.WHITE? 6:1;
+                    int dir = piece.getColor() == Color.WHITE? 1:-1;
+                    if(firstClick.y==row&&point.y==row+dir){
+                      pawnPromotion(piece.getColor());
+                    }
+                  }
                   // Сравниваем первый и второй клик, если они равны, то мы грубо говоря убираем подсветку
                   if (firstClick != null && firstClick.equals(new Point(col, row))) {
                     showBoard(board, board.getPiece(col, row).getColor());
@@ -420,6 +412,53 @@ public class GameGui implements UI {
           }
         });
   }
+  public void pawnPromotion(Color color) {
+    JDialog dialog = new JDialog();
+    dialog.setTitle("Превращение пешки");
+    dialog.setLayout(new GridLayout(1, 4));
+
+    String colorPrefix = color == Color.WHITE ? "White" : "Black";
+
+    JButton queenButton = new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "Q.png")));
+    queenButton.setPreferredSize(new Dimension(50, 50));
+    queenButton.addActionListener(e -> {
+      promotionPiece = 'q';
+      dialog.dispose();
+    });
+    dialog.add(queenButton);
+
+    JButton rookButton = new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "R.png")));
+    rookButton.setPreferredSize(new Dimension(50, 50));
+    rookButton.addActionListener(e -> {
+      promotionPiece = 'r';
+      dialog.dispose();
+    });
+    dialog.add(rookButton);
+
+    JButton bishopButton = new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "B.png")));
+    bishopButton.setPreferredSize(new Dimension(50, 50));
+    bishopButton.addActionListener(e -> {
+      promotionPiece = 'b';
+      dialog.dispose();
+    });
+    dialog.add(bishopButton);
+
+    JButton knightButton = new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "N.png")));
+    knightButton.setPreferredSize(new Dimension(50, 50));
+    knightButton.addActionListener(e -> {
+      promotionPiece = 'n';
+      dialog.dispose();
+    });
+    dialog.add(knightButton);
+
+    dialog.pack();
+    dialog.setLocationRelativeTo(null);
+    dialog.setModal(true);
+    dialog.setResizable(false);
+    dialog.setVisible(true);
+  }
+
+
 
   /**
    * Делаем кнопку некликабельной, удаляя с неё листенеры
