@@ -156,6 +156,7 @@ class GameStateCheckerTest {
     board.setLastMove(move);
 
     Assertions.assertAll(
+        () -> Assertions.assertFalse(GameStateChecker.isMate(board, Color.BLACK)),
         () -> Assertions.assertTrue(GameStateChecker.isStaleMate(board, Color.BLACK)),
         () -> Assertions.assertTrue(GameStateChecker.isDraw(board, gameHistory)));
   }
