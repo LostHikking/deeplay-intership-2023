@@ -4,6 +4,7 @@ plugins {
     id("net.ltgt.errorprone") version "3.1.0"
     id("checkstyle")
     id("io.freefair.lombok") version "8.2.1"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 group = "io.deeplay.grandmastery"
@@ -15,6 +16,7 @@ allprojects {
     apply(plugin = "jacoco")
     apply(plugin = "checkstyle")
     apply(plugin = "io.freefair.lombok")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -74,5 +76,9 @@ allprojects {
 
     tasks.withType<Javadoc> {
         options.encoding = "UTF-8"
+    }
+
+    tasks.build {
+        dependsOn(tasks.shadowJar)
     }
 }

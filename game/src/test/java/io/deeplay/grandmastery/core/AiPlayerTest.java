@@ -1,5 +1,6 @@
 package io.deeplay.grandmastery.core;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -153,6 +154,17 @@ class AiPlayerTest {
 
   @Test
   void emptyBoardTest() {
+    assertThrows(GameException.class, () -> aiPlayer.createMove());
+  }
+
+  @Test
+  void answerDrawTest() {
+    assertFalse(aiPlayer.answerDraw());
+  }
+
+  @Test
+  void ifGameOverTest() {
+    aiPlayer.gameOver();
     assertThrows(GameException.class, () -> aiPlayer.createMove());
   }
 }

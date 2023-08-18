@@ -23,9 +23,15 @@ public class GameStateChecker {
         board.getAllPieceByColorPosition(color == Color.WHITE ? Color.BLACK : Color.WHITE);
     for (Position position : piecePosition) {
       Piece piece = board.getPiece(position);
-      Move move = new Move(position, kingPoz, null);
+      FigureType promotionPiece = null;
+      if (piece.getFigureType() == FigureType.PAWN
+          && (kingPoz.row().value() == 0 || kingPoz.row().value() == 7)) {
+        promotionPiece = FigureType.QUEEN;
+      }
 
-      if (piece != null && piece.canMove(board, move, false)) {
+      Move move = new Move(position, kingPoz, promotionPiece);
+
+      if (piece.canMove(board, move, false)) {
         return true;
       }
     }

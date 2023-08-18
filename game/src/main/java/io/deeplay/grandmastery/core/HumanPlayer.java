@@ -2,6 +2,7 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.listeners.InputListener;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
@@ -22,8 +23,16 @@ public class HumanPlayer extends Player {
     this.inputListener = inputListener;
   }
 
-  private String notifyInputListener() throws IOException {
+  private String notifyInputMoveListener() throws IOException {
     return inputListener.inputMove(this.getName());
+  }
+
+  private boolean notifyConfirmSurListener() throws IOException {
+    return inputListener.confirmSur();
+  }
+
+  private boolean notifyAnswerDrawListener() throws IOException {
+    return inputListener.answerDraw();
   }
 
   /**
@@ -36,10 +45,37 @@ public class HumanPlayer extends Player {
     if (this.isGameOver()) {
       throw GameErrorCode.GAME_ALREADY_OVER.asException();
     }
+
     try {
-      Move move = LongAlgebraicNotation.getMoveFromString(notifyInputListener());
+      String input = null;
+      while (input == null) {
+        input = notifyInputMoveListener();
+        if ("sur".equalsIgnoreCase(input) || "surrender".equalsIgnoreCase(input)) {
+          if (notifyConfirmSurListener()) {
+            return new Move(null, null, null, MoveType.SURRENDER);
+          } else {
+            input = null;
+            continue;
+          }
+        }
+
+        if ("draw".equalsIgnoreCase(input)) {
+          return new Move(null, null, null, MoveType.DRAW_OFFER);
+        }
+      }
+
+      Move move = LongAlgebraicNotation.getMoveFromString(input);
       setLastMove(move);
       return move;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public boolean answerDraw() throws GameException {
+    try {
+      return notifyAnswerDrawListener();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

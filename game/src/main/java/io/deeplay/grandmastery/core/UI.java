@@ -16,7 +16,7 @@ public interface UI extends InputListener {
 
   String inputPlayerName(Color color) throws IOException;
 
-  void showMove(Board board, PlayerInfo movePlayer);
+  void showMove(PlayerInfo movePlayer);
 
   void showResultGame(GameState gameState);
 
@@ -25,12 +25,6 @@ public interface UI extends InputListener {
   void showBoard(Board board, Color color);
 
   void incorrectMove();
-
-  void emptyStartPosition(Move move);
-
-  void moveImpossible(Move move);
-
-  void warningYourKingInCheck(Move move);
 
   void close();
 }

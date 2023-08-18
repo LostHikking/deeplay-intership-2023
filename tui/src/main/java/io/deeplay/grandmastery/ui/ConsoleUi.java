@@ -2,16 +2,13 @@ package io.deeplay.grandmastery.ui;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.BoardRender;
-import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.PlayerInfo;
-import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.helps.ConsoleHelp;
-import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,11 +137,10 @@ public class ConsoleUi implements UI {
   /**
    * Метод для отображения хода игрока на консоли.
    *
-   * @param board доска.
    * @param movePlayer игрок, выполняющий ход.
    */
   @Override
-  public void showMove(Board board, PlayerInfo movePlayer) {
+  public void showMove(PlayerInfo movePlayer) {
     printStream.println("/―――――――――――――――――――――――――――――――――――――――――――――――――――\\");
     printStream.println(
         " Ход игрока: "
@@ -154,9 +150,6 @@ public class ConsoleUi implements UI {
             + ") "
             + movePlayer.getLastMove());
     printStream.println("\\―――――――――――――――――――――――――――――――――――――――――――――――――――/");
-
-    showBoard(board, movePlayer.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
-    printStream.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   }
 
   /**
@@ -195,6 +188,34 @@ public class ConsoleUi implements UI {
   }
 
   /**
+   * Метод для подтверждения сдачи игрока.
+   *
+   * @return {@code true} если да, {@code false} если нет.
+   * @throws IOException если произошла ошибка при считывании ввода из консоли.
+   */
+  @Override
+  public boolean confirmSur() throws IOException {
+    printStream.print("Вы уверены что хотите сдаться: [Y/n]");
+    String answer = expectInput(List.of("Y", "N", "y", "n"));
+    printStream.flush();
+    return "Y".equals(answer) || "y".equals(answer);
+  }
+
+  /**
+   * Метод для принятия/отказа ничьи игроком.
+   *
+   * @return {@code true} если принял, {@code false} если отказался.
+   * @throws IOException если произошла ошибка при считывании ввода из консоли.
+   */
+  @Override
+  public boolean answerDraw() throws IOException {
+    printStream.print("Вам предлагают ничью: [Y/n]");
+    String answer = expectInput(List.of("Y", "N", "y", "n"));
+    printStream.flush();
+    return "Y".equals(answer) || "y".equals(answer);
+  }
+
+  /**
    * Метод для отображения доски на консоли.
    *
    * @param board доска, которую необходимо отобразить.
@@ -217,38 +238,7 @@ public class ConsoleUi implements UI {
   /** Метод для вывода сообщения о некорректном ходе на консоль. */
   @Override
   public void incorrectMove() {
-    printStream.println("Некорректный ход! Пожалуйста, введите ход правильно.");
-    printStream.println("Пример хода: e2e4.");
-  }
-
-  /**
-   * Метод для вывода сообщения о пустой начальной позиции на консоль.
-   *
-   * @param move ход, который начинается с пустой клетки.
-   */
-  @Override
-  public void emptyStartPosition(Move move) {
-    printStream.println("На клетке " + Position.positionToString(move.from()) + " пусто!");
-  }
-
-  /**
-   * Метод для вывода сообщения о невозможности хода на консоль.
-   *
-   * @param move ход, который невозможно выполнить.
-   */
-  @Override
-  public void moveImpossible(Move move) {
-    printStream.println("Ход " + LongAlgebraicNotation.moveToString(move) + " невозможен");
-  }
-
-  /**
-   * Метод для вывода предупреждения о том, что король игрока находится под шахом после хода.
-   *
-   * @param move ход, который привел к шаху короля игрока.
-   */
-  @Override
-  public void warningYourKingInCheck(Move move) {
-    printStream.println(
-        "Ваш король все еще под шахом, после хода: " + LongAlgebraicNotation.moveToString(move));
+    printStream.println("Некорректный или невозможный ход! Пожалуйста, попробуйте снова.");
+    printStream.println("Пример корректного хода: e2e4.");
   }
 }
