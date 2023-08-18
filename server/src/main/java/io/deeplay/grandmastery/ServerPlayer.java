@@ -2,7 +2,11 @@ package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
-import io.deeplay.grandmastery.domain.*;
+import io.deeplay.grandmastery.domain.ChessType;
+import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.dto.SendAnswerDraw;
 import io.deeplay.grandmastery.dto.SendMove;
 import io.deeplay.grandmastery.dto.WaitAnswerDraw;
