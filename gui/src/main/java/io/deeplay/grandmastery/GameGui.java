@@ -205,7 +205,6 @@ public class GameGui implements UI {
   @Override
   public void showMove(Board board, PlayerInfo movePlayer) {
  showBoard(board, movePlayer.getColor() == Color.WHITE ? Color.WHITE : Color.BLACK);
- setMovingPlayer(movePlayer.getName());
   }
   /**
    * Метод для вывода результата игры.
@@ -260,6 +259,7 @@ public class GameGui implements UI {
     }
     String messageBuilder = playerName + ": " + move + "\n";
     gameGuiContainer.printMessage(messageBuilder);
+    setMovingPlayer(playerName);
     return move;
   }
   /**
