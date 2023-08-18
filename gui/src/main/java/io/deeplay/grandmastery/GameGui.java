@@ -243,10 +243,9 @@ public class GameGui implements UI {
    *
    * @param playerName Имя игрока.
    * @return Строка хода.
-   * @throws IOException если возникла ошибка при чтении ввода.
    */
   @Override
-  public String inputMove(String playerName) throws IOException {
+  public String inputMove(String playerName){
     String move = null;
     StringBuilder stringBuilder = new StringBuilder();
     try {
@@ -374,8 +373,9 @@ public class GameGui implements UI {
           public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 1) {
               try {
+                Point point = new Point(col,row);
                 // Помещаем координаты в очередь
-                clickQueue.put(new Point(col, row));
+                clickQueue.put(point);
                 // Если это первый клик, показываем возможные ходы
                 if (clickQueue.size() == 1) {
                   makeBoardUnclickable();
@@ -390,8 +390,16 @@ public class GameGui implements UI {
                 }
                 // Если это второй клик, скрываем возможные ходы
                 else if (clickQueue.size() == 2) {
-                  // Сравниваем первый и второй клик, если они равны, то мы грубо говоря убираем
-                  // подсветку
+                  //Проверка для подмены пешки
+//                  Piece piece = board.getPiece(firstClick.x, firstClick.y);
+//                  if(piece.getFigureType().getSymbol()=='p'){
+//                    int row = piece.getColor() == Color.WHITE? 6:1;
+//                    int dir = piece.getColor() == Color.WHITE? 1:-1;
+//                    if(firstClick.y==row&&point.y==row+dir){
+//                      System.out.println("СЮДА НАХУЙ");
+//                    }
+//                  }
+                  // Сравниваем первый и второй клик, если они равны, то мы грубо говоря убираем подсветку
                   if (firstClick != null && firstClick.equals(new Point(col, row))) {
                     showBoard(board, board.getPiece(col, row).getColor());
                     clickQueue.clear();

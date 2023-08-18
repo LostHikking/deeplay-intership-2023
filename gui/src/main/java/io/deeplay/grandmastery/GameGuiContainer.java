@@ -42,7 +42,7 @@ public class GameGuiContainer {
     frame = new JFrame("Chess Board");
     ImageIcon icon =
         new ImageIcon(
-            "C:/Users/Матвей/IdeaProjects/grandmastery/gui/src/main/resources/GrandmasteryIcon.png"); // Замените "path/to/icon.png" путем к вашей иконке
+            "gui/src/main/resources/GrandmasteryIcon.png"); // Замените "path/to/icon.png" путем к вашей иконке
     frame.setIconImage(icon.getImage());
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(windowWidth, windowHeight);
@@ -260,7 +260,7 @@ public class GameGuiContainer {
     } else {
       color = "Black";
     }
-    String imagePath = "C:/Users/Матвей/IdeaProjects/grandmastery/gui/src/main/resources/";
+    String imagePath = "gui/src/main/resources/";
     switch (figureSymbol) {
       case 'k':
         ImageIcon kingIcon = new ImageIcon(imagePath + color + "King.png");
