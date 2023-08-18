@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.net.URL;
 
 import static io.deeplay.grandmastery.domain.Color.WHITE;
 
@@ -40,10 +41,11 @@ public class GameGuiContainer {
     int windowY = (screenHeight - windowHeight) / 2;
     // Создание окна и установка его позиции
     frame = new JFrame("Chess Board");
-    ImageIcon icon =
-        new ImageIcon(
-            "gui/src/main/resources/GrandmasteryIcon.png"); // Замените "path/to/icon.png" путем к вашей иконке
+
+    // Используем getResource для загрузки иконки из ресурсов
+    ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("GrandmasteryIcon.png"));
     frame.setIconImage(icon.getImage());
+
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(windowWidth, windowHeight);
     frame.setLocation(windowX, windowY);
@@ -253,42 +255,27 @@ public class GameGuiContainer {
    */
   public void setPieceIcon(Piece piece, int col, int row) {
     JButton cellButton = cells[row][col];
-    char figureSymbol = piece.getFigureType().getSymbol();
+    char figureSymbol = Character.toUpperCase(piece.getFigureType().getSymbol()); // Преобразуем символ в большую букву
     String color;
     if (piece.getColor() == WHITE) {
       color = "White";
     } else {
       color = "Black";
     }
-    String imagePath = "gui/src/main/resources/";
-    switch (figureSymbol) {
-      case 'k':
-        ImageIcon kingIcon = new ImageIcon(imagePath + color + "King.png");
-        cellButton.setIcon(kingIcon);
-        break;
-      case 'q':
-        ImageIcon queenIcon = new ImageIcon(imagePath + color + "Queen.png");
-        cellButton.setIcon(queenIcon);
-        break;
-      case 'r':
-        ImageIcon rookIcon = new ImageIcon(imagePath + color + "Rook.png");
-        cellButton.setIcon(rookIcon);
-        break;
-      case 'b':
-        ImageIcon bishopIcon = new ImageIcon(imagePath + color + "Bishop.png");
-        cellButton.setIcon(bishopIcon);
-        break;
-      case 'n':
-        ImageIcon knightIcon = new ImageIcon(imagePath + color + "Knight.png");
-        cellButton.setIcon(knightIcon);
-        break;
-      case 'p':
-        ImageIcon pawnIcon = new ImageIcon(imagePath + color + "Pawn.png");
-        cellButton.setIcon(pawnIcon);
-        break;
-      default:
+    String imageName = color + figureSymbol + ".png";
+
+    try {
+      URL imageUrl = getClass().getClassLoader().getResource(imageName);
+
+      if (imageUrl != null) {
+        ImageIcon icon = new ImageIcon(imageUrl);
+        cellButton.setIcon(icon);
+      } else {
         cellButton.setIcon(null);
-        break;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      cellButton.setIcon(null);
     }
   }
 

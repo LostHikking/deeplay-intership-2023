@@ -380,7 +380,7 @@ public class GameGui implements UI {
                 if (clickQueue.size() == 1) {
                   makeBoardUnclickable();
                   makePossibleMovesClickable(board, col, row);
-                  System.out.println("This cell clickable");
+                  //System.out.println("This cell clickable");
                   synchronized (monitor) {
                     // Уведомляем метод inputMove о новом значении в очереди
                     monitor.notify();
