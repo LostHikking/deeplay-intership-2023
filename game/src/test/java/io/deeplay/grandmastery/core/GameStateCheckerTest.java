@@ -5,6 +5,7 @@ import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Knight;
 import io.deeplay.grandmastery.figures.Pawn;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.figures.Rook;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import org.junit.jupiter.api.Assertions;
@@ -31,6 +32,38 @@ class GameStateCheckerTest {
     Assertions.assertAll(
         () -> Assertions.assertTrue(GameStateChecker.isCheck(board, Color.WHITE)),
         () -> Assertions.assertFalse(GameStateChecker.isCheck(board, Color.BLACK)));
+  }
+
+  @Test
+  void isCheckAfterPromotionPawnToQueenTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+
+    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.getPositionFromString("e8"), new King(Color.BLACK));
+    board.setPiece(Position.getPositionFromString("a7"), pawn);
+
+    Move move = LongAlgebraicNotation.getMoveFromString("a7a8q");
+    pawn.move(board, move);
+    BoardRender.showBoard(System.out, board, Color.WHITE);
+    Assertions.assertAll(
+        () -> Assertions.assertFalse(GameStateChecker.isCheck(board, Color.WHITE), "White"),
+        () -> Assertions.assertTrue(GameStateChecker.isCheck(board, Color.BLACK), "Black"));
+  }
+
+  @Test
+  void isCheckAfterPromotionPawnToKnightTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+
+    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.getPositionFromString("b6"), new King(Color.BLACK));
+    board.setPiece(Position.getPositionFromString("a7"), pawn);
+
+    Move move = LongAlgebraicNotation.getMoveFromString("a7a8n");
+    pawn.move(board, move);
+    BoardRender.showBoard(System.out, board, Color.WHITE);
+    Assertions.assertAll(
+        () -> Assertions.assertFalse(GameStateChecker.isCheck(board, Color.WHITE), "White"),
+        () -> Assertions.assertTrue(GameStateChecker.isCheck(board, Color.BLACK), "Black"));
   }
 
   @Test
