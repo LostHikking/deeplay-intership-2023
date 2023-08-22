@@ -190,7 +190,7 @@ public class ConsoleUiTest {
  Ход игрока: Dima(WHITE) e2e4
 \\―――――――――――――――――――――――――――――――――――――――――――――――――――/
         """;
-    assertEquals(expect, output.toString(StandardCharsets.UTF_8));
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", ""));
   }
 
   @Test
