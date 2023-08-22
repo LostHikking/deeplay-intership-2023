@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/** Класс для принятия хода соперника. */
 @Getter
 @Setter
 @ToString

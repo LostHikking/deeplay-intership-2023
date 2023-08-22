@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/** Класс для получения предложения/согласия на ничью. */
 @Getter
 @Setter
 @ToString

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/** Класс для получения результата игры. */
 @Getter
 @Setter
 @ToString

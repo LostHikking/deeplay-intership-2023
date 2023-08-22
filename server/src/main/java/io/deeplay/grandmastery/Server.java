@@ -1,6 +1,12 @@
 package io.deeplay.grandmastery;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,28 +15,30 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Server {
-  public static final int PORT = 8080;
   public static final ExecutorService START_GAME = Executors.newSingleThreadExecutor();
   public static final ExecutorService GAMES = Executors.newFixedThreadPool(8);
 
   /**
    * Метод запускает сервер на указанном порту.
    *
-   * @throws RuntimeException В случае ошибки сервера
+   * @throws IllegalStateException В случае ошибки сервера
    * @throws IOException Ошибка ввода/вывода
    */
-  public static void run() throws IOException {
-    try (var serverSocket = new ServerSocket(PORT)) {
+  public static void run(int port) throws IOException {
+    try (var serverSocket = new ServerSocket(port)) {
       log.info("Сервер запущен!");
 
       while (!serverSocket.isClosed()) {
         var socket = serverSocket.accept();
         socket.setSoTimeout((int) TimeUnit.MINUTES.toMillis(5));
 
-        START_GAME.execute(new CreateGame(socket));
+        var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
+        var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
+
+        START_GAME.execute(new CreateGame(socket, in, out));
       }
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new IllegalStateException(e);
     } finally {
       GAMES.shutdownNow();
       START_GAME.shutdownNow();
@@ -49,6 +57,6 @@ public class Server {
    * @throws IOException Ошибка ввода/вывода
    */
   public static void main(String[] args) throws IOException {
-    Server.run();
+    Server.run(8080);
   }
 }

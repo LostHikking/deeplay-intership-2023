@@ -1,5 +1,7 @@
 package io.deeplay.grandmastery;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import io.deeplay.grandmastery.core.Game;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
@@ -22,7 +24,11 @@ import io.deeplay.grandmastery.service.ConversationService;
 import io.deeplay.grandmastery.ui.ConsoleUi;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,8 +51,11 @@ public class Client {
    * @throws IOException Ошибка ввода/вывода
    */
   public Client(String host, int port, UI ui) throws IOException {
-    this.clientController = new ClientController(new ClientDao(new Socket(host, port)), ui);
+    var socket = new Socket(host, port);
+    var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
+    var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
 
+    this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
     log.info("Клиент успешно создан");
   }
 
@@ -54,7 +63,7 @@ public class Client {
    * Запускает клиент с определённым UI.
    *
    * @throws IOException ошибка ввода/вывода
-   * @throws RuntimeException неизвестный тип ответа от сервера
+   * @throws IllegalStateException неизвестный тип ответа от сервера
    */
   public void run() throws IOException {
     var gameMode = clientController.selectMode();
@@ -84,7 +93,7 @@ public class Client {
 
       startGame(color, name);
     } else {
-      throw new RuntimeException("Неизвестный тип ответа от сервера - " + response);
+      throw new IllegalStateException("Неизвестный тип ответа от сервера - " + response);
     }
   }
 

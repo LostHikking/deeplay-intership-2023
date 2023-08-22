@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/** Класс для отправки хода на сервер. */
 @Getter
 @Setter
 @ToString
