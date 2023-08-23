@@ -73,11 +73,16 @@ public class ClientDao {
    *
    * @return Json
    * @throws IOException Ошибка ввода-вывода
+   * @throws QueryException при отключении от сервера
    */
   public String getJsonFromServer() throws IOException {
     var result = in.readLine();
-    log.info("Получили данные от сервера - " + result);
 
+    if (result == null) {
+      throw new QueryException("Server disconnect");
+    }
+
+    log.info("Получили данные от сервера - " + result);
     return result;
   }
 
@@ -87,7 +92,14 @@ public class ClientDao {
    * @throws IOException Ошибка чтения/записи
    */
   public void close() throws IOException {
+    in.close();
+    out.close();
     socket.close();
-    log.info("Закрыли соединение");
+
+    log.info("Соединение закрыто");
+  }
+
+  public boolean isClosed() {
+    return socket.isClosed();
   }
 }

@@ -118,6 +118,15 @@ public class GameHistory implements GameListener {
     boards.add(copyBoard);
   }
 
+  /** Метод для очистки игровой истории. */
+  public void clear() {
+    moves.clear();
+    movesWithoutTakingAndAdvancingPawns = 0;
+    gameOver = false;
+    boards.clear();
+    resultGame = null;
+  }
+
   /**
    * Метод возвращает количество повторений позиции на доске в истории.
    *

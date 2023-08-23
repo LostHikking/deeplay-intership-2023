@@ -74,7 +74,7 @@ public abstract class Player implements GameListener, PlayerInfo {
   }
 
   @Override
-  public void makeMove(Move move) {
+  public void makeMove(Move move) throws GameException {
     game.makeMove(move);
   }
 

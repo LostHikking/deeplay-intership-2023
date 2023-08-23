@@ -11,7 +11,6 @@ import io.deeplay.grandmastery.exceptions.QueryException;
 import java.io.IOException;
 
 public record ClientController(ClientDao clientDao, UI ui) {
-
   public GameMode selectMode() throws IOException {
     return ui.selectMode();
   }
@@ -40,35 +39,19 @@ public record ClientController(ClientDao clientDao, UI ui) {
     ui.showResultGame(gameState);
   }
 
-  public boolean answerDraw() throws IOException {
-    return ui.answerDraw();
-  }
-
-  public boolean confirmSur() throws IOException {
-    return ui.confirmSur();
-  }
-
-  public void printHelp() throws IOException {
-    ui.printHelp();
-  }
-
   public String getJsonFromServer() throws IOException {
     return clientDao.getJsonFromServer();
-  }
-
-  public void incorrectMove() {
-    ui.incorrectMove();
   }
 
   public void close() throws IOException {
     clientDao.close();
   }
 
-  public void send(String json) throws IOException {
+  public synchronized void send(String json) throws IOException {
     clientDao.send(json);
   }
 
-  public String inputMove(String name) throws IOException {
-    return ui.inputMove(name);
+  public boolean isClosed() {
+    return clientDao.isClosed();
   }
 }
