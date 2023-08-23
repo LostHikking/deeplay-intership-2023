@@ -12,8 +12,6 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import lombok.extern.slf4j.Slf4j;
-
-
 @Slf4j
 public class GrandmasteryApp {
   private static final Gui GUI = new Gui();
@@ -68,6 +66,7 @@ public class GrandmasteryApp {
                       try {
                         GUI.setMovingPlayer(gameController.getCurrentPlayer().getName());
                         gameController.nextMove();
+                        GUI.showMove(gameController.getOpponentPlayer());
                         publish(); // Обновляем интерфейс в основном потоке
                       } catch (GameException e) {
                         GUI.incorrectMove();
@@ -80,7 +79,6 @@ public class GrandmasteryApp {
                   protected void process(List<Void> chunks) {
                     GUI.showBoard(
                         gameController.getBoard(), gameController.getCurrentPlayer().getColor());
-                    GUI.showMove(gameController.getOpponentPlayer());
                   }
 
                   @Override

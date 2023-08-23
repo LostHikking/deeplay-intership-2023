@@ -170,8 +170,9 @@ public class Gui implements UI {
    */
   @Override
   public void showMove(PlayerInfo movePlayer) {
-    if (movePlayer.getLastMove() != null) {
-      String messageBuilder = movePlayer.getName() + ": " + movePlayer.getLastMove() + "\n";
+    String messageBuilder = movePlayer.getName() + ": " + movePlayer.getLastMove() + "\n";
+    String lastMove = movePlayer.getLastMove();
+    if (lastMove != null && !messageBuilder.equals(guiContainer.getLastLine())) {
       guiContainer.printMessage(messageBuilder);
     }
   }
@@ -388,7 +389,7 @@ public class Gui implements UI {
                     monitor.notify();
                   }
                   // Записываем значение для проверки в следующем ифе
-                  firstClick = new Point(col, row);
+                  firstClick = point;
                   // Если это второй клик, скрываем возможные ходы
                 } else if (clickQueue.size() == 2) {
                   // Проверка для подмены пешки
@@ -402,7 +403,7 @@ public class Gui implements UI {
                   }
                   // Сравниваем первый и второй клик, если они равны, то мы грубо говоря убираем
                   // подсветку
-                  if (firstClick != null && firstClick.equals(new Point(col, row))) {
+                  if (firstClick != null && firstClick.equals(point)) {
                     showBoard(board, board.getPiece(col, row).getColor());
                     clickQueue.clear();
                     firstClick = null;

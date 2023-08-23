@@ -329,7 +329,7 @@ public class GuiContainer {
 
     for (int row = 0; row < 8; row++) {
       for (int col = 0; col < 8; col++) {
-        int x = col * (cellSize + columnSpacing);
+        int x = (7 - col) * (cellSize + columnSpacing);
         int y = row * cellSize;
         JButton cellsButton = new JButton();
         cellsButton.setBounds(x, y, cellSize, cellSize);
@@ -553,6 +553,19 @@ public class GuiContainer {
    */
   public void removePieceIcon(int col, int row) {
     cells[row][col].setIcon(null);
+  }
+
+  /**
+   * Метод возвращает последнюю строку в textArea.
+   * @return Последняя строка.
+   */
+  public String getLastLine() {
+    String text = textArea.getText();
+    if (text.isEmpty()) {
+      return null;
+    }
+    String[] lines = text.split("\n");
+    return lines[lines.length - 1].trim() + "\n";
   }
 
   /**
