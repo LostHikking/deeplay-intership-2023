@@ -10,6 +10,7 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Piece;
 import java.util.Arrays;
@@ -46,7 +47,8 @@ public class LongAlgebraicNotation {
     gameHistory.startup(copyBoard);
 
     Piece piece = copyBoard.getPiece(moves.get(0).from());
-    game.setColorMove(piece.getColor());
+    game.setGameState(
+        piece.getColor() == Color.WHITE ? GameState.WHITE_MOVE : GameState.BLACK_MOVE);
 
     for (Move move : moves) {
       try {
@@ -54,7 +56,7 @@ public class LongAlgebraicNotation {
       } catch (GameException e) {
         return false;
       }
-      Color enemyColor = game.getColorMove() == Color.WHITE ? Color.BLACK : Color.WHITE;
+      Color enemyColor = game.getGameState() == GameState.WHITE_MOVE ? Color.BLACK : Color.WHITE;
       if (GameStateChecker.isDraw(copyBoard, gameHistory)
           || GameStateChecker.isMate(copyBoard, enemyColor)) {
         return false;
@@ -99,8 +101,8 @@ public class LongAlgebraicNotation {
    * @return Возвращает ход, спаршенный из строки
    */
   private static Move getSimpleMoveFromString(String simpleMoveString) {
-    var fromPosition = Position.getPositionFromString(simpleMoveString.substring(0, 2));
-    var toPosition = Position.getPositionFromString(simpleMoveString.substring(2));
+    var fromPosition = Position.fromString(simpleMoveString.substring(0, 2));
+    var toPosition = Position.fromString(simpleMoveString.substring(2));
 
     return new Move(fromPosition, toPosition, null);
   }
@@ -112,8 +114,8 @@ public class LongAlgebraicNotation {
    * @return Возвращает ход, спаршенный из строки
    */
   private static Move getPromotionMoveFromString(String promotionMoveString) {
-    var fromPosition = Position.getPositionFromString(promotionMoveString.substring(0, 2));
-    var toPosition = Position.getPositionFromString(promotionMoveString.substring(2, 4));
+    var fromPosition = Position.fromString(promotionMoveString.substring(0, 2));
+    var toPosition = Position.fromString(promotionMoveString.substring(2, 4));
 
     var figureSymbol = promotionMoveString.charAt(4);
     var piece =
@@ -133,9 +135,9 @@ public class LongAlgebraicNotation {
    */
   public static String moveToString(Move move) {
     return move.promotionPiece() != null
-        ? Position.positionToString(move.from())
-            + Position.positionToString(move.to())
+        ? Position.getString(move.from())
+            + Position.getString(move.to())
             + move.promotionPiece().getSymbol()
-        : Position.positionToString(move.from()) + Position.positionToString(move.to());
+        : Position.getString(move.from()) + Position.getString(move.to());
   }
 }

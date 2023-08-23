@@ -28,7 +28,7 @@ public record ServerController(ServerDao serverDao) {
    * Функция закрывает ресурсы.
    *
    * @throws IOException В случае ошибки закрытия
-  */
+   */
   public void close() throws IOException {
     serverDao.close();
   }

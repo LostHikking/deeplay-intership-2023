@@ -29,8 +29,8 @@ public class GameControllerTest {
   /** Создает gameController по умолчанию с двумя игроками людьми. */
   @BeforeEach
   public void init() {
-    Player white = new HumanPlayer("White", Color.WHITE, testUi);
-    Player black = new HumanPlayer("Black", Color.BLACK, testUi);
+    Player white = new HumanPlayer("White", Color.WHITE, testUi, false);
+    Player black = new HumanPlayer("Black", Color.BLACK, testUi, false);
     gameController = new GameController(white, black);
   }
 
@@ -74,8 +74,7 @@ public class GameControllerTest {
     gameController.nextMove();
 
     Assertions.assertAll(
-        () ->
-            assertNotNull(gameController.getBoard().getPiece(Position.getPositionFromString("e4"))),
+        () -> assertNotNull(gameController.getBoard().getPiece(Position.fromString("e4"))),
         () -> assertEquals(GameState.BLACK_MOVE, gameController.getGameStatus()),
         () -> assertNull(gameController.getMove()),
         () -> assertFalse(gameController.isGameOver()));
@@ -89,7 +88,7 @@ public class GameControllerTest {
 
     Assertions.assertAll(
         () -> assertThrows(GameException.class, gameController::nextMove),
-        () -> assertNull(gameController.getBoard().getPiece(Position.getPositionFromString("e4"))),
+        () -> assertNull(gameController.getBoard().getPiece(Position.fromString("e4"))),
         () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()),
         () -> assertNull(gameController.getMove()));
   }

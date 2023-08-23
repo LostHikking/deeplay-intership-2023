@@ -41,10 +41,7 @@ public class ServerDaoTest {
 
   @Test
   void sendMoveTest() throws IOException {
-    var dto =
-        new SendMove(
-            new Move(
-                Position.getPositionFromString("a1"), Position.getPositionFromString("b2"), null));
+    var dto = new SendMove(new Move(Position.fromString("a1"), Position.fromString("b2"), null));
     try (var utilities = Mockito.mockStatic(ServerDao.class)) {
       utilities
           .when(() -> ServerDao.getJsonFromClient(bufferedReader))

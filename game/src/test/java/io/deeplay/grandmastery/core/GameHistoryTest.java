@@ -1,5 +1,6 @@
 package io.deeplay.grandmastery.core;
 
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
@@ -46,8 +47,7 @@ class GameHistoryTest {
 
   @Test
   void getMovesWithoutTakingAndAdvancingPawnsAfterMovePawnTest() {
-    var move =
-        new Move(Position.getPositionFromString("b2"), Position.getPositionFromString("b3"), null);
+    var move = new Move(Position.fromString("b2"), Position.fromString("b3"), null);
 
     var piece = board.getPiece(move.from());
     piece.move(board, move);
@@ -130,11 +130,10 @@ class GameHistoryTest {
   @Test
   void ifGameOverTest() {
     Move move = LongAlgebraicNotation.getMoveFromString("b1c3");
-    gameHistory.gameOver();
+    gameHistory.gameOver(GameState.WHITE_WIN);
 
     Assertions.assertAll(
-            () -> Assertions.assertTrue(gameHistory.isGameOver()),
-            () -> Assertions.assertThrows(GameException.class, () -> gameHistory.makeMove(move))
-    );
+        () -> Assertions.assertTrue(gameHistory.isGameOver()),
+        () -> Assertions.assertThrows(GameException.class, () -> gameHistory.makeMove(move)));
   }
 }

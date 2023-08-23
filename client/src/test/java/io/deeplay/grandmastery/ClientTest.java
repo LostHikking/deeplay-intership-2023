@@ -15,9 +15,7 @@ import org.mockito.Mockito;
 public class ClientTest {
   private ClientDao clientDao;
   private final SendMove sendMove =
-      new SendMove(
-          new Move(
-              Position.getPositionFromString("a1"), Position.getPositionFromString("b2"), null));
+      new SendMove(new Move(Position.fromString("a1"), Position.fromString("b2"), null));
 
   @BeforeEach
   void init() throws IOException {

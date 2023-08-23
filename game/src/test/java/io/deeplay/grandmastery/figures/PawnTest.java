@@ -40,8 +40,8 @@ public class PawnTest {
   public void init() {
     board = new HashBoard();
 
-    defaultWhiteKingPosition = Position.getPositionFromString("a1");
-    defaultBlackKingPosition = Position.getPositionFromString("a8");
+    defaultWhiteKingPosition = Position.fromString("a1");
+    defaultBlackKingPosition = Position.fromString("a8");
     board.setPiece(defaultWhiteKingPosition, new King(Color.WHITE));
     board.setPiece(defaultBlackKingPosition, new King(Color.BLACK));
   }
@@ -130,9 +130,9 @@ public class PawnTest {
     Piece pawn = new Pawn(Color.valueOf(color));
     board.setPiece(move.from(), pawn);
     if ("WHITE".equals(color)) {
-      board.setPiece(Position.getPositionFromString("e3"), new Pawn(Color.valueOf(color)));
+      board.setPiece(Position.fromString("e3"), new Pawn(Color.valueOf(color)));
     } else {
-      board.setPiece(Position.getPositionFromString("e6"), new Pawn(Color.valueOf(color)));
+      board.setPiece(Position.fromString("e6"), new Pawn(Color.valueOf(color)));
     }
 
     assertFalse(pawn.move(board, move), "Check " + color + " pawn");
@@ -454,8 +454,8 @@ public class PawnTest {
     board.setPiece(move.from(), pawn);
 
     Assertions.assertAll(
-            () -> assertFalse(pawn.move(board, move)),
-            () -> assertTrue(board.hasPiece(move.from()), "Check pawn"));
+        () -> assertFalse(pawn.move(board, move)),
+        () -> assertTrue(board.hasPiece(move.from()), "Check pawn"));
   }
 
   @Test
@@ -472,10 +472,10 @@ public class PawnTest {
   @Test
   public void skipCaptureEnPassatTest() {
     Piece pawn = new Pawn(Color.WHITE);
-    Position position = Position.getPositionFromString("e2");
+    Position position = Position.fromString("e2");
 
     board.setPiece(position, pawn);
-    board.setPiece(Position.getPositionFromString("d2"), new Pawn(Color.BLACK));
+    board.setPiece(Position.fromString("d2"), new Pawn(Color.BLACK));
     board.setLastMove(LongAlgebraicNotation.getMoveFromString("d4d2"));
 
     Move move = LongAlgebraicNotation.getMoveFromString("e2e3");
@@ -485,22 +485,22 @@ public class PawnTest {
     Assertions.assertAll(
         () -> assertEquals(pawn, board.getPiece(move.to())),
         () -> assertNull(board.getPiece(move.from())),
-        () -> assertNotNull(board.getPiece(Position.getPositionFromString("d2")), "Enemy pawn"));
+        () -> assertNotNull(board.getPiece(Position.fromString("d2")), "Enemy pawn"));
   }
 
   @Test
   public void checkKingAfterCaptureEnPassatTest() {
     Piece pawn = new Pawn(Color.WHITE);
     Piece enemyPawn = new Pawn(Color.BLACK);
-    Position pawnPosition = Position.getPositionFromString("d5");
-    Position enemyPawnPosition = Position.getPositionFromString("c5");
+    Position pawnPosition = Position.fromString("d5");
+    Position enemyPawnPosition = Position.fromString("c5");
 
     board.setPiece(pawnPosition, pawn);
     board.setPiece(enemyPawnPosition, enemyPawn);
-    board.setPiece(Position.getPositionFromString("b6"), new Bishop(Color.BLACK));
+    board.setPiece(Position.fromString("b6"), new Bishop(Color.BLACK));
 
     Piece whiteKing = board.removePiece(defaultWhiteKingPosition);
-    board.setPiece(Position.getPositionFromString("g1"), whiteKing);
+    board.setPiece(Position.fromString("g1"), whiteKing);
     board.setLastMove(LongAlgebraicNotation.getMoveFromString("c7c5"));
 
     Move move = LongAlgebraicNotation.getMoveFromString("d5c6");
@@ -516,7 +516,7 @@ public class PawnTest {
   @Test
   public void getAllMovesEmptyPositionPawnTest() {
     Piece pawn = new Pawn(Color.WHITE);
-    Position position = Position.getPositionFromString("e2");
+    Position position = Position.fromString("e2");
 
     board.setPiece(position, pawn);
     pawn.move(board, LongAlgebraicNotation.getMoveFromString("e2e3"));
@@ -528,7 +528,7 @@ public class PawnTest {
   @Description("Check getAllMoves, two squares forward, when pawn already moved")
   public void getAllMovesPawnTest() {
     Piece pawn = new Pawn(Color.WHITE);
-    Position position = Position.getPositionFromString("e2");
+    Position position = Position.fromString("e2");
 
     board.setPiece(position, pawn);
     pawn.move(board, LongAlgebraicNotation.getMoveFromString("e2e3"));
@@ -536,19 +536,19 @@ public class PawnTest {
     List<Move> expectMoves = new ArrayList<>();
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("e3e4"));
 
-    assertEquals(expectMoves, pawn.getAllMoves(board, Position.getPositionFromString("e3")));
+    assertEquals(expectMoves, pawn.getAllMoves(board, Position.fromString("e3")));
   }
 
   @Test
   public void allMovesWhitePawnTest() {
     Piece pawn = new Pawn(Color.WHITE);
-    Position position = Position.getPositionFromString("e2");
+    Position position = Position.fromString("e2");
 
     board.setPiece(position, pawn);
-    board.setPiece(Position.getPositionFromString("d2"), new Pawn(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("f3"), new Pawn(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("f1"), new Pawn(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("d1"), new Pawn(Color.BLACK));
+    board.setPiece(Position.fromString("d2"), new Pawn(Color.BLACK));
+    board.setPiece(Position.fromString("f3"), new Pawn(Color.BLACK));
+    board.setPiece(Position.fromString("f1"), new Pawn(Color.BLACK));
+    board.setPiece(Position.fromString("d1"), new Pawn(Color.BLACK));
     board.setLastMove(LongAlgebraicNotation.getMoveFromString("d4d2"));
 
     List<Move> expectMoves = new ArrayList<>();
@@ -563,13 +563,13 @@ public class PawnTest {
   @Test
   public void allMovesBlackPawnTest() {
     Piece pawn = new Pawn(Color.BLACK);
-    Position position = Position.getPositionFromString("e7");
+    Position position = Position.fromString("e7");
 
     board.setPiece(position, pawn);
-    board.setPiece(Position.getPositionFromString("d6"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("f7"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("f8"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("d8"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("d6"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("f7"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("f8"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("d8"), new Pawn(Color.WHITE));
     board.setLastMove(LongAlgebraicNotation.getMoveFromString("f5f7"));
 
     List<Move> expectMoves = new ArrayList<>();
@@ -584,11 +584,11 @@ public class PawnTest {
   @Test
   public void allMovesReviveWhitePawnTest() {
     Piece pawn = new Pawn(Color.WHITE);
-    Position position = Position.getPositionFromString("e7");
+    Position position = Position.fromString("e7");
 
     board.setPiece(position, pawn);
-    board.setPiece(Position.getPositionFromString("f8"), new Knight(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("d8"), new Knight(Color.BLACK));
+    board.setPiece(Position.fromString("f8"), new Knight(Color.BLACK));
+    board.setPiece(Position.fromString("d8"), new Knight(Color.BLACK));
 
     List<Move> expectMoves = new ArrayList<>();
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8b"));
@@ -610,11 +610,11 @@ public class PawnTest {
   @Test
   public void allMovesReviveBlackPawnTest() {
     Piece pawn = new Pawn(Color.BLACK);
-    Position position = Position.getPositionFromString("e2");
+    Position position = Position.fromString("e2");
 
     board.setPiece(position, pawn);
-    board.setPiece(Position.getPositionFromString("f1"), new Knight(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("d1"), new Knight(Color.WHITE));
+    board.setPiece(Position.fromString("f1"), new Knight(Color.WHITE));
+    board.setPiece(Position.fromString("d1"), new Knight(Color.WHITE));
 
     List<Move> expectMoves = new ArrayList<>();
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("e2e1b"));
@@ -636,11 +636,11 @@ public class PawnTest {
   @Test
   public void allMovesReviveBlockTest() {
     Piece pawn = new Pawn(Color.WHITE);
-    Position position = Position.getPositionFromString("h7");
+    Position position = Position.fromString("h7");
 
     Piece king = board.removePiece(defaultBlackKingPosition);
     board.setPiece(position, pawn);
-    board.setPiece(Position.getPositionFromString("h8"), king);
+    board.setPiece(Position.fromString("h8"), king);
 
     List<Move> expectMoves = new ArrayList<>();
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8b"));

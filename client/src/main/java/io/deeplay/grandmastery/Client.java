@@ -2,10 +2,13 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import io.deeplay.grandmastery.core.Game;
+import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
+import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.core.UI;
+import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.MoveType;
@@ -19,11 +22,10 @@ import io.deeplay.grandmastery.dto.StartGameResponse;
 import io.deeplay.grandmastery.dto.WaitAnswerDraw;
 import io.deeplay.grandmastery.dto.WaitMove;
 import io.deeplay.grandmastery.dto.WrongMove;
-import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
 import io.deeplay.grandmastery.ui.ConsoleUi;
 import io.deeplay.grandmastery.utils.Boards;
-import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -38,9 +40,8 @@ public class Client {
   private static final int PORT = 8080;
 
   private final GameHistory gameHistory = new GameHistory();
-  private final Game game = new Game();
-
   private final ClientController clientController;
+  private Player player;
 
   /**
    * Конструктор для класса Client.
@@ -65,95 +66,91 @@ public class Client {
    * @throws IOException ошибка ввода/вывода
    * @throws IllegalStateException неизвестный тип ответа от сервера
    */
-  public void run() throws IOException {
-    var gameMode = clientController.selectMode();
-    var isBotVsBotGame = gameMode == GameMode.BOT_VS_BOT;
+  public void run() throws IOException, IllegalStateException {
+    GameMode gameMode = clientController.selectMode();
+    if (gameMode == GameMode.BOT_VS_BOT) {
+      botVsBot(clientController.selectChessType());
+      return;
+    }
 
-    var color = isBotVsBotGame ? Color.WHITE : clientController.selectColor();
-    var name = isBotVsBotGame ? "AI" : clientController.inputPlayerName(color);
-    var chessType = clientController.selectChessType();
+    Color color = clientController.selectColor();
+    String name = clientController.inputPlayerName(color);
+    ChessType chessType = clientController.selectChessType();
 
-    var request = new StartGameRequest(name, gameMode, chessType, color);
+    player = new HumanPlayer(name, color, clientController.ui());
+    StartGameRequest request = new StartGameRequest(name, gameMode, chessType, color);
+    IDto response = clientController.query(request);
 
-    var response = clientController.query(request);
-
-    if (response instanceof ResultGame resultGame) {
-      var boards = resultGame.getBoards();
-      var stringBoard = boards.get(boards.size() - 1);
-
-      clientController.showBoard(Boards.getBoardFromString(stringBoard), color);
-      clientController.showResultGame(resultGame.getGameState());
-    } else if (response instanceof StartGameResponse responseDto) {
-      var board = Boards.getBoardFromString(responseDto.getBoard());
+    if (response instanceof StartGameResponse responseDto) {
+      Board board = Boards.getBoardFromString(responseDto.getBoard());
       gameHistory.startup(board);
-      game.startup(board);
+      player.startup(board);
 
-      clientController.printHelp();
-      clientController.showBoard(gameHistory.getCurBoard(), color);
-
-      startGame(color, name);
+      startGame();
     } else {
       throw new IllegalStateException("Неизвестный тип ответа от сервера - " + response);
     }
   }
 
-  private void startGame(Color color, String name) throws IOException {
+  /**
+   * Запускает и возвращает результат игр bot_vs_bot.
+   *
+   * @throws QueryException ошибка во время запроса.
+   * @throws IllegalStateException неизвестный тип ответа от сервера.
+   */
+  private void botVsBot(ChessType chessType) throws QueryException, IllegalStateException {
+    StartGameRequest request =
+        new StartGameRequest("AI", GameMode.BOT_VS_BOT, chessType, Color.WHITE);
+    IDto response = clientController.query(request);
+
+    if (response instanceof ResultGame resultGame) {
+      var boards = resultGame.getBoards();
+      var stringBoard = boards.get(boards.size() - 1);
+
+      clientController.showBoard(Boards.getBoardFromString(stringBoard), Color.WHITE);
+      clientController.showResultGame(resultGame.getGameState());
+    } else {
+      throw new IllegalStateException("Неизвестный тип ответа от сервера - " + response);
+    }
+  }
+
+  private void startGame() throws IOException {
     IDto serverDto;
 
     do {
-      var serverResponse = clientController.getJsonFromServer();
+      String serverResponse = clientController.getJsonFromServer();
       serverDto = ConversationService.deserialize(serverResponse);
 
       if (serverDto instanceof WaitMove) {
-        makeMove(name);
-        clientController.showBoard(gameHistory.getCurBoard(), color);
+        String json = ConversationService.serialize(new SendMove(makeMove()));
+        clientController.send(json);
       } else if (serverDto instanceof WrongMove) {
         gameHistory.getBoards().remove(gameHistory.getBoards().size() - 1);
-        game.startup(gameHistory.getCurBoard());
-        game.setColorMove(color);
-
-        clientController.showBoard(gameHistory.getCurBoard(), color);
-        clientController.incorrectMove();
+        player.startup(gameHistory.getCurBoard());
       } else if (serverDto instanceof AcceptMove acceptMove) {
-        game.makeMove(acceptMove.getMove());
-        gameHistory.addBoard(game.getCopyBoard());
-
-        clientController.showBoard(gameHistory.getCurBoard(), color);
+        player.makeMove(acceptMove.getMove());
+        gameHistory.addBoard(player.getBoard());
       } else if (serverDto instanceof WaitAnswerDraw) {
-        String json =
-            ConversationService.serialize(new SendAnswerDraw(clientController.answerDraw()));
+        String json = ConversationService.serialize(new SendAnswerDraw(player.answerDraw()));
         clientController.send(json);
       }
     } while (!(serverDto instanceof ResultGame));
 
-    game.gameOver();
-    gameHistory.gameOver();
-
-    clientController.showResultGame(((ResultGame) serverDto).getGameState());
+    player.gameOver(((ResultGame) serverDto).getGameState());
+    gameHistory.gameOver(((ResultGame) serverDto).getGameState());
     clientController.close();
   }
 
-  private void makeMove(String name) throws IOException {
+  private Move makeMove() {
     while (true) {
-      try {
-        String input = clientController.inputMove(name);
-        Move move;
-        if (("sur".equalsIgnoreCase(input) || "surrender".equalsIgnoreCase(input))
-            && clientController.confirmSur()) {
-          move = new Move(null, null, null, MoveType.SURRENDER);
-        } else if ("draw".equalsIgnoreCase(input)) {
-          move = new Move(null, null, null, MoveType.DRAW_OFFER);
-        } else {
-          move = LongAlgebraicNotation.getMoveFromString(input);
-          game.makeMove(move);
-          gameHistory.addBoard(game.getCopyBoard());
-        }
+      Move move = player.createMove();
+      if (move.moveType() == MoveType.DEFAULT) {
+        player.makeMove(move);
+        gameHistory.addBoard(player.getBoard());
+      }
 
-        var json = ConversationService.serialize(new SendMove(move));
-        clientController.send(json);
-        break;
-      } catch (GameException e) {
-        clientController.incorrectMove();
+      if (player.getLastMove() != null) {
+        return move;
       }
     }
   }
@@ -164,6 +161,7 @@ public class Client {
    * @throws IOException Неудачная попытка чтения/записи
    */
   public static void main(String[] args) throws IOException {
-    new Client(HOST, PORT, new ConsoleUi(System.in, System.out)).run();
+    UI ui = new ConsoleUi(System.in, System.out);
+    new Client(HOST, PORT, ui).run();
   }
 }

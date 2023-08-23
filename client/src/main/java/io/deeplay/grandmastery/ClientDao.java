@@ -1,6 +1,5 @@
 package io.deeplay.grandmastery;
 
-
 import io.deeplay.grandmastery.dto.IDto;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;

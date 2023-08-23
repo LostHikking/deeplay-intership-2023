@@ -2,24 +2,23 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
-import lombok.Getter;
 
-@Getter
 public class Game implements GameListener {
-  private Color colorMove;
+  private GameState gameState;
 
   private final Board board = new HashBoard();
 
   private boolean gameOver;
 
   @Override
-  public void startup(Board board) {
+  public void startup(Board board) throws GameException {
     Boards.copyBoard(board).accept(this.board);
-    colorMove = Color.WHITE;
+    gameState = GameState.WHITE_MOVE;
     gameOver = false;
   }
 
@@ -29,6 +28,7 @@ public class Game implements GameListener {
       throw GameErrorCode.GAME_ALREADY_OVER.asException();
     }
 
+    Color colorMove = gameState == GameState.WHITE_MOVE ? Color.WHITE : Color.BLACK;
     Piece piece = board.getPiece(move.from());
     if (piece == null || colorMove != piece.getColor()) {
       throw GameErrorCode.IMPOSSIBLE_MOVE.asException();
@@ -39,16 +39,17 @@ public class Game implements GameListener {
     } else {
       throw GameErrorCode.IMPOSSIBLE_MOVE.asException();
     }
-    colorMove = colorMove == Color.WHITE ? Color.BLACK : Color.WHITE;
+    gameState = gameState == GameState.WHITE_MOVE ? GameState.BLACK_MOVE : GameState.WHITE_MOVE;
   }
 
   @Override
-  public void gameOver() {
+  public void gameOver(GameState gameState) {
     gameOver = true;
+    this.gameState = gameState;
   }
 
-  public void setColorMove(Color colorMove) {
-    this.colorMove = colorMove;
+  public void setGameState(GameState gameState) {
+    this.gameState = gameState;
   }
 
   /**
@@ -60,5 +61,13 @@ public class Game implements GameListener {
     Board copyBoard = new HashBoard();
     Boards.copyBoard(board).accept(copyBoard);
     return copyBoard;
+  }
+
+  public GameState getGameState() {
+    return gameState;
+  }
+
+  public boolean isGameOver() {
+    return gameOver;
   }
 }

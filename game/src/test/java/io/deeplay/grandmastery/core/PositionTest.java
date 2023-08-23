@@ -11,9 +11,9 @@ class PositionTest {
 
   @Test
   void getPositionFromStringTest() {
-    var position1 = Position.getPositionFromString("a1");
-    var position2 = Position.getPositionFromString("h8");
-    var position3 = Position.getPositionFromString("e2");
+    var position1 = Position.fromString("a1");
+    var position2 = Position.fromString("h8");
+    var position3 = Position.fromString("e2");
 
     Assertions.assertAll(
         () -> assertEquals(0, position1.col().value()),
@@ -27,21 +27,21 @@ class PositionTest {
   @Test
   void getWrongPositionFromStringTest() {
     Assertions.assertAll(
-        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("a9")),
-        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("z1")),
-        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("z9")),
-        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("aa")),
-        () -> assertThrows(GameException.class, () -> Position.getPositionFromString("22")));
+        () -> assertThrows(GameException.class, () -> Position.fromString("a9")),
+        () -> assertThrows(GameException.class, () -> Position.fromString("z1")),
+        () -> assertThrows(GameException.class, () -> Position.fromString("z9")),
+        () -> assertThrows(GameException.class, () -> Position.fromString("aa")),
+        () -> assertThrows(GameException.class, () -> Position.fromString("22")));
   }
 
   @Test
   void positionToStringTest() {
-    Position position = Position.getPositionFromString("e2");
-    assertEquals("e2", Position.positionToString(position));
+    Position position = Position.fromString("e2");
+    assertEquals("e2", Position.getString(position));
   }
 
   @Test
   void incorrectPositionTest() {
-    assertThrows(GameException.class, () -> Position.getPositionFromString("eee"));
+    assertThrows(GameException.class, () -> Position.fromString("eee"));
   }
 }
