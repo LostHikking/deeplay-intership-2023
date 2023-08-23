@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/** Класс для отправки предложения о ничьей. */
 @Getter
 @Setter
 @ToString

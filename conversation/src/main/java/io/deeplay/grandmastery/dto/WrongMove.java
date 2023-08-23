@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/** Класс для сообщения клиенту о неправильном ходе. */
 @Getter
 @Setter
 @ToString

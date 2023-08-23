@@ -51,6 +51,7 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
     var sb = new StringBuilder(in.readLine());
 
     while (in.ready()) {
+      sb.append("\n");
       sb.append(in.readLine());
     }
 
@@ -62,9 +63,10 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
 
   /**
    * Функция уведомляет о неправильном ходе.
+   *
    * @param color Цвет.
    * @throws IOException Ошибка ввода/вывода
-   * */
+   */
   public void notifyWrongMove(Color color) throws IOException {
     var json = ConversationService.serialize(new WrongMove());
 
@@ -77,10 +79,11 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
 
   /**
    * Функция уведомляет о совершённом ходе.
+   *
    * @param color Цвет.
    * @param lastMove Ход.
    * @throws IOException Ошибка ввода/вывода
-   * */
+   */
   public void notifySuccessMove(Color color, Move lastMove) throws IOException {
     var json = ConversationService.serialize(new AcceptMove(lastMove));
 
@@ -93,9 +96,10 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
 
   /**
    * Функция уведомляет о начале игры.
+   *
    * @param board Доска.
    * @throws IOException Ошибка ввода/вывода
-   * */
+   */
   public void notifyStartGame(Board board) throws IOException {
     var startGameResponse = new StartGameResponse(Boards.getStringFromBoard(board));
     var json = ConversationService.serialize(startGameResponse);
@@ -110,10 +114,11 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
 
   /**
    * Функция возвращает результат игры.
+   *
    * @param gameStatus Статус игры.
    * @param boardList Список досок.
    * @throws IOException Ошибка ввода/вывода
-   * */
+   */
   public void sendResult(GameState gameStatus, List<Board> boardList) throws IOException {
     var boards = new ArrayList<String>();
     for (Board board : boardList) {
@@ -138,8 +143,9 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
 
   /**
    * Функция закрывает соединение.
+   *
    * @throws IOException Ошибка ввода/вывода
-   * */
+   */
   public void close() throws IOException {
     if (playerOne instanceof ServerPlayer serverPlayer) {
       serverPlayer.getSocket().close();

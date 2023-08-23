@@ -1,6 +1,5 @@
 package io.deeplay.grandmastery;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import io.deeplay.grandmastery.dto.IDto;
 import io.deeplay.grandmastery.exceptions.QueryException;
@@ -8,8 +7,6 @@ import io.deeplay.grandmastery.service.ConversationService;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +21,11 @@ public class ClientDao {
    * Конструктор DAO.
    *
    * @param socket Socket
-   * @throws IOException Ошибка чтения/записи
    */
-  public ClientDao(Socket socket) throws IOException {
+  public ClientDao(Socket socket, BufferedReader in, BufferedWriter out) {
     this.socket = socket;
-    this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
-    this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
+    this.in = in;
+    this.out = out;
 
     log.info("Создали DAO класс");
   }
@@ -50,8 +46,7 @@ public class ClientDao {
       out.newLine();
       out.flush();
 
-      var response = in.readLine();
-      log.info("Получили ответ от сервера - " + response);
+      var response = getJsonFromServer();
 
       return ConversationService.deserialize(response);
     } catch (IOException e) {

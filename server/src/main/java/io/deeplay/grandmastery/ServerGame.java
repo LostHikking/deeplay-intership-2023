@@ -4,11 +4,15 @@ import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.ChessType;
+import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import java.io.IOException;
 import java.net.Socket;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
 public class ServerGame implements Runnable {
   private final ServerController serverController;
@@ -50,6 +54,12 @@ public class ServerGame implements Runnable {
           serverController.notifyWrongMove(color);
 
           log.error("Некорректный ход цветом - " + color);
+        } catch (ServerException e) {
+          var color = gameController.getOpponentPlayer().getColor();
+          var gameStatus = color == Color.WHITE ? GameState.WHITE_WIN : GameState.BLACK_WIN;
+          serverController.sendResult(gameStatus, gameController.getGameHistory().getBoards());
+
+          return;
         }
       }
 
