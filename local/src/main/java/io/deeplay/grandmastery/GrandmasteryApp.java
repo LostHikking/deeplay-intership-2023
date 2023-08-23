@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public class GrandmasteryApp {
   private static final Gui GUI = new Gui();
