@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
@@ -12,7 +13,6 @@ import io.deeplay.grandmastery.figures.Knight;
 import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.figures.Queen;
 import io.deeplay.grandmastery.figures.Rook;
-import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class AiPlayerTest {
             new Position(new Column(0), new Row(0)),
             new Position(new Column(0), new Row(2)),
             null));
-    assertTrue(moves.contains(LongAlgebraicNotation.getMoveFromString(aiPlayer.getLastMove())));
+    assertTrue(moves.contains(aiPlayer.getLastMove()));
   }
 
   @Test
@@ -62,7 +62,7 @@ class AiPlayerTest {
             new Position(new Column(0), new Row(0)),
             new Position(new Column(2), new Row(1)),
             null));
-    assertTrue(moves.contains(LongAlgebraicNotation.getMoveFromString(aiPlayer.getLastMove())));
+    assertTrue(moves.contains(aiPlayer.getLastMove()));
   }
 
   @Test
@@ -83,7 +83,7 @@ class AiPlayerTest {
               new Position(new Column(0), new Row(i)),
               null));
     }
-    assertTrue(moves.contains(LongAlgebraicNotation.getMoveFromString(aiPlayer.getLastMove())));
+    assertTrue(moves.contains(aiPlayer.getLastMove()));
   }
 
   @Test
@@ -99,7 +99,7 @@ class AiPlayerTest {
               new Position(new Column(i), new Row(i)),
               null));
     }
-    assertTrue(moves.contains(LongAlgebraicNotation.getMoveFromString(aiPlayer.getLastMove())));
+    assertTrue(moves.contains(aiPlayer.getLastMove()));
   }
 
   @Test
@@ -125,7 +125,7 @@ class AiPlayerTest {
               new Position(new Column(i), new Row(i)),
               null));
     }
-    assertTrue(moves.contains(LongAlgebraicNotation.getMoveFromString(aiPlayer.getLastMove())));
+    assertTrue(moves.contains(aiPlayer.getLastMove()));
   }
 
   @Test
@@ -149,7 +149,7 @@ class AiPlayerTest {
             new Position(new Column(0), new Row(0)),
             new Position(new Column(1), new Row(1)),
             null));
-    assertTrue(moves.contains(LongAlgebraicNotation.getMoveFromString(aiPlayer.getLastMove())));
+    assertTrue(moves.contains(aiPlayer.getLastMove()));
   }
 
   @Test
@@ -164,7 +164,7 @@ class AiPlayerTest {
 
   @Test
   void ifGameOverTest() {
-    aiPlayer.gameOver();
+    aiPlayer.gameOver(GameState.WHITE_WIN);
     assertThrows(GameException.class, () -> aiPlayer.createMove());
   }
 }

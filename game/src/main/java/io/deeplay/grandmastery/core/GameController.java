@@ -70,9 +70,9 @@ public class GameController {
   }
 
   private void notifyGameOver() throws GameException {
-    gameListener.gameOver();
+    gameListener.gameOver(gameStatus);
     for (GameListener listener : historyAndPlayers) {
-      listener.gameOver();
+      listener.gameOver(gameStatus);
     }
   }
 

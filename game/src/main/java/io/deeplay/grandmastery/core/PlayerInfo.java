@@ -3,7 +3,7 @@ package io.deeplay.grandmastery.core;
 import io.deeplay.grandmastery.domain.Color;
 
 public interface PlayerInfo {
-  String getLastMove();
+  Move getLastMove();
 
   String getName();
 

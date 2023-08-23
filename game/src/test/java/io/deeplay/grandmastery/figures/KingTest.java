@@ -142,16 +142,14 @@ public class KingTest {
     Piece king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("a1"), rook);
+    board.setPiece(Position.fromString("a1"), rook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
         () ->
             assertSame(
-                rook,
-                board.getPiece(Position.getPositionFromString("d1")),
-                "Check rook after castling"));
+                rook, board.getPiece(Position.fromString("d1")), "Check rook after castling"));
   }
 
   @Test
@@ -160,16 +158,14 @@ public class KingTest {
     Piece king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("h1"), rook);
+    board.setPiece(Position.fromString("h1"), rook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
         () ->
             assertSame(
-                rook,
-                board.getPiece(Position.getPositionFromString("f1")),
-                "Check rook after castling"));
+                rook, board.getPiece(Position.fromString("f1")), "Check rook after castling"));
   }
 
   @Test
@@ -178,16 +174,14 @@ public class KingTest {
     Piece king = new King(Color.BLACK);
     Piece rook = new Rook(Color.BLACK);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("a8"), rook);
+    board.setPiece(Position.fromString("a8"), rook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
         () ->
             assertSame(
-                rook,
-                board.getPiece(Position.getPositionFromString("d8")),
-                "Check rook after castling"));
+                rook, board.getPiece(Position.fromString("d8")), "Check rook after castling"));
   }
 
   @Test
@@ -196,16 +190,14 @@ public class KingTest {
     Piece king = new King(Color.BLACK);
     Piece rook = new Rook(Color.BLACK);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("h8"), rook);
+    board.setPiece(Position.fromString("h8"), rook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
         () ->
             assertSame(
-                rook,
-                board.getPiece(Position.getPositionFromString("f8")),
-                "Check rook after castling"));
+                rook, board.getPiece(Position.fromString("f8")), "Check rook after castling"));
   }
 
   @Test
@@ -215,14 +207,12 @@ public class KingTest {
     Piece rook = new Rook(Color.WHITE);
     king.setMoved(true);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("h1"), rook);
+    board.setPiece(Position.fromString("h1"), rook);
 
     Assertions.assertAll(
         () -> assertFalse(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.from()), "King not changed"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.getPositionFromString("h1")), "Rook not changed"));
+        () -> assertSame(rook, board.getPiece(Position.fromString("h1")), "Rook not changed"));
   }
 
   @Test
@@ -232,14 +222,12 @@ public class KingTest {
     Piece rook = new Rook(Color.WHITE);
     rook.setMoved(true);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("a1"), rook);
+    board.setPiece(Position.fromString("a1"), rook);
 
     Assertions.assertAll(
         () -> assertFalse(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.from()), "King not changed"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.getPositionFromString("a1")), "Rook not changed"));
+        () -> assertSame(rook, board.getPiece(Position.fromString("a1")), "Rook not changed"));
   }
 
   @Test
@@ -260,15 +248,13 @@ public class KingTest {
     Piece rook = new Rook(Color.WHITE);
     Piece knight = new Knight(Color.WHITE);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("a1"), rook);
-    board.setPiece(Position.getPositionFromString("b1"), knight);
+    board.setPiece(Position.fromString("a1"), rook);
+    board.setPiece(Position.fromString("b1"), knight);
 
     Assertions.assertAll(
         () -> assertFalse(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.from()), "King not changed"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.getPositionFromString("a1")), "Rook not changed"));
+        () -> assertSame(rook, board.getPiece(Position.fromString("a1")), "Rook not changed"));
   }
 
   @Test
@@ -278,15 +264,13 @@ public class KingTest {
     Piece rook = new Rook(Color.WHITE);
     Piece blackRook = new Rook(Color.BLACK);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("a1"), rook);
-    board.setPiece(Position.getPositionFromString("d7"), blackRook);
+    board.setPiece(Position.fromString("a1"), rook);
+    board.setPiece(Position.fromString("d7"), blackRook);
 
     Assertions.assertAll(
         () -> assertFalse(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.from()), "King not changed"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.getPositionFromString("a1")), "Rook not changed"));
+        () -> assertSame(rook, board.getPiece(Position.fromString("a1")), "Rook not changed"));
   }
 
   @Test
@@ -296,36 +280,32 @@ public class KingTest {
     Piece rook = new Rook(Color.WHITE);
     Piece blackRook = new Rook(Color.BLACK);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("a1"), rook);
-    board.setPiece(Position.getPositionFromString("b7"), blackRook);
+    board.setPiece(Position.fromString("a1"), rook);
+    board.setPiece(Position.fromString("b7"), blackRook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
         () ->
             assertSame(
-                rook,
-                board.getPiece(Position.getPositionFromString("d1")),
-                "Check rook after castling"));
+                rook, board.getPiece(Position.fromString("d1")), "Check rook after castling"));
   }
 
   @Test
   public void skipCastlingTest() {
     King king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
-    board.setPiece(Position.getPositionFromString("e1"), king);
-    board.setPiece(Position.getPositionFromString("a1"), rook);
+    board.setPiece(Position.fromString("e1"), king);
+    board.setPiece(Position.fromString("a1"), rook);
 
     Move move = LongAlgebraicNotation.getMoveFromString("e1e2");
-    king.getAllMoves(board, Position.getPositionFromString("e1"));
+    king.getAllMoves(board, Position.fromString("e1"));
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king pos"),
         () -> assertFalse(king.isCastling(), "isCastling"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.getPositionFromString("a1")), "Check rook pos"));
+        () -> assertSame(rook, board.getPiece(Position.fromString("a1")), "Check rook pos"));
   }
 
   @Test
@@ -335,17 +315,15 @@ public class KingTest {
     Piece rook = new Rook(Color.WHITE);
     Piece whiteKnight = new Rook(Color.WHITE);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("h1"), rook);
-    board.setPiece(Position.getPositionFromString("f3"), whiteKnight);
+    board.setPiece(Position.fromString("h1"), rook);
+    board.setPiece(Position.fromString("f3"), whiteKnight);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
         () ->
             assertSame(
-                rook,
-                board.getPiece(Position.getPositionFromString("f1")),
-                "Check rook after castling"));
+                rook, board.getPiece(Position.fromString("f1")), "Check rook after castling"));
   }
 
   @Test
@@ -355,7 +333,7 @@ public class KingTest {
     Piece queen = new Queen(Color.WHITE);
     board.setPiece(move.from(), king);
     board.setPiece(move.to(), queen);
-    board.setPiece(Position.getPositionFromString("c4"), new Bishop(Color.WHITE));
+    board.setPiece(Position.fromString("c4"), new Bishop(Color.WHITE));
 
     Assertions.assertAll(
         () -> assertFalse(king.move(board, move)),
@@ -369,7 +347,7 @@ public class KingTest {
     Piece king = new King(Color.WHITE);
     Piece queen = new Queen(Color.BLACK);
     board.setPiece(move.from(), king);
-    board.setPiece(Position.getPositionFromString("e8"), queen);
+    board.setPiece(Position.fromString("e8"), queen);
 
     Assertions.assertAll(
         () -> assertFalse(king.move(board, move)),
@@ -379,7 +357,7 @@ public class KingTest {
   @Test
   public void allMovesKingWithoutCastlingTest() {
     Piece king = new King(Color.WHITE);
-    Position position = Position.getPositionFromString("e4");
+    Position position = Position.fromString("e4");
     board.setPiece(position, king);
 
     List<Move> expectMoves = new ArrayList<>();
@@ -399,13 +377,13 @@ public class KingTest {
   @Description("Pawns block forward moves, but all castlings possible")
   public void allMovesKingInStartPositionTest() {
     Piece king = new King(Color.WHITE);
-    Position position = Position.getPositionFromString("e1");
+    Position position = Position.fromString("e1");
     board.setPiece(position, king);
-    board.setPiece(Position.getPositionFromString("a1"), new Rook(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("h1"), new Rook(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e2"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("d2"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("f2"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("h1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("e2"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("d2"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("f2"), new Pawn(Color.WHITE));
 
     List<Move> expectMoves = new ArrayList<>();
     expectMoves.add(LongAlgebraicNotation.getMoveFromString("e1f1"));

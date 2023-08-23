@@ -24,10 +24,10 @@ class GameStateCheckerTest {
 
   @Test
   void isCheckTest() {
-    board.setPiece(Position.getPositionFromString("f3"), new Rook(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("f1"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("a1"), new King(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("a2"), new Knight(Color.WHITE));
+    board.setPiece(Position.fromString("f3"), new Rook(Color.BLACK));
+    board.setPiece(Position.fromString("f1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("a1"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("a2"), new Knight(Color.WHITE));
 
     Assertions.assertAll(
         () -> Assertions.assertTrue(GameStateChecker.isCheck(board, Color.WHITE)),
@@ -38,13 +38,12 @@ class GameStateCheckerTest {
   void isCheckAfterPromotionPawnToQueenTest() {
     Piece pawn = new Pawn(Color.WHITE);
 
-    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e8"), new King(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("a7"), pawn);
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e8"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("a7"), pawn);
 
     Move move = LongAlgebraicNotation.getMoveFromString("a7a8q");
     pawn.move(board, move);
-    BoardRender.showBoard(System.out, board, Color.WHITE);
     Assertions.assertAll(
         () -> Assertions.assertFalse(GameStateChecker.isCheck(board, Color.WHITE), "White"),
         () -> Assertions.assertTrue(GameStateChecker.isCheck(board, Color.BLACK), "Black"));
@@ -54,13 +53,12 @@ class GameStateCheckerTest {
   void isCheckAfterPromotionPawnToKnightTest() {
     Piece pawn = new Pawn(Color.WHITE);
 
-    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("b6"), new King(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("a7"), pawn);
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("b6"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("a7"), pawn);
 
     Move move = LongAlgebraicNotation.getMoveFromString("a7a8n");
     pawn.move(board, move);
-    BoardRender.showBoard(System.out, board, Color.WHITE);
     Assertions.assertAll(
         () -> Assertions.assertFalse(GameStateChecker.isCheck(board, Color.WHITE), "White"),
         () -> Assertions.assertTrue(GameStateChecker.isCheck(board, Color.BLACK), "Black"));
@@ -68,11 +66,11 @@ class GameStateCheckerTest {
 
   @Test
   void isMateTest() {
-    board.setPiece(Position.getPositionFromString("a1"), new Rook(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("b1"), new Rook(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("a8"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("c1"), new Rook(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("h1"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("a1"), new Rook(Color.BLACK));
+    board.setPiece(Position.fromString("b1"), new Rook(Color.BLACK));
+    board.setPiece(Position.fromString("a8"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("c1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("h1"), new King(Color.BLACK));
 
     Assertions.assertAll(
         () -> Assertions.assertFalse(GameStateChecker.isMate(board, Color.BLACK)),
@@ -81,8 +79,8 @@ class GameStateCheckerTest {
 
   @Test
   void isDrawTestWithKings() {
-    board.setPiece(Position.getPositionFromString("e4"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("g7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e4"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("g7"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
@@ -96,9 +94,9 @@ class GameStateCheckerTest {
 
   @Test
   void isDrawTestWithKingsAndBishop() {
-    board.setPiece(Position.getPositionFromString("e4"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e6"), new Bishop(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("g7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e4"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e6"), new Bishop(Color.WHITE));
+    board.setPiece(Position.fromString("g7"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
@@ -112,9 +110,9 @@ class GameStateCheckerTest {
 
   @Test
   void isDrawTestWithKingsAndKnight() {
-    board.setPiece(Position.getPositionFromString("e4"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e6"), new Knight(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("g7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e4"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e6"), new Knight(Color.WHITE));
+    board.setPiece(Position.fromString("g7"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
@@ -128,10 +126,10 @@ class GameStateCheckerTest {
 
   @Test
   void isDrawTestWithKingsAndTwoKnight() {
-    board.setPiece(Position.getPositionFromString("e4"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e6"), new Knight(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e7"), new Knight(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("g7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e4"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e6"), new Knight(Color.WHITE));
+    board.setPiece(Position.fromString("e7"), new Knight(Color.WHITE));
+    board.setPiece(Position.fromString("g7"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
@@ -145,9 +143,9 @@ class GameStateCheckerTest {
 
   @Test
   void isNotDrawTestWithKingsAndRook() {
-    board.setPiece(Position.getPositionFromString("e4"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e6"), new Rook(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("g7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e4"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e6"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("g7"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
@@ -161,9 +159,9 @@ class GameStateCheckerTest {
 
   @Test
   void isNotDrawTestWithKingsAndPawn() {
-    board.setPiece(Position.getPositionFromString("e4"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("e6"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("g7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e4"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e6"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("g7"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("e4e5");
     new King(Color.WHITE).move(board, move);
@@ -177,12 +175,12 @@ class GameStateCheckerTest {
 
   @Test
   void isStaleMateTest() {
-    board.setPiece(Position.getPositionFromString("h5"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("h7"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("h8"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("h5"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("h7"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("h8"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("h5h6");
-    board.getPiece(Position.getPositionFromString("h5")).move(board, move);
+    board.getPiece(Position.fromString("h5")).move(board, move);
 
     gameHistory.addBoard(board);
     gameHistory.makeMove(move);
@@ -196,12 +194,12 @@ class GameStateCheckerTest {
 
   @Test
   void isNotStaleMateTest() {
-    board.setPiece(Position.getPositionFromString("h4"), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("h7"), new Pawn(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("h8"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("h4"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("h7"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("h8"), new King(Color.BLACK));
 
     var move = LongAlgebraicNotation.getMoveFromString("h4h5");
-    board.getPiece(Position.getPositionFromString("h4")).move(board, move);
+    board.getPiece(Position.fromString("h4")).move(board, move);
 
     gameHistory.addBoard(board);
     gameHistory.makeMove(move);

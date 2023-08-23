@@ -4,10 +4,9 @@ import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
-import io.deeplay.grandmastery.listeners.InputListener;
 import java.io.IOException;
 
-public interface UI extends InputListener {
+public interface UI {
   GameMode selectMode() throws IOException;
 
   ChessType selectChessType() throws IOException;
@@ -16,7 +15,7 @@ public interface UI extends InputListener {
 
   String inputPlayerName(Color color) throws IOException;
 
-  void showMove(PlayerInfo movePlayer);
+  void showMove(Move move, Color color);
 
   void showResultGame(GameState gameState);
 
@@ -25,6 +24,12 @@ public interface UI extends InputListener {
   void showBoard(Board board, Color color);
 
   void incorrectMove();
+
+  String inputMove(String playerName) throws IOException;
+
+  boolean confirmSur() throws IOException;
+
+  boolean answerDraw() throws IOException;
 
   void close();
 }

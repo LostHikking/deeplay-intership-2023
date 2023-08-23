@@ -12,7 +12,7 @@ public record Position(Column col, Row row) {
    * @param stringPos Позиция записанная в строке, например e2
    * @return Позицию на шахматной доске
    */
-  public static Position getPositionFromString(String stringPos) {
+  public static Position fromString(String stringPos) {
     if (stringPos.length() != 2) {
       throw GameErrorCode.INCORRECT_POSITION_FORMAT.asException();
     }
@@ -23,7 +23,7 @@ public record Position(Column col, Row row) {
     return new Position(col, row);
   }
 
-  public static String positionToString(Position position) {
+  public static String getString(Position position) {
     return position.col.getChar() + position.row.getChar();
   }
 }

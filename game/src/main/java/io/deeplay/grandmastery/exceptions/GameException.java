@@ -6,4 +6,8 @@ public class GameException extends RuntimeException {
   public GameException(GameErrorCode gameErrorCode) {
     super(gameErrorCode.getDescription());
   }
+
+  public GameException(GameErrorCode gameErrorCode, Exception e) {
+    super(gameErrorCode.getDescription(), e);
+  }
 }

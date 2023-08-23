@@ -32,17 +32,18 @@ public class LocalGame {
       secondPlayer = new AiPlayer(Color.BLACK);
     } else if (gameMode == GameMode.HUMAN_VS_BOT) {
       Color color = consoleUi.selectColor();
+      firstPlayer = new HumanPlayer(consoleUi.inputPlayerName(color), color, consoleUi, false);
+
       if (color == Color.WHITE) {
-        firstPlayer = new HumanPlayer(consoleUi.inputPlayerName(color), color, consoleUi);
         secondPlayer = new AiPlayer(Color.BLACK);
       } else {
-        firstPlayer = new HumanPlayer(consoleUi.inputPlayerName(color), color, consoleUi);
         secondPlayer = new AiPlayer(Color.WHITE);
       }
     } else {
-      firstPlayer = new HumanPlayer(consoleUi.inputPlayerName(Color.WHITE), Color.WHITE, consoleUi);
+      firstPlayer =
+          new HumanPlayer(consoleUi.inputPlayerName(Color.WHITE), Color.WHITE, consoleUi, false);
       secondPlayer =
-          new HumanPlayer(consoleUi.inputPlayerName(Color.BLACK), Color.BLACK, consoleUi);
+          new HumanPlayer(consoleUi.inputPlayerName(Color.BLACK), Color.BLACK, consoleUi, false);
     }
 
     return new GameController(firstPlayer, secondPlayer);
@@ -62,13 +63,16 @@ public class LocalGame {
       while (!gameController.isGameOver()) {
         try {
           gameController.nextMove();
-          consoleUi.showMove(gameController.getOpponentPlayer());
+          consoleUi.showMove(
+              gameController.getOpponentPlayer().getLastMove(),
+              gameController.getOpponentPlayer().getColor());
           consoleUi.showBoard(
               gameController.getBoard(), gameController.getCurrentPlayer().getColor());
         } catch (GameException e) {
           consoleUi.incorrectMove();
         }
       }
+      consoleUi.showBoard(gameController.getBoard(), Color.WHITE);
       consoleUi.showResultGame(gameController.getGameStatus());
     } catch (GameException | IOException e) {
       log.error(e.getMessage());

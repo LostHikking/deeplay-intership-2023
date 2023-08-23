@@ -2,6 +2,7 @@ package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
@@ -19,6 +20,8 @@ public class GameHistory implements GameListener {
   private boolean gameOver;
 
   private final List<Board> boards = new ArrayList<>();
+
+  private GameState resultGame;
 
   /**
    * * Метод устанавливает начальное состояние доски.
@@ -58,8 +61,9 @@ public class GameHistory implements GameListener {
   }
 
   @Override
-  public void gameOver() {
+  public void gameOver(GameState gameState) {
     this.gameOver = true;
+    resultGame = gameState;
   }
 
   /**

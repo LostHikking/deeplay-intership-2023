@@ -4,18 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.HashBoard;
-import io.deeplay.grandmastery.core.HumanPlayer;
-import io.deeplay.grandmastery.core.Player;
-import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
-import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.helps.ConsoleHelp;
-import io.deeplay.grandmastery.utils.Boards;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -173,22 +167,29 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void showMoveTest() {
-    Board board = new HashBoard();
+  public void showWhiteMoveTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
-    Boards.defaultChess().accept(board);
-    Player player = new HumanPlayer("Dima", Color.WHITE, consoleUi);
-
-    player.setLastMove("e2e4");
-    board.removePiece(Position.getPositionFromString("e2"));
-    board.setPiece(Position.getPositionFromString("e4"), new Pawn(Color.WHITE));
-    consoleUi.showMove(player);
+    consoleUi.showMove(LongAlgebraicNotation.getMoveFromString("e2e4"), Color.WHITE);
 
     String expect =
         """
-/―――――――――――――――――――――――――――――――――――――――――――――――――――\\
- Ход игрока: Dima(WHITE) e2e4
-\\―――――――――――――――――――――――――――――――――――――――――――――――――――/
+    /―――――――――――――――――――――――――――――――――――――――――――――――――――\\
+     Ход белых: e2e4
+    \\―――――――――――――――――――――――――――――――――――――――――――――――――――/
+        """;
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", ""));
+  }
+
+  @Test
+  public void showBlackMoveTest() {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showMove(LongAlgebraicNotation.getMoveFromString("e7e6"), Color.BLACK);
+
+    String expect =
+        """
+    /―――――――――――――――――――――――――――――――――――――――――――――――――――\\
+     Ход черных: e7e6
+    \\―――――――――――――――――――――――――――――――――――――――――――――――――――/
         """;
     assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", ""));
   }
