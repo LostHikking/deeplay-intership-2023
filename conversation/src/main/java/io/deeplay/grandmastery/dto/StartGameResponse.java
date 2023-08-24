@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/** Класс для получения начальной доски при старте игры. */
 @Getter
 @Setter
 @ToString

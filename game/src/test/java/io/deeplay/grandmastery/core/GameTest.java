@@ -5,12 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.figures.Piece;
-import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,14 +34,14 @@ public class GameTest {
 
     Assertions.assertAll(
         () -> assertNotNull(board),
-        () -> assertEquals(Color.WHITE, game.getColorMove()),
+        () -> assertEquals(GameState.WHITE_MOVE, game.getGameState()),
         () -> assertFalse(game.isGameOver()));
   }
 
   @Test
   public void makeMoveTest() {
-    Position from = Position.getPositionFromString("e2");
-    Position to = Position.getPositionFromString("e4");
+    Position from = Position.fromString("e2");
+    Position to = Position.fromString("e4");
     Piece pawn = new Pawn(Color.WHITE);
     board.setPiece(from, pawn);
 
@@ -51,12 +52,12 @@ public class GameTest {
     Assertions.assertAll(
         () -> assertEquals(pawn, game.getCopyBoard().getPiece(to)),
         () -> assertNull(game.getCopyBoard().getPiece(from)),
-        () -> assertEquals(Color.BLACK, game.getColorMove()));
+        () -> assertEquals(GameState.BLACK_MOVE, game.getGameState()));
   }
 
   @Test
   public void startPositionEmptyTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
+    Move move = new Move(Position.fromString("e2"), Position.fromString("e4"), null);
     game.startup(board);
 
     assertThrows(GameException.class, () -> game.makeMove(move));
@@ -65,8 +66,8 @@ public class GameTest {
   @Test
   public void moveImpossibleTest() {
     Piece pawn = new Pawn(Color.WHITE);
-    board.setPiece(Position.getPositionFromString("e2"), pawn);
-    Move move = LongAlgebraicNotation.getMoveFromString("e2e5");
+    board.setPiece(Position.fromString("e2"), pawn);
+    Move move = new Move(Position.fromString("e2"), Position.fromString("e5"), null);
     game.startup(board);
 
     assertThrows(GameException.class, () -> game.makeMove(move));
@@ -75,9 +76,12 @@ public class GameTest {
   @Test
   public void ifGameOverTest() {
     game.startup(board);
-    game.gameOver();
+    game.gameOver(GameState.WHITE_WIN);
 
-    Move move = LongAlgebraicNotation.getMoveFromString("e2e5");
-    assertThrows(GameException.class, () -> game.makeMove(move));
+    Move move = new Move(Position.fromString("e2"), Position.fromString("e4"), null);
+    Assertions.assertAll(
+        () -> assertEquals(GameState.WHITE_WIN, game.getGameState()),
+        () -> assertTrue(game.isGameOver()),
+        () -> assertThrows(GameException.class, () -> game.makeMove(move)));
   }
 }

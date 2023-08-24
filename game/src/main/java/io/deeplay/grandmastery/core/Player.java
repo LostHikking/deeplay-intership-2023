@@ -1,31 +1,18 @@
 package io.deeplay.grandmastery.core;
 
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
-import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.listeners.GameListener;
-import io.deeplay.grandmastery.utils.Boards;
-import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 
 /** Абстрактный класс, представляющий игрока. */
 public abstract class Player implements GameListener, PlayerInfo {
-  private final String name;
+  protected final Game game;
+  protected final String name;
+  protected final Color color;
 
-  private final Color color;
-
-  private final Board board;
-
-  private String lastMove;
-
-  private boolean gameOver;
-
-  /** Конструктор по умолчанию. */
-  public Player() {
-    this.name = "";
-    this.color = Color.WHITE;
-    this.board = new HashBoard();
-  }
+  protected Move lastMove;
+  protected boolean gameOver;
 
   /**
    * Конструктор с параметрами.
@@ -36,7 +23,7 @@ public abstract class Player implements GameListener, PlayerInfo {
   public Player(String name, Color color) {
     this.name = name;
     this.color = color;
-    this.board = new HashBoard();
+    this.game = new Game();
   }
 
   /**
@@ -46,10 +33,6 @@ public abstract class Player implements GameListener, PlayerInfo {
    * @throws GameException Если ход не валиден.
    */
   public void setLastMove(Move move) throws GameException {
-    this.lastMove = LongAlgebraicNotation.moveToString(move);
-  }
-
-  public void setLastMove(String move) throws GameException {
     this.lastMove = move;
   }
 
@@ -75,7 +58,7 @@ public abstract class Player implements GameListener, PlayerInfo {
   }
 
   @Override
-  public String getLastMove() {
+  public Move getLastMove() {
     return lastMove;
   }
 
@@ -85,40 +68,27 @@ public abstract class Player implements GameListener, PlayerInfo {
   }
 
   @Override
-  public void startup(Board board) {
-    Boards.copyBoard(board).accept(this.board);
+  public void startup(Board board) throws GameException {
+    game.startup(board);
     gameOver = false;
   }
 
   @Override
   public void makeMove(Move move) {
-    Piece piece = board.getPiece(move.from());
-
-    if (piece.getFigureType() == FigureType.KING) {
-      piece.move(board, move);
-    } else {
-      board.removePiece(move.from());
-      board.removePiece(move.to());
-
-      if (move.promotionPiece() != null) {
-        board.setPiece(move.to(), move.promotionPiece().getPiece(piece.getColor()));
-      } else {
-        board.setPiece(move.to(), piece);
-      }
-      piece.setMoved(true);
-    }
+    game.makeMove(move);
   }
 
   @Override
-  public void gameOver() {
+  public void gameOver(GameState gameState) {
     gameOver = true;
-  }
-
-  public Board getBoard() {
-    return board;
+    game.gameOver(gameState);
   }
 
   public boolean isGameOver() {
     return gameOver;
+  }
+
+  public Board getBoard() {
+    return game.getCopyBoard();
   }
 }

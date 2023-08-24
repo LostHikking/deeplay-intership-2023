@@ -2,13 +2,14 @@ package io.deeplay.grandmastery.ui;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.BoardRender;
-import io.deeplay.grandmastery.core.PlayerInfo;
+import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.helps.ConsoleHelp;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -137,18 +138,16 @@ public class ConsoleUi implements UI {
   /**
    * Метод для отображения хода игрока на консоли.
    *
-   * @param movePlayer игрок, выполняющий ход.
+   * @param move сделанный ход
+   * @param color цвет
    */
   @Override
-  public void showMove(PlayerInfo movePlayer) {
+  public void showMove(Move move, Color color) {
     printStream.println("/―――――――――――――――――――――――――――――――――――――――――――――――――――\\");
     printStream.println(
-        " Ход игрока: "
-            + movePlayer.getName()
-            + "("
-            + movePlayer.getColor()
-            + ") "
-            + movePlayer.getLastMove());
+        " Ход "
+            + ((color == Color.WHITE) ? "белых: " : "черных: ")
+            + LongAlgebraicNotation.moveToString(move));
     printStream.println("\\―――――――――――――――――――――――――――――――――――――――――――――――――――/");
   }
 
@@ -223,6 +222,7 @@ public class ConsoleUi implements UI {
   @Override
   public void showBoard(Board board, Color color) {
     BoardRender.showBoard(printStream, board, color);
+    printStream.println();
   }
 
   @Override

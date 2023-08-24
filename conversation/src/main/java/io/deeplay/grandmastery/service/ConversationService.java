@@ -20,7 +20,7 @@ public class ConversationService {
     try {
       return MAPPER.writeValueAsString(object);
     } catch (JsonProcessingException e) {
-      throw new QueryException("Ошибка при сериализаци объекта - " + object);
+      throw new QueryException("Ошибка при сериализаци объекта - " + object, e.getCause());
     }
   }
 
@@ -35,7 +35,7 @@ public class ConversationService {
     try {
       return MAPPER.readValue(json, new TypeReference<>() {});
     } catch (JsonProcessingException e) {
-      throw new QueryException("Ошибка при десериализаци строки - " + json);
+      throw new QueryException("Ошибка при десериализаци строки - " + json, e.getCause());
     }
   }
 
@@ -51,7 +51,8 @@ public class ConversationService {
     try {
       return MAPPER.readValue(json, clazz);
     } catch (JsonProcessingException e) {
-      throw new QueryException("Ошибка при десериализаци строки - " + json + " в класс " + clazz);
+      throw new QueryException(
+          "Ошибка при десериализаци строки - " + json + " в класс " + clazz, e.getCause());
     }
   }
 }

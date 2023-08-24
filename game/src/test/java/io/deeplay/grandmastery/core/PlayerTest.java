@@ -38,7 +38,7 @@ public class PlayerTest {
 
   @Test
   public void makeMoveTest() {
-    board.setPiece(Position.getPositionFromString("e2"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("e2"), new Pawn(Color.WHITE));
     player.startup(board);
 
     Move move = LongAlgebraicNotation.getMoveFromString("e2e4");
@@ -51,7 +51,7 @@ public class PlayerTest {
 
   @Test
   public void makeMoveRevivePawnTest() {
-    board.setPiece(Position.getPositionFromString("e7"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("e7"), new Pawn(Color.WHITE));
     player.startup(board);
 
     Move move = LongAlgebraicNotation.getMoveFromString("e7e8q");
@@ -68,7 +68,7 @@ public class PlayerTest {
 
   @Test
   public void makeMoveKingNoCastlingTest() {
-    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
     player.startup(board);
 
     Move move = LongAlgebraicNotation.getMoveFromString("e1e2");
@@ -83,7 +83,7 @@ public class PlayerTest {
   public void makeMoveKingCastlingTest() {
     Move move = LongAlgebraicNotation.getMoveFromString("e1c1");
     board.setPiece(move.from(), new King(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("a1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
 
     player.startup(board);
     player.makeMove(move);
@@ -95,15 +95,12 @@ public class PlayerTest {
         () ->
             assertEquals(
                 FigureType.ROOK,
-                player.getBoard().getPiece(Position.getPositionFromString("d1")).getFigureType(),
+                player.getBoard().getPiece(Position.fromString("d1")).getFigureType(),
                 "Rook"),
         () ->
-            assertFalse(
-                player.getBoard().hasPiece(Position.getPositionFromString("e1")),
-                "Old king position"),
+            assertFalse(player.getBoard().hasPiece(Position.fromString("e1")), "Old king position"),
         () ->
             assertFalse(
-                player.getBoard().hasPiece(Position.getPositionFromString("a1")),
-                "Old rook position"));
+                player.getBoard().hasPiece(Position.fromString("a1")), "Old rook position"));
   }
 }

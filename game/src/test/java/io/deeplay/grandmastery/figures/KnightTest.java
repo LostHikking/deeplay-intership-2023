@@ -19,11 +19,11 @@ class KnightTest {
   void init() {
     piece = new Knight(Color.WHITE);
     board = new HashBoard();
-    board.setPiece(Position.getPositionFromString("e5"), piece);
-    board.setPiece(Position.getPositionFromString("d3"), new Bishop(Color.WHITE));
-    board.setPiece(Position.getPositionFromString("d7"), new Bishop(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("f7"), new King(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e5"), piece);
+    board.setPiece(Position.fromString("d3"), new Bishop(Color.WHITE));
+    board.setPiece(Position.fromString("d7"), new Bishop(Color.BLACK));
+    board.setPiece(Position.fromString("f7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
   }
 
   @ParameterizedTest
@@ -64,7 +64,6 @@ class KnightTest {
 
   @Test
   void getAllMovesTest() {
-    Assertions.assertEquals(
-        6, piece.getAllMoves(board, Position.getPositionFromString("e5")).size());
+    Assertions.assertEquals(6, piece.getAllMoves(board, Position.fromString("e5")).size());
   }
 }

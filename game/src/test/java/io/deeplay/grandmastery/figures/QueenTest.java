@@ -244,7 +244,7 @@ class QueenTest {
     var hashBoard = new HashBoard();
     var queen = new Queen(Color.WHITE);
 
-    hashBoard.setPiece(Position.getPositionFromString("e6"), queen);
+    hashBoard.setPiece(Position.fromString("e6"), queen);
     Assertions.assertFalse(
         queen.canMove(hashBoard, LongAlgebraicNotation.getMoveFromString("e6h8"), true));
   }
@@ -253,17 +253,17 @@ class QueenTest {
   void getAllMovesTestWithPieces2() {
     var hashBoard = new HashBoard();
     var queen = new Queen(Color.WHITE);
-    var pos = Position.getPositionFromString("e5");
+    var pos = Position.fromString("e5");
 
     hashBoard.setPiece(pos, queen);
-    hashBoard.setPiece(Position.getPositionFromString("f3"), new King(Color.WHITE));
-    hashBoard.setPiece(Position.getPositionFromString("a7"), new King(Color.BLACK));
-    hashBoard.setPiece(Position.getPositionFromString("a1"), new Rook(Color.BLACK));
-    hashBoard.setPiece(Position.getPositionFromString("e1"), new Rook(Color.BLACK));
-    hashBoard.setPiece(Position.getPositionFromString("h2"), new Rook(Color.BLACK));
-    hashBoard.setPiece(Position.getPositionFromString("h8"), new Rook(Color.BLACK));
-    hashBoard.setPiece(Position.getPositionFromString("e8"), new Rook(Color.BLACK));
-    hashBoard.setPiece(Position.getPositionFromString("b8"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.fromString("f3"), new King(Color.WHITE));
+    hashBoard.setPiece(Position.fromString("a7"), new King(Color.BLACK));
+    hashBoard.setPiece(Position.fromString("a1"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.fromString("e1"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.fromString("h2"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.fromString("h8"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.fromString("e8"), new Rook(Color.BLACK));
+    hashBoard.setPiece(Position.fromString("b8"), new Rook(Color.BLACK));
     Assertions.assertEquals(27, queen.getAllMoves(hashBoard, pos).size());
   }
 }

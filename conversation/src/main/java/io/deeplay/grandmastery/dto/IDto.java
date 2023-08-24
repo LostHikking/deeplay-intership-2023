@@ -3,6 +3,7 @@ package io.deeplay.grandmastery.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+/** Базовый класс для DTO. */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
   @JsonSubTypes.Type(value = StartGameResponse.class),
@@ -15,6 +16,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   @JsonSubTypes.Type(WaitAnswerDraw.class),
   @JsonSubTypes.Type(SendAnswerDraw.class)
 })
-public class IDto {
+public abstract class IDto {
   public IDto() {}
 }

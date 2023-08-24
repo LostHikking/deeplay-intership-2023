@@ -16,6 +16,7 @@ import io.deeplay.grandmastery.service.ConversationService;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -76,6 +77,8 @@ public class ServerPlayer extends Player {
         setLastMove(move);
       }
       return move;
+    } catch (SocketException e) {
+      throw new ServerException("Соединение разорвано");
     } catch (Exception e) {
       throw GameErrorCode.ERROR_PLAYER_MAKE_MOVE.asException();
     }

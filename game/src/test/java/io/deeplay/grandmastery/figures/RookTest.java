@@ -19,10 +19,10 @@ class RookTest {
   void init() {
     piece = new Rook(Color.WHITE);
     board = new HashBoard();
-    board.setPiece(Position.getPositionFromString("f5"), piece);
-    board.setPiece(Position.getPositionFromString("f3"), new Bishop(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("f7"), new King(Color.BLACK));
-    board.setPiece(Position.getPositionFromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("f5"), piece);
+    board.setPiece(Position.fromString("f3"), new Bishop(Color.BLACK));
+    board.setPiece(Position.fromString("f7"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
   }
 
   @ParameterizedTest
@@ -67,7 +67,6 @@ class RookTest {
 
   @Test
   void getAllMovesTest() {
-    Assertions.assertEquals(
-        10, piece.getAllMoves(board, Position.getPositionFromString("f5")).size());
+    Assertions.assertEquals(10, piece.getAllMoves(board, Position.fromString("f5")).size());
   }
 }

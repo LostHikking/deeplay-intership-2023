@@ -125,7 +125,7 @@ class BishopTest {
     var hashBoard = new HashBoard();
     var bishop = new Bishop(Color.WHITE);
 
-    hashBoard.setPiece(Position.getPositionFromString("e6"), bishop);
+    hashBoard.setPiece(Position.fromString("e6"), bishop);
     Assertions.assertFalse(
         bishop.canMove(hashBoard, LongAlgebraicNotation.getMoveFromString("e6h8"), true));
   }

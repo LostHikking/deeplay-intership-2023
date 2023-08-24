@@ -48,10 +48,7 @@ public class BoardRender {
           printStream.print("│" + space);
         }
       }
-      printStream.print(
-          color == Color.WHITE
-              ? "│\n"
-              : "│" + space + (i + 1) + "\n");
+      printStream.print(color == Color.WHITE ? "│\n" : "│" + space + (i + 1) + "\n");
     }
 
     printStream.print(" " + space.repeat(2));
