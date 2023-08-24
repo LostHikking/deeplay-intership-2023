@@ -34,7 +34,7 @@ class GuiTest {
     guiContainer.printMessage(expected);
     Column colFrom = new Column(0);
     Column colTo = new Column(0);
-    Row rowFrom = new Row(1);;
+    Row rowFrom = new Row(1);
     Row rowTo = new Row(3);
     Move move = new Move(new Position(colFrom,rowFrom),new Position(colTo, rowTo), null);
     gui.showMove(move, Color.BLACK);
