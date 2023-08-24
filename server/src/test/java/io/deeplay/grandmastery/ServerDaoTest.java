@@ -2,21 +2,26 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
+import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.dto.SendAnswerDraw;
 import io.deeplay.grandmastery.dto.SendMove;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
+import io.deeplay.grandmastery.utils.Boards;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,5 +89,140 @@ public class ServerDaoTest {
     var json = ServerDao.getJsonFromClient(inputStream);
 
     Assertions.assertEquals(ex, json);
+  }
+
+  @Test
+  void sendResultTest() throws IOException {
+    var serverPlayer =
+        new ServerPlayer(
+            Mockito.mock(),
+            Mockito.mock(),
+            Mockito.mock(),
+            "name",
+            Color.WHITE,
+            GameMode.HUMAN_VS_HUMAN,
+            ChessType.CLASSIC);
+    var socket = Mockito.mock(Socket.class);
+    var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
+    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+
+    Assertions.assertDoesNotThrow(() -> serverDao.sendResult(GameState.WHITE_WIN, List.of()));
+  }
+
+  @Test
+  void sendResultWrongTest() throws IOException {
+    var out = new BufferedWriter(new OutputStreamWriter(System.out, UTF_8));
+    out.close();
+
+    var serverPlayer =
+        new ServerPlayer(
+            Mockito.mock(),
+            Mockito.mock(),
+            out,
+            "name",
+            Color.WHITE,
+            GameMode.HUMAN_VS_HUMAN,
+            ChessType.CLASSIC);
+    var socket = Mockito.mock(Socket.class);
+    var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
+    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+
+    Assertions.assertDoesNotThrow(() -> serverDao.sendResult(GameState.WHITE_WIN, List.of()));
+  }
+
+  @Test
+  void sendResultWrongTest2() throws IOException {
+    var out = new BufferedWriter(new OutputStreamWriter(System.out, UTF_8));
+    out.close();
+
+    var serverPlayer =
+        new ServerPlayer(
+            Mockito.mock(),
+            Mockito.mock(),
+            out,
+            "name",
+            Color.WHITE,
+            GameMode.HUMAN_VS_HUMAN,
+            ChessType.CLASSIC);
+    var socket = Mockito.mock(Socket.class);
+    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+    var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
+    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+
+    Assertions.assertDoesNotThrow(() -> serverDao.sendResult(GameState.WHITE_WIN, List.of()));
+  }
+
+  @Test
+  void notifyWrongMoveTest() throws IOException {
+    var serverPlayer =
+        new ServerPlayer(
+            Mockito.mock(),
+            Mockito.mock(),
+            Mockito.mock(),
+            "name",
+            Color.WHITE,
+            GameMode.HUMAN_VS_HUMAN,
+            ChessType.CLASSIC);
+    var socket = Mockito.mock(Socket.class);
+    var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
+    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+
+    Assertions.assertDoesNotThrow(() -> serverDao.notifyWrongMove(Color.WHITE));
+  }
+
+  @Test
+  void notifySuccessMoveTest() throws IOException {
+    var serverPlayer =
+        new ServerPlayer(
+            Mockito.mock(),
+            Mockito.mock(),
+            Mockito.mock(),
+            "name",
+            Color.WHITE,
+            GameMode.HUMAN_VS_HUMAN,
+            ChessType.CLASSIC);
+    var socket = Mockito.mock(Socket.class);
+    var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
+    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+
+    Assertions.assertDoesNotThrow(() -> serverDao.notifySuccessMove(Color.WHITE, Mockito.mock()));
+  }
+
+  @Test
+  void notifyStartGameTest() throws IOException {
+    var serverPlayer =
+        new ServerPlayer(
+            Mockito.mock(),
+            Mockito.mock(),
+            Mockito.mock(),
+            "name",
+            Color.WHITE,
+            GameMode.HUMAN_VS_HUMAN,
+            ChessType.CLASSIC);
+    var socket = Mockito.mock(Socket.class);
+    var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
+    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+
+    var board = new HashBoard();
+    Boards.defaultChess().accept(board);
+
+    Assertions.assertDoesNotThrow(() -> serverDao.notifyStartGame(board));
+  }
+
+  @Test
+  void closeTest() {
+    var serverPlayer =
+        new ServerPlayer(
+            Mockito.mock(),
+            Mockito.mock(),
+            Mockito.mock(),
+            "name",
+            Color.WHITE,
+            GameMode.HUMAN_VS_HUMAN,
+            ChessType.CLASSIC);
+    var socket = Mockito.mock(Socket.class);
+    var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
+
+    Assertions.assertDoesNotThrow(serverDao::close);
   }
 }

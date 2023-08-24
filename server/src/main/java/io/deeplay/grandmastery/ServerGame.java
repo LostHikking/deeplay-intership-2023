@@ -50,16 +50,10 @@ public class ServerGame implements Runnable {
             log.info("Сделан ход цветом - " + color);
           }
         } catch (GameException e) {
-          var color = gameController.getOpponentPlayer().getColor();
+          var color = gameController.getCurrentPlayer().getColor();
           serverController.notifyWrongMove(color);
 
           log.error("Некорректный ход цветом - " + color);
-        } catch (ServerException e) {
-          var color = gameController.getOpponentPlayer().getColor();
-          var gameStatus = color == Color.WHITE ? GameState.WHITE_WIN : GameState.BLACK_WIN;
-          serverController.sendResult(gameStatus, gameController.getGameHistory().getBoards());
-
-          return;
         }
       }
 
@@ -68,9 +62,15 @@ public class ServerGame implements Runnable {
       serverController.sendResult(
           gameController.getGameStatus(), gameController.getGameHistory().getBoards());
       serverController.close();
-    } catch (IOException e) {
-      log.error("Возникла проблема с чтением/записью - " + e.getMessage());
-      throw new RuntimeException(e);
+    } catch (IOException | ServerException e) {
+      var color = gameController.getCurrentPlayer().getColor();
+      var gameStatus = color == Color.WHITE ? GameState.BLACK_WIN : GameState.WHITE_WIN;
+      try {
+        serverController.sendResult(gameStatus, gameController.getGameHistory().getBoards());
+      } catch (IOException ex) {
+        log.error("Ошибка при отправке результатов игры клиентам");
+        throw new RuntimeException(ex);
+      }
     }
   }
 }

@@ -102,6 +102,8 @@ public class ServerPlayer extends Player {
       log.info("Получили ответ на ничью от клиента - " + answer);
 
       return answer;
+    } catch (SocketException e) {
+      throw new ServerException("Соединение разорвано");
     } catch (Exception e) {
       throw GameErrorCode.ERROR_PLAYER_MAKE_MOVE.asException();
     }

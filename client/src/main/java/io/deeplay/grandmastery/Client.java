@@ -22,6 +22,7 @@ import io.deeplay.grandmastery.dto.StartGameResponse;
 import io.deeplay.grandmastery.dto.WaitAnswerDraw;
 import io.deeplay.grandmastery.dto.WaitMove;
 import io.deeplay.grandmastery.dto.WrongMove;
+import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
 import io.deeplay.grandmastery.ui.ConsoleUi;
@@ -66,7 +67,7 @@ public class Client {
    * @throws IOException ошибка ввода/вывода
    * @throws IllegalStateException неизвестный тип ответа от сервера
    */
-  public void run() throws IOException, IllegalStateException {
+  private void run() throws IOException, IllegalStateException {
     GameMode gameMode = clientController.selectMode();
     if (gameMode == GameMode.BOT_VS_BOT) {
       botVsBot(clientController.selectChessType());
@@ -143,14 +144,18 @@ public class Client {
 
   private Move makeMove() {
     while (true) {
-      Move move = player.createMove();
-      if (move.moveType() == MoveType.DEFAULT) {
-        player.makeMove(move);
-        gameHistory.addBoard(player.getBoard());
-      }
+      try {
+        Move move = player.createMove();
+        if (move.moveType() == MoveType.DEFAULT) {
+          player.makeMove(move);
+          gameHistory.addBoard(player.getBoard());
+        }
 
-      if (player.getLastMove() != null) {
-        return move;
+        if (player.getLastMove() != null) {
+          return move;
+        }
+      } catch (GameException e) {
+        log.error("Неверный ход - " + player.getColor());
       }
     }
   }
