@@ -59,6 +59,7 @@ public class Gui implements UI {
     guiContainer = new GuiContainer();
     activateEndGamePanel();
     monitor = new Object();
+    showGui();
   }
 
   /**
@@ -212,7 +213,7 @@ public class Gui implements UI {
    */
   @Override
   public String inputMove(String playerName) {
-
+    clickQueue.clear();
     String move = null;
     StringBuilder stringBuilder = new StringBuilder();
     try {
