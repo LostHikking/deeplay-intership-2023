@@ -25,7 +25,6 @@ import io.deeplay.grandmastery.dto.WrongMove;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
-import io.deeplay.grandmastery.ui.ConsoleUi;
 import io.deeplay.grandmastery.utils.Boards;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -166,7 +165,7 @@ public class Client {
    * @throws IOException Неудачная попытка чтения/записи
    */
   public static void main(String[] args) throws IOException {
-    UI ui = new ConsoleUi(System.in, System.out);
+    var ui = new Gui();
     new Client(HOST, PORT, ui).run();
   }
 }
