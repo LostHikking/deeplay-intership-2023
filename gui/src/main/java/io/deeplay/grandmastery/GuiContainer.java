@@ -47,7 +47,7 @@ public class GuiContainer {
     createGameGui();
   }
 
-  /** Метод для инициализации всех компонент графического интерфейса.*/
+  /** Метод для инициализации всех компонент графического интерфейса. */
   private void createGameGui() {
     // Создание окна и установка его позиции
     frame = new JFrame("Chess Board");
@@ -82,18 +82,28 @@ public class GuiContainer {
     createRightNumberLabels(mainPanel, x, y);
     createBottomNumberLabels(mainPanel, x, y);
     createLeftNumberLabels(mainPanel, x, y);
-    // Создание и установка текстового поля для вывода хода игры
-    textArea = new JTextArea();
-    textArea.setBackground(new Color(222, 184, 135));
-    JScrollPane scrollPane = new JScrollPane(textArea);
-    scrollPane.setBounds(450, 60, 160, 400);
-    textArea.setFocusable(false);
+    JScrollPane scrollPane = createTextArea();
     mainPanel.add(scrollPane);
     // Создание и установка лейбла игрока, производящего ход
     JLabel movingPlayerLabel = createMovingPlayerLabel();
     mainPanel.add(movingPlayerLabel);
     // Установка главной панели во фрейм
     frame.add(mainPanel);
+  }
+
+  /**
+   * Метод для инициализации TextArea.
+   * @return Панель с textArea
+   */
+  public JScrollPane createTextArea() {
+    // Создание и установка текстового поля для вывода хода игры
+    textArea = new JTextArea();
+    textArea.setBackground(new Color(222, 184, 135));
+    JScrollPane scrollPane = new JScrollPane(textArea);
+    scrollPane.setBounds(450, 60, 160, 400);
+    textArea.setFocusable(false);
+    textArea.setName("textArea");
+    return scrollPane;
   }
 
   /** Метод выводит диалоговое окно для выбора режима игры. */
@@ -238,8 +248,8 @@ public class GuiContainer {
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.add(Box.createVerticalGlue());
     String message =
-            (color == io.deeplay.grandmastery.domain.Color.WHITE ? "Белый" : "Черный")
-                    + " игрок, введите ваше имя:";
+        (color == io.deeplay.grandmastery.domain.Color.WHITE ? "Белый" : "Черный")
+            + " игрок, введите ваше имя:";
     panel.add(new JLabel(message));
     panel.add(Box.createVerticalStrut(10));
     panel.add(textField);
@@ -280,6 +290,7 @@ public class GuiContainer {
    */
   public JLabel createMovingPlayerLabel() {
     movingPlayerLabel = new JLabel();
+    movingPlayerLabel.setName("movingPlayerLabel");
     movingPlayerLabel.setBounds(450, 465, 160, 15);
     Font font = new Font("Arial", Font.BOLD, 15);
     movingPlayerLabel.setFont(font);
@@ -303,7 +314,9 @@ public class GuiContainer {
    */
   private JPanel createEndGameButtonsPanel() {
     offerDrawButton = new JButton("Предложить ничью");
+    offerDrawButton.setName("offerDrawButton");
     surrenderButton = new JButton("Сдаться");
+    surrenderButton.setName("surrenderButton");
     offerDrawButton.setBounds(0, 0, 308, 30);
     surrenderButton.setBounds(308, 0, 308, 30);
     offerDrawButton.setBackground(new Color(213, 178, 156));
@@ -311,6 +324,7 @@ public class GuiContainer {
     JPanel endGameButtonsPanel = new JPanel(null);
     endGameButtonsPanel.add(offerDrawButton);
     endGameButtonsPanel.add(surrenderButton);
+    endGameButtonsPanel.setName("EndGameButtonsPanel");
     return endGameButtonsPanel;
   }
 
@@ -321,6 +335,7 @@ public class GuiContainer {
    */
   private JPanel createChessPanel() {
     chessPanel = new JPanel(null);
+    chessPanel.setName("chessPanel");
     chessPanel.setPreferredSize(new Dimension(400, 420));
 
     int cellSize = 50;
@@ -348,9 +363,7 @@ public class GuiContainer {
     return chessPanel;
   }
 
-  /**
-   * Метод, вращающий наш массив кнопок.
-   */
+  /** Метод, вращающий наш массив кнопок. */
   public void rotateArray() {
     int rows = cells.length;
     int cols = cells[0].length;
@@ -557,6 +570,7 @@ public class GuiContainer {
 
   /**
    * Метод возвращает последнюю строку в textArea.
+   *
    * @return Последняя строка.
    */
   public String getLastLine() {

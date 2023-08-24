@@ -62,12 +62,11 @@ public class GrandmasteryApp {
             SwingWorker<Void, Void> worker =
                 new SwingWorker<Void, Void>() {
                   @Override
-                  protected Void doInBackground() throws Exception {
+                  protected Void doInBackground() {
                     while (!gameController.isGameOver()) {
                       try {
                         GUI.setMovingPlayer(gameController.getCurrentPlayer().getName());
                         gameController.nextMove();
-                        GUI.showMove(gameController.getOpponentPlayer());
                         publish(); // Обновляем интерфейс в основном потоке
                       } catch (GameException e) {
                         GUI.incorrectMove();
@@ -80,6 +79,8 @@ public class GrandmasteryApp {
                   protected void process(List<Void> chunks) {
                     GUI.showBoard(
                         gameController.getBoard(), gameController.getCurrentPlayer().getColor());
+                      GUI.showMove(gameController.getOpponentPlayer().getLastMove(),
+                              gameController.getOpponentPlayer().getColor());
                   }
 
                   @Override

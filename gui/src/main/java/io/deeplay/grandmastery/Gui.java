@@ -3,7 +3,6 @@ package io.deeplay.grandmastery;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.Move;
-import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.core.UI;
@@ -12,6 +11,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.figures.Piece;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -27,7 +27,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Gui implements UI {
   private char promotionPiece;
   private boolean wantsDraw;
@@ -48,7 +52,7 @@ public class Gui implements UI {
     guiContainer.getFrame().repaint();
   }
 
-  /** Конструктор для GUI.*/
+  /** Конструктор для GUI. */
   public Gui() {
     wantsSurrender = false;
     firstClick = null;
@@ -166,13 +170,14 @@ public class Gui implements UI {
   /**
    * Метод вывода хода игрока в TextArea.
    *
-   * @param movePlayer Игрок, совершающий ход.
+   * @param move Ход
    */
   @Override
-  public void showMove(PlayerInfo movePlayer) {
-    String messageBuilder = movePlayer.getName() + ": " + movePlayer.getLastMove() + "\n";
-    String lastMove = movePlayer.getLastMove();
-    if (lastMove != null && !messageBuilder.equals(guiContainer.getLastLine())) {
+  public void showMove(Move move, Color color) {
+    String messageBuilder = color.toString() + ": "
+            + LongAlgebraicNotation.moveToString(move) + "\n";
+    String lastLine = guiContainer.getLastLine();
+    if (move != null && !messageBuilder.equals(lastLine)) {
       guiContainer.printMessage(messageBuilder);
     }
   }
@@ -267,9 +272,7 @@ public class Gui implements UI {
     Piece piece;
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-
         piece = board.getPiece(j, i);
-
         JButton cell = guiContainer.getCells()[i][j];
         if ((i + j) % 2 == 0) {
           cell.setBackground(guiContainer.getOriginalBlackColor());
@@ -277,6 +280,7 @@ public class Gui implements UI {
           cell.setBackground(guiContainer.getOriginalWhiteColor());
         }
         if (piece != null) {
+          cell.setName(piece.getColor().toString() + piece.getFigureType().getSymbol());
           guiContainer.setPieceIcon(piece, j, i);
           if (piece.getColor() == color) {
             makeClickable(cell, j, i, board);
@@ -342,7 +346,7 @@ public class Gui implements UI {
   }
 
   /** Метод, активирующий кнопки для сдачи и ничьей. */
-  private void activateEndGamePanel() {
+  void activateEndGamePanel() {
     JButton surrenderButton = guiContainer.getSurrenderButton();
     JButton offerDrawButton = guiContainer.getOfferDrawButton();
     surrenderButton.addActionListener(
@@ -488,7 +492,7 @@ public class Gui implements UI {
    *
    * @param button Кнопка
    */
-  private void makeUnclickable(JButton button) {
+  public void makeUnclickable(JButton button) {
     // Удаляем все существующие MouseListener'ы из кнопки
     for (MouseListener listener : button.getMouseListeners()) {
       button.removeMouseListener(listener);

@@ -2,21 +2,20 @@ package io.deeplay.grandmastery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.Column;
 import io.deeplay.grandmastery.core.HashBoard;
-import io.deeplay.grandmastery.core.HumanPlayer;
-import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.Position;
+import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.listeners.InputListener;
 import io.deeplay.grandmastery.utils.Boards;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.BlockingQueue;
 import javax.swing.JButton;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class GuiTest {
@@ -31,13 +30,14 @@ class GuiTest {
   @Test
   void showMove() {
     init();
-    String expected = "Moto: a2a4\n";
+    String expected = "BLACK: a2a4\n";
     guiContainer.printMessage(expected);
-    InputListener inputListener = mock(InputListener.class);
-    Color color = mock(Color.class);
-    Player player = new HumanPlayer("Moto", color, inputListener);
-    player.setLastMove("a2a4");
-    gui.showMove(player);
+    Column colFrom = new Column(0);
+    Column colTo = new Column(0);
+    Row rowFrom = new Row(1);;
+    Row rowTo = new Row(3);
+    Move move = new Move(new Position(colFrom,rowFrom),new Position(colTo, rowTo), null);
+    gui.showMove(move, Color.BLACK);
     String actual = guiContainer.getTextArea().getText();
     assertEquals(expected, actual);
   }
