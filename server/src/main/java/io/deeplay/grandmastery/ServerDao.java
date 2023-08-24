@@ -129,14 +129,24 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
     var json = ConversationService.serialize(result);
 
     if (playerOne instanceof ServerPlayer serverPlayer) {
-      ServerDao.send(serverPlayer.getOut(), json);
+      try {
+        ServerDao.send(serverPlayer.getOut(), json);
+      } catch (IOException e) {
+        log.error("Не удалось отправить результат игры клиенту - " + serverPlayer.getColor());
+      }
     }
     if (playerTwo instanceof ServerPlayer serverPlayer) {
-      ServerDao.send(serverPlayer.getOut(), json);
+      try {
+        ServerDao.send(serverPlayer.getOut(), json);
+      } catch (IOException e) {
+        log.error("Не удалось отправить результат игры клиенту - " + serverPlayer.getColor());
+      }
     }
     if (socket != null) {
       try (var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8))) {
         ServerDao.send(out, json);
+      } catch (IOException e) {
+        log.error("Не удалось отправить результат игры клиенту");
       }
     }
   }
