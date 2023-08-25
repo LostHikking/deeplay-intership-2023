@@ -10,6 +10,7 @@ import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.dto.AcceptMove;
@@ -32,64 +33,130 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Client {
+  private static final ExecutorService MAKE_MOVE = Executors.newSingleThreadExecutor();
+  private static final AtomicReference<IOException> IO_EXCEPTION_REF = new AtomicReference<>();
   private static final String HOST = "localhost";
   private static final int PORT = 8080;
+  private static final int TIME_RECONNECTION = 5000;
 
-  private final GameHistory gameHistory = new GameHistory();
-  private final ClientController clientController;
-  private Player player;
+  protected final UI ui;
+  protected ClientController clientController;
+  protected final GameHistory gameHistory = new GameHistory();
+  protected Player player;
+
+  protected boolean reconnect;
 
   /**
    * Конструктор для класса Client.
    *
-   * @param host Адрес хоста
-   * @param port Порт
    * @param ui UI
-   * @throws IOException Ошибка ввода/вывода
    */
-  public Client(String host, int port, UI ui) throws IOException {
-    var socket = new Socket(host, port);
-    var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
-    var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
+  public Client(UI ui) {
+    this.ui = ui;
+    connect();
+    reconnect = false;
+  }
 
-    this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
-    log.info("Клиент успешно создан");
+  /**
+   * Метод для подключения клиента к серверу. Если подключение не возможно, будет повторная попытка
+   * через {@code TIME_RECONNECTION} мс. И так до тех пор, пока не будет успешного подключения.
+   */
+  protected void connect() {
+    while (true) {
+      try {
+        Socket socket = new Socket(HOST, PORT);
+        BufferedReader in =
+            new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
+        BufferedWriter out =
+            new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
+
+        this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
+        log.info("Соединение с сервером установлено.");
+        break;
+      } catch (IOException e) {
+        log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
+        waitAndReconnect();
+      }
+    }
+  }
+
+  /**
+   * Метод для переподключения клиента к серверу.
+   *
+   * @throws IOException При проблемах с закрытием текущего соединения или при установке нового.
+   */
+  protected void reconnect() throws IOException {
+    clientController.close();
+    gameHistory.clear();
+    reconnect = true;
+    connect();
+  }
+
+  private void waitAndReconnect() {
+    try {
+      Thread.sleep(TIME_RECONNECTION);
+    } catch (InterruptedException ex) {
+      log.error(ex.getMessage(), ex);
+    }
+  }
+
+  private static boolean isServerUnavailable(IOException e) {
+    return e.getMessage().contains("Server disconnect");
   }
 
   /**
    * Запускает клиент с определённым UI.
    *
-   * @throws IOException ошибка ввода/вывода
+   * @throws IOException ошибка при закрытии потоков ввода/вывода
    * @throws IllegalStateException неизвестный тип ответа от сервера
    */
-  private void run() throws IOException, IllegalStateException {
-    GameMode gameMode = clientController.selectMode();
-    if (gameMode == GameMode.BOT_VS_BOT) {
-      botVsBot(clientController.selectChessType());
-      return;
-    }
+  public void run() throws IOException, IllegalStateException {
+    do {
+      try {
+        GameMode gameMode = clientController.selectMode();
+        if (gameMode == GameMode.BOT_VS_BOT) {
+          botVsBot(clientController.selectChessType());
+        } else {
+          Color color = clientController.selectColor();
+          String name = clientController.inputPlayerName(color);
+          ChessType chessType = clientController.selectChessType();
 
-    Color color = clientController.selectColor();
-    String name = clientController.inputPlayerName(color);
-    ChessType chessType = clientController.selectChessType();
+          player = new HumanPlayer(name, color, ui);
+          StartGameRequest request = new StartGameRequest(name, gameMode, chessType, color);
+          IDto response = clientController.query(request);
 
-    player = new HumanPlayer(name, color, clientController.ui());
-    StartGameRequest request = new StartGameRequest(name, gameMode, chessType, color);
-    IDto response = clientController.query(request);
+          if (response instanceof StartGameResponse responseDto) {
+            Board board = Boards.getBoardFromString(responseDto.getBoard());
+            gameHistory.startup(board);
+            player.startup(board);
 
-    if (response instanceof StartGameResponse responseDto) {
-      Board board = Boards.getBoardFromString(responseDto.getBoard());
-      gameHistory.startup(board);
-      player.startup(board);
+            startGame();
+          } else {
+            MAKE_MOVE.shutdown();
+            clientController.close();
+            throw new IllegalStateException("Неизвестный тип ответа от сервера - " + response);
+          }
+        }
+      } catch (IOException e) {
+        if (isServerUnavailable(e)) {
+          log.error("Соединение с сервером разорвано");
+          log.info("Попытка переподключения: ");
 
-      startGame();
-    } else {
-      throw new IllegalStateException("Неизвестный тип ответа от сервера - " + response);
-    }
+          reconnect();
+        } else {
+          throw e;
+        }
+      }
+    } while (reconnect);
+
+    clientController.close();
   }
 
   /**
@@ -98,7 +165,7 @@ public class Client {
    * @throws QueryException ошибка во время запроса.
    * @throws IllegalStateException неизвестный тип ответа от сервера.
    */
-  private void botVsBot(ChessType chessType) throws QueryException, IllegalStateException {
+  private void botVsBot(ChessType chessType) throws IOException, IllegalStateException {
     StartGameRequest request =
         new StartGameRequest("AI", GameMode.BOT_VS_BOT, chessType, Color.WHITE);
     IDto response = clientController.query(request);
@@ -109,21 +176,31 @@ public class Client {
 
       clientController.showBoard(Boards.getBoardFromString(stringBoard), Color.WHITE);
       clientController.showResultGame(resultGame.getGameState());
+      reconnect = false;
     } else {
+      MAKE_MOVE.shutdown();
+      clientController.close();
       throw new IllegalStateException("Неизвестный тип ответа от сервера - " + response);
     }
   }
 
-  private void startGame() throws IOException {
+  private void startGame() throws IOException, GameException {
     IDto serverDto;
 
     do {
       String serverResponse = clientController.getJsonFromServer();
       serverDto = ConversationService.deserialize(serverResponse);
 
+      if (IO_EXCEPTION_REF.get() != null) {
+        throw IO_EXCEPTION_REF.get();
+      }
+
       if (serverDto instanceof WaitMove) {
-        String json = ConversationService.serialize(new SendMove(makeMove()));
-        clientController.send(json);
+        if (!MAKE_MOVE.isShutdown()) {
+          MAKE_MOVE.execute(this::makeMove);
+        } else {
+          throw GameErrorCode.GAME_ALREADY_OVER.asException();
+        }
       } else if (serverDto instanceof WrongMove) {
         gameHistory.getBoards().remove(gameHistory.getBoards().size() - 1);
         player.startup(gameHistory.getCurBoard());
@@ -136,36 +213,52 @@ public class Client {
       }
     } while (!(serverDto instanceof ResultGame));
 
+    MAKE_MOVE.shutdown();
     player.gameOver(((ResultGame) serverDto).getGameState());
     gameHistory.gameOver(((ResultGame) serverDto).getGameState());
-    clientController.close();
+    reconnect = false;
   }
 
-  private Move makeMove() {
+  private void makeMove() {
+    Move move;
     while (true) {
       try {
-        Move move = player.createMove();
-        if (move.moveType() == MoveType.DEFAULT) {
-          player.makeMove(move);
-          gameHistory.addBoard(player.getBoard());
-        }
-
-        if (player.getLastMove() != null) {
-          return move;
+        move = player.createMove();
+        if (move != null) {
+          if (move.moveType() == MoveType.DEFAULT) {
+            player.makeMove(move);
+            gameHistory.addBoard(player.getBoard());
+            gameHistory.makeMove(move);
+          }
+          break;
         }
       } catch (GameException e) {
-        log.error("Неверный ход - " + player.getColor());
+        if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
+          log.error("Игра уже завершилась!");
+          return;
+        }
       }
+    }
+
+    try {
+      String json = ConversationService.serialize(new SendMove(move));
+      clientController.send(json);
+    } catch (IOException e) {
+      IO_EXCEPTION_REF.set(e);
     }
   }
 
-  /**
-   * Метод запускает клиент.
-   *
-   * @throws IOException Неудачная попытка чтения/записи
-   */
-  public static void main(String[] args) throws IOException {
-    var ui = new Gui();
-    new Client(HOST, PORT, ui).run();
+  /** Метод запускает клиент. */
+  public static void main(String[] args) {
+    UI ui = new Gui();
+    try {
+      new Client(ui).run();
+    } catch (Exception e) {
+      log.error("Ошибка во время работы клиента", e);
+    } finally {
+      if (!MAKE_MOVE.isShutdown()) {
+        MAKE_MOVE.shutdown();
+      }
+    }
   }
 }

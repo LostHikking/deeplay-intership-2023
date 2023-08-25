@@ -136,4 +136,10 @@ class GameHistoryTest {
         () -> Assertions.assertTrue(gameHistory.isGameOver()),
         () -> Assertions.assertThrows(GameException.class, () -> gameHistory.makeMove(move)));
   }
+
+  @Test
+  void clearTest() {
+    gameHistory.clear();
+    Assertions.assertTrue(gameHistory.isEmpty());
+  }
 }

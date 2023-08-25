@@ -16,7 +16,7 @@ public class ConversationService {
    * @return Json строка
    * @throws QueryException Ошибка выполнения запроса
    */
-  public static String serialize(IDto object) throws QueryException {
+  public static synchronized String serialize(IDto object) throws QueryException {
     try {
       return MAPPER.writeValueAsString(object);
     } catch (JsonProcessingException e) {
@@ -31,7 +31,7 @@ public class ConversationService {
    * @return Объект
    * @throws QueryException Ошибка выполнения запроса
    */
-  public static IDto deserialize(String json) throws QueryException {
+  public static synchronized IDto deserialize(String json) throws QueryException {
     try {
       return MAPPER.readValue(json, new TypeReference<>() {});
     } catch (JsonProcessingException e) {
@@ -47,7 +47,8 @@ public class ConversationService {
    * @return Объект
    * @throws QueryException Ошибка выполнения запроса
    */
-  public static <T extends IDto> T deserialize(String json, Class<T> clazz) throws QueryException {
+  public static synchronized <T extends IDto> T deserialize(String json, Class<T> clazz)
+      throws QueryException {
     try {
       return MAPPER.readValue(json, clazz);
     } catch (JsonProcessingException e) {
