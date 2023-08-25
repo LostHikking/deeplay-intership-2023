@@ -9,6 +9,17 @@ import java.util.Objects;
 /** Класс для сохранения позиции столбца фигуры на шахматной доске. */
 @JsonSerialize
 public record Column(int value) {
+  /**
+   * Конструктор, который проверяет валидность Column.
+   *
+   * @throws IllegalArgumentException при неверном значении, при создании Column.
+   */
+  public Column {
+    if (value < 0 || value > 7) {
+      throw new IllegalArgumentException();
+    }
+  }
+
   private static final Map<Character, Integer> VALID_CHARACTERS =
       Map.of('a', 0, 'b', 1, 'c', 2, 'd', 3, 'e', 4, 'f', 5, 'g', 6, 'h', 7);
 

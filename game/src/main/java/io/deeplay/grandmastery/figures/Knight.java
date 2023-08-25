@@ -8,6 +8,7 @@ import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.utils.Figures;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Knight extends Piece {
   /**
@@ -46,7 +47,11 @@ public class Knight extends Piece {
     moveList.add(Figures.getMoveByPositionAndDeltas(position, 2, 1));
 
     return moveList.stream()
-        .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
+        .filter(
+            move ->
+                Objects.nonNull(move)
+                    && canMove(board, move)
+                    && simulationMoveAndCheck(board, move))
         .toList();
   }
 }
