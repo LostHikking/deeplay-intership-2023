@@ -67,6 +67,8 @@ public class GrandmasteryApp {
                       try {
                         GUI.setMovingPlayer(gameController.getCurrentPlayer().getName());
                         gameController.nextMove();
+                          GUI.showMove(gameController.getOpponentPlayer().getLastMove(),
+                                  gameController.getOpponentPlayer().getColor());
                         publish(); // Обновляем интерфейс в основном потоке
                       } catch (GameException e) {
                         GUI.incorrectMove();
@@ -79,8 +81,6 @@ public class GrandmasteryApp {
                   protected void process(List<Void> chunks) {
                     GUI.showBoard(
                         gameController.getBoard(), gameController.getCurrentPlayer().getColor());
-                      GUI.showMove(gameController.getOpponentPlayer().getLastMove(),
-                              gameController.getOpponentPlayer().getColor());
                   }
 
                   @Override

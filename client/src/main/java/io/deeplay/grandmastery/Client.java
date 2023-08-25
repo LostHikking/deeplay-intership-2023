@@ -26,6 +26,7 @@ import io.deeplay.grandmastery.dto.WrongMove;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
+import io.deeplay.grandmastery.ui.ConsoleUi;
 import io.deeplay.grandmastery.utils.Boards;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -250,7 +251,7 @@ public class Client {
 
   /** Метод запускает клиент. */
   public static void main(String[] args) {
-    UI ui = new Gui();
+    var ui = new Gui();
     try {
       new Client(ui).run();
     } catch (Exception e) {

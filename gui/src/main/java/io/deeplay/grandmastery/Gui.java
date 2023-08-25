@@ -160,7 +160,7 @@ public class Gui implements UI {
       }
       case 1 -> {
         playSound("/sounds/clickSound.wav");
-        color = Color.WHITE;
+        color = Color.BLACK;
       }
       default -> color = null;
     }
