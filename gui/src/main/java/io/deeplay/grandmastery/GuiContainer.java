@@ -52,7 +52,8 @@ public class GuiContainer {
     // Создание окна и установка его позиции
     frame = new JFrame("Chess Board");
     // Используем getResource для загрузки иконки из ресурсов
-    ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("GrandmasteryIcon.png"));
+    ImageIcon icon =
+        new ImageIcon(getClass().getClassLoader().getResource("images/GrandmasteryIcon.png"));
     frame.setIconImage(icon.getImage());
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     int windowWidth = 630; // ширина окна
@@ -93,6 +94,7 @@ public class GuiContainer {
 
   /**
    * Метод для инициализации TextArea.
+   *
    * @return Панель с textArea
    */
   public JScrollPane createTextArea() {
@@ -541,7 +543,7 @@ public class GuiContainer {
     } else {
       color = "Black";
     }
-    String imageName = color + figureSymbol + ".png";
+    String imageName = "images/" + color + figureSymbol + ".png";
 
     try {
       URL imageUrl = getClass().getClassLoader().getResource(imageName);

@@ -264,7 +264,7 @@ class GuiContainerTest {
     ImageIcon actualIcon = (ImageIcon) cells[0][0].getIcon();
     ImageIcon expectedIcon =
         new ImageIcon(
-            Objects.requireNonNull(getClass().getClassLoader().getResource("BlackR.png")));
+            Objects.requireNonNull(getClass().getClassLoader().getResource("images/BlackR.png")));
     assertEquals(expectedIcon.getImage(), actualIcon.getImage());
   }
 
@@ -276,7 +276,7 @@ class GuiContainerTest {
     ImageIcon actualIcon = (ImageIcon) cells[3][3].getIcon();
     ImageIcon expectedIcon =
         new ImageIcon(
-            Objects.requireNonNull(getClass().getClassLoader().getResource("WhiteQ.png")));
+            Objects.requireNonNull(getClass().getClassLoader().getResource("images/WhiteQ.png")));
     assertEquals(expectedIcon.getImage(), actualIcon.getImage());
   }
 

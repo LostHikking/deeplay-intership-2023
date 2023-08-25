@@ -20,9 +20,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -60,6 +68,29 @@ public class Gui implements UI {
     activateEndGamePanel();
     monitor = new Object();
     showGui();
+    playBackgroundMusic("/sounds/backgroundMusic.wav", 0.6f);
+  }
+
+  private void playBackgroundMusic(String soundFile, float volume) {
+    new Thread(
+            () -> {
+              try {
+                URL url = getClass().getResource(soundFile);
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioInputStream);
+                FloatControl gainControl =
+                    (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float range = gainControl.getMaximum() - gainControl.getMinimum();
+                float gain = (range * volume) + gainControl.getMinimum();
+                gainControl.setValue(gain);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip.start();
+              } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
   }
 
   /**
@@ -73,9 +104,11 @@ public class Gui implements UI {
     ChessType selectedChessType;
     switch (choice) {
       case 0:
+        playSound("/sounds/clickSound.wav");
         selectedChessType = ChessType.CLASSIC;
         break;
       case 1:
+        playSound("/sounds/clickSound.wav");
         selectedChessType = ChessType.FISHERS;
         break;
       default:
@@ -92,12 +125,23 @@ public class Gui implements UI {
   @Override
   public GameMode selectMode() {
     int selectedMode = guiContainer.showModeSelectionWindow();
-    return switch (selectedMode) {
-      case 0 -> GameMode.HUMAN_VS_BOT;
-      case 1 -> GameMode.HUMAN_VS_HUMAN;
-      case 2 -> GameMode.BOT_VS_BOT;
-      default -> null;
-    };
+    GameMode mode;
+    switch (selectedMode) {
+      case 0 -> {
+        playSound("/sounds/clickSound.wav");
+        mode = GameMode.HUMAN_VS_BOT;
+      }
+      case 1 -> {
+        playSound("/sounds/clickSound.wav");
+        mode = GameMode.HUMAN_VS_HUMAN;
+      }
+      case 2 -> {
+        playSound("/sounds/clickSound.wav");
+        mode = GameMode.BOT_VS_BOT;
+      }
+      default -> mode = null;
+    }
+    return mode;
   }
 
   /**
@@ -108,12 +152,20 @@ public class Gui implements UI {
   @Override
   public Color selectColor() {
     int selectedColor = guiContainer.showColorSelectionWindow();
-
-    return switch (selectedColor) {
-      case 0 -> Color.WHITE;
-      case 1 -> Color.BLACK;
-      default -> null;
-    };
+    Color color;
+    switch (selectedColor) {
+      case 0 -> {
+        playSound("/sounds/clickSound.wav");
+        color = Color.WHITE;
+      }
+      case 1 -> {
+        playSound("/sounds/clickSound.wav");
+        color = Color.WHITE;
+      }
+      default -> color = null;
+    }
+    ;
+    return color;
   }
 
   /**
@@ -124,17 +176,22 @@ public class Gui implements UI {
   @Override
   public boolean confirmSur() {
     int choice = guiContainer.showConfirmSurWindow();
-    return switch (choice) {
+    boolean result;
+    switch (choice) {
       case 0 -> {
+        playSound("/sounds/clickSound.wav");
         wantsSurrender = true;
-        yield true;
+        result = true;
       }
       case 1 -> {
+        playSound("/sounds/clickSound.wav");
         wantsSurrender = false;
-        yield false;
+        result = false;
       }
-      default -> false;
-    };
+      default -> result = false;
+    }
+    ;
+    return result;
   }
 
   /**
@@ -145,11 +202,20 @@ public class Gui implements UI {
   @Override
   public boolean answerDraw() {
     int choice = guiContainer.showAnswerDrawWindow();
-    return switch (choice) {
-      case 0 -> false;
-      case 1 -> true;
-      default -> false;
-    };
+    boolean result;
+    switch (choice) {
+      case 0 -> {
+        playSound("/sounds/clickSound.wav");
+        result = false;
+      }
+      case 1 -> {
+        playSound("/sounds/clickSound.wav");
+        result = true;
+      }
+      default -> result = false;
+    }
+    ;
+    return result;
   }
 
   /**
@@ -160,7 +226,9 @@ public class Gui implements UI {
    */
   @Override
   public String inputPlayerName(Color color) {
-    return guiContainer.showInputPlayerNameWindow(color);
+    String name = guiContainer.showInputPlayerNameWindow(color);
+    playSound("/sounds/clickSound.wav");
+    return name;
   }
 
   /** Метод, делающий наш фрейм видимым. */
@@ -175,8 +243,8 @@ public class Gui implements UI {
    */
   @Override
   public void showMove(Move move, Color color) {
-    String messageBuilder = color.toString() + ": "
-            + LongAlgebraicNotation.moveToString(move) + "\n";
+    String messageBuilder =
+        color.toString() + ": " + LongAlgebraicNotation.moveToString(move) + "\n";
     String lastLine = guiContainer.getLastLine();
     if (move != null && !messageBuilder.equals(lastLine)) {
       guiContainer.printMessage(messageBuilder);
@@ -191,13 +259,18 @@ public class Gui implements UI {
   @Override
   public void showResultGame(GameState gameState) {
     String message;
+    String sound;
     if (gameState == GameState.WHITE_WIN) {
+      sound = "/sounds/whiteWinSound.wav";
       message = "Белые выиграли!!!";
     } else if (gameState == GameState.BLACK_WIN) {
       message = "Чёрные выиграли!!!";
+      sound = "/sounds/blackWinSound.wav";
     } else {
       message = "Ничья!";
+      sound = "/sounds/drawSound.wav";
     }
+    playSound(sound);
     JOptionPane.showMessageDialog(null, message, "Результат игры", JOptionPane.INFORMATION_MESSAGE);
   }
 
@@ -354,6 +427,7 @@ public class Gui implements UI {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
+            playSound("/sounds/clickSound.wav");
             wantsSurrender = true;
             synchronized (monitor) {
               monitor.notify();
@@ -364,12 +438,29 @@ public class Gui implements UI {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
+            playSound("/sounds/clickSound.wav");
             wantsDraw = true;
             synchronized (monitor) {
               monitor.notify();
             }
           }
         });
+  }
+
+  private void playSound(String soundFile) {
+    new Thread(
+            () -> {
+              try {
+                URL soundUrl = getClass().getResource(soundFile);
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundUrl);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioInputStream);
+                clip.start();
+              } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
   }
 
   /** Метод, делающий кнопку доски кликабельной, а также устанавливающий логику нажатий по доске. */
@@ -381,6 +472,7 @@ public class Gui implements UI {
           public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 1) {
               try {
+                playSound("/sounds/clickSound.wav");
                 Point point = new Point(col, row);
                 // Помещаем координаты в очередь
                 clickQueue.put(point);
@@ -397,6 +489,7 @@ public class Gui implements UI {
                   firstClick = point;
                   // Если это второй клик, скрываем возможные ходы
                 } else if (clickQueue.size() == 2) {
+                  playSound("/sounds/clickSound.wav");
                   // Проверка для подмены пешки
                   Piece piece = board.getPiece(firstClick.x, firstClick.y);
                   if (piece.getFigureType().getSymbol() == 'p') {
@@ -439,47 +532,59 @@ public class Gui implements UI {
     dialog.setTitle("Превращение пешки");
     dialog.setLayout(new GridLayout(1, 4));
 
-    String colorPrefix = color == Color.WHITE ? "White" : "Black";
+    String colorPrefix = color == Color.WHITE ? "/images/White" : "/images/Black";
 
-    JButton queenButton =
-        new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "Q.png")));
-    queenButton.setPreferredSize(new Dimension(50, 50));
-    queenButton.addActionListener(
-        e -> {
-          promotionPiece = 'q';
-          dialog.dispose();
-        });
-    dialog.add(queenButton);
+    URL queenUrl = getClass().getResource(colorPrefix + "Q.png");
+    if (queenUrl != null) {
+      JButton queenButton = new JButton(new ImageIcon(queenUrl));
+      queenButton.setPreferredSize(new Dimension(50, 50));
+      queenButton.addActionListener(
+          e -> {
+            playSound("/sounds/clickSound.wav");
+            promotionPiece = 'q';
+            dialog.dispose();
+          });
+      dialog.add(queenButton);
+    }
 
-    JButton rookButton =
-        new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "R.png")));
-    rookButton.setPreferredSize(new Dimension(50, 50));
-    rookButton.addActionListener(
-        e -> {
-          promotionPiece = 'r';
-          dialog.dispose();
-        });
-    dialog.add(rookButton);
+    URL rookUrl = getClass().getResource(colorPrefix + "R.png");
+    if (rookUrl != null) {
+      JButton rookButton = new JButton(new ImageIcon(rookUrl));
+      rookButton.setPreferredSize(new Dimension(50, 50));
+      rookButton.addActionListener(
+          e -> {
+            playSound("/sounds/clickSound.wav");
+            promotionPiece = 'r';
+            dialog.dispose();
+          });
+      dialog.add(rookButton);
+    }
 
-    JButton bishopButton =
-        new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "B.png")));
-    bishopButton.setPreferredSize(new Dimension(50, 50));
-    bishopButton.addActionListener(
-        e -> {
-          promotionPiece = 'b';
-          dialog.dispose();
-        });
-    dialog.add(bishopButton);
+    URL bishopUrl = getClass().getResource(colorPrefix + "B.png");
+    if (bishopUrl != null) {
+      JButton bishopButton = new JButton(new ImageIcon(bishopUrl));
+      bishopButton.setPreferredSize(new Dimension(50, 50));
+      bishopButton.addActionListener(
+          e -> {
+            playSound("/sounds/clickSound.wav");
+            promotionPiece = 'b';
+            dialog.dispose();
+          });
+      dialog.add(bishopButton);
+    }
 
-    JButton knightButton =
-        new JButton(new ImageIcon(getClass().getClassLoader().getResource(colorPrefix + "N.png")));
-    knightButton.setPreferredSize(new Dimension(50, 50));
-    knightButton.addActionListener(
-        e -> {
-          promotionPiece = 'n';
-          dialog.dispose();
-        });
-    dialog.add(knightButton);
+    URL knightUrl = getClass().getResource(colorPrefix + "N.png");
+    if (knightUrl != null) {
+      JButton knightButton = new JButton(new ImageIcon(knightUrl));
+      knightButton.setPreferredSize(new Dimension(50, 50));
+      knightButton.addActionListener(
+          e -> {
+            playSound("/sounds/clickSound.wav");
+            promotionPiece = 'n';
+            dialog.dispose();
+          });
+      dialog.add(knightButton);
+    }
 
     dialog.pack();
     dialog.setLocationRelativeTo(null);
