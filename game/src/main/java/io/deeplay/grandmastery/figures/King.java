@@ -11,6 +11,7 @@ import io.deeplay.grandmastery.utils.Figures;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -137,17 +138,19 @@ public class King extends Piece {
     moves.add(Figures.getMoveByPositionAndDeltas(position, -1, 0));
     moves.add(Figures.getMoveByPositionAndDeltas(position, -1, 1));
 
+    var realMoves = new ArrayList<>(moves.stream().filter(Objects::nonNull).toList());
+
     if (!this.isMoved()) {
       if (this.getColor() == Color.WHITE) {
-        moves.add(LongAlgebraicNotation.getMoveFromString("e1c1"));
-        moves.add(LongAlgebraicNotation.getMoveFromString("e1g1"));
+        realMoves.add(LongAlgebraicNotation.getMoveFromString("e1c1"));
+        realMoves.add(LongAlgebraicNotation.getMoveFromString("e1g1"));
       } else {
-        moves.add(LongAlgebraicNotation.getMoveFromString("e8c8"));
-        moves.add(LongAlgebraicNotation.getMoveFromString("e8g8"));
+        realMoves.add(LongAlgebraicNotation.getMoveFromString("e8c8"));
+        realMoves.add(LongAlgebraicNotation.getMoveFromString("e8g8"));
       }
     }
 
-    return moves.stream()
+    return realMoves.stream()
         .filter(move -> canMove(board, move) && simulationMoveAndCheck(board, move))
         .toList();
   }

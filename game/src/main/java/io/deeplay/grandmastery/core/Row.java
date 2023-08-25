@@ -8,6 +8,17 @@ import java.util.Set;
 /** Класс для сохранения позиции строки фигуры на шахматной доске. */
 @JsonSerialize
 public record Row(int value) {
+  /**
+   * Конструктор, который проверяет валидность Row.
+   *
+   * @throws IllegalArgumentException при неверном значении, при создании Row.
+   */
+  public Row {
+    if (value < 0 || value > 7) {
+      throw new IllegalArgumentException();
+    }
+  }
+
   private static final Set<Character> VALID_NUMBERS =
       Set.of('1', '2', '3', '4', '5', '6', '7', '8');
 

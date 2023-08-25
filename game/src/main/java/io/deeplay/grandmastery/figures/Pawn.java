@@ -9,6 +9,7 @@ import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.utils.Figures;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Pawn extends Piece {
   private boolean captureEnPassant;
@@ -144,8 +145,10 @@ public class Pawn extends Piece {
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, 1, -1));
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, -1, -1));
 
+    var realMoves = defaultMoves.stream().filter(Objects::nonNull).toList();
+
     List<Move> resultMoves = new ArrayList<>();
-    for (Move move : defaultMoves) {
+    for (Move move : realMoves) {
       if (this.getColor() == Color.WHITE) {
         if (move.to().row().value() == 7) {
           generateReviveMoves(resultMoves, move);

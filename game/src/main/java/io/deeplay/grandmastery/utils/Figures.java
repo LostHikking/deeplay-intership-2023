@@ -52,16 +52,22 @@ public class Figures {
    * @return Ход
    */
   public static Move getMoveByPositionAndDeltas(Position position, int deltaCol, int deltaRow) {
-    return new Move(
-        position,
-        new Position(
-            new Column(position.col().value() + deltaCol),
-            new Row(position.row().value() + deltaRow)),
-        null);
+    var colValue = position.col().value() + deltaCol;
+    var rowValue = position.row().value() + deltaRow;
+
+    if (notValidValueForPosition(colValue) || notValidValueForPosition(rowValue)) {
+      return null;
+    }
+
+    return new Move(position, new Position(new Column(colValue), new Row(rowValue)), null);
+  }
+
+  private static boolean notValidValueForPosition(int value) {
+    return value < 0 || value > 7;
   }
 
   /**
-   * Метод проверяет есть ли какая либо фигура на заданной вертикали между двумя позициями.
+   * Метод проверяет есть ли какая-либо фигура на заданной вертикали между двумя позициями.
    *
    * @param board Доска
    * @param colNumber Позиция колонки по которой мы бежим
