@@ -164,7 +164,6 @@ public class Gui implements UI {
       }
       default -> color = null;
     }
-    ;
     return color;
   }
 
@@ -190,7 +189,6 @@ public class Gui implements UI {
       }
       default -> result = false;
     }
-    ;
     return result;
   }
 
@@ -214,7 +212,6 @@ public class Gui implements UI {
       }
       default -> result = false;
     }
-    ;
     return result;
   }
 
