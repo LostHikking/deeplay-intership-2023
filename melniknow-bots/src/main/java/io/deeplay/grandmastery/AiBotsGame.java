@@ -19,7 +19,7 @@ public class AiBotsGame {
    */
   public static void main(String[] args) {
     if (WITH_GUI) {
-      gui = new Gui();
+      gui = new Gui(true);
     }
 
     for (int i = 1; i <= COUNT_TESTS; i++) {

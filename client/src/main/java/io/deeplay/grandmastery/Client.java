@@ -2,6 +2,8 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HumanPlayer;
@@ -37,6 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 
 @Slf4j
 public class Client {
@@ -45,7 +48,6 @@ public class Client {
   private static final String HOST = "localhost";
   private static final int PORT = 8080;
   private static final int TIME_RECONNECTION = 5000;
-
   protected final UI ui;
   protected ClientController clientController;
   protected final GameHistory gameHistory = new GameHistory();
@@ -60,6 +62,9 @@ public class Client {
    */
   public Client(UI ui) {
     this.ui = ui;
+    if (ui instanceof Gui) {
+      setupLogging((Gui) ui);
+    }
     connect();
     reconnect = false;
   }
@@ -248,9 +253,30 @@ public class Client {
     }
   }
 
+  /**
+   * Метод, настраивающий логи для GUI.
+   *
+   * @param gui Графический интерфейс.
+   */
+  void setupLogging(Gui gui) {
+    // Если используется GUI, добавьте GuiAppender в список аппендеров
+    ch.qos.logback.classic.Logger rootLogger =
+        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+    LoggerContext loggerContext = rootLogger.getLoggerContext();
+
+    // Создайте и добавьте GuiAppender
+    GuiAppender guiAppender = new GuiAppender(gui);
+    guiAppender.setContext(loggerContext);
+    guiAppender.start();
+    rootLogger.addAppender(guiAppender);
+
+    // Выведите внутреннее состояние
+    StatusPrinter.print(loggerContext);
+  }
+
   /** Метод запускает клиент. */
   public static void main(String[] args) {
-    UI ui = new Gui();
+    UI ui = new Gui(true);
     try {
       new Client(ui).run();
     } catch (Exception e) {

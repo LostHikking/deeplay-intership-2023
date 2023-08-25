@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.read.ListAppender;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
@@ -25,6 +26,7 @@ import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.dto.StartGameResponse;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Iterator;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -33,12 +35,30 @@ import org.slf4j.LoggerFactory;
 
 public class ClientTest {
   private static final int PORT = 8080;
-
   private final UI mockUi = mock(UI.class);
   private Client client;
   private ServerSocket server;
   private ListAppender<ILoggingEvent> listAppender;
-
+  
+  @Test
+  void testSetupLogging() throws IOException {
+    Gui gui = new Gui(false);
+    runTestServer();
+    Client client = new Client(gui);
+    client.setupLogging(gui);
+    Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    Iterator<Appender<ILoggingEvent>> appenderIterator =  rootLogger.iteratorForAppenders();
+    boolean isGuiAppenderAttached = false;
+    while (appenderIterator.hasNext()) {
+      Appender<ILoggingEvent> appender = appenderIterator.next();
+      if (appender instanceof GuiAppender) {
+        isGuiAppenderAttached = true;
+        break;
+      }
+    }
+    assertTrue(isGuiAppenderAttached, "GuiAppender должен быть прикреплен к корневому логгеру");
+  }
+  
   private void setupLogCheck() {
     Logger clientLogger = (Logger) LoggerFactory.getLogger(Client.class);
     listAppender = new ListAppender<>();

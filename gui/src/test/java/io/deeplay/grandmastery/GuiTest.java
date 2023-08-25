@@ -1,7 +1,13 @@
 package io.deeplay.grandmastery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
@@ -14,9 +20,13 @@ import io.deeplay.grandmastery.utils.Boards;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowListener;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -25,8 +35,80 @@ class GuiTest {
   private GuiContainer guiContainer;
 
   private void init() {
-    gui = new Gui();
+    gui = new Gui(false);
     guiContainer = gui.getGuiContainer();
+  }
+  
+  @Test
+  public void testPlaySoundUnsupportedFile() {
+    init();
+
+    String incorrectSoundFile = "file.txt";
+    int volumeIndex = 1;
+    assertThrows(NullPointerException.class,
+            () -> gui.playBackgroundMusic(incorrectSoundFile, volumeIndex));
+  
+  }
+
+  @Test
+  void activateVolumePanel() {
+    init();
+    GuiContainer mockGuiContainer = mock(GuiContainer.class);
+    JPanel mockVolumePanel = mock(JPanel.class);
+    JButton mockVolumeButton = mock(JButton.class);
+    when(mockGuiContainer.getVolumePanel()).thenReturn(mockVolumePanel);
+    when(mockVolumePanel.getComponent(1)).thenReturn(mockVolumeButton);
+    gui.setGuiContainer(mockGuiContainer);
+    gui.activateVolumePanel();
+    verify(mockGuiContainer).getVolumePanel();
+    verify(mockVolumePanel).getComponent(1);
+    verify(mockVolumeButton).setIcon(any());
+    verify(mockVolumeButton).addActionListener(any());
+  }  
+  
+  @Test
+  public void testAddLog() {
+    init();
+    
+    String testMessage = "Test message";
+    gui.addLog(testMessage);
+
+    String actualContent = guiContainer.getLogTextArea().getText();
+
+    assertEquals(testMessage, actualContent);
+  }
+  
+  @Test
+  public void testActivateExitButton() {
+    init();
+    // Вызовите метод для активации кнопки выхода
+    gui.activateExitButton();
+
+    // Получите JFrame для тестирования
+    JFrame frame = guiContainer.getFrame();
+
+    // Проверьте, что листенер установлен и совпадает с нашим типом листенера
+    WindowListener foundListener = null;
+    for (WindowListener listener : frame.getWindowListeners()) {
+      if (listener instanceof WindowAdapter) {
+        foundListener = listener;
+        break;
+      }
+    }
+    assertNotNull(foundListener, "WindowAdapter listener должен быть установлен");
+  }
+
+  @Test
+  void testPlayBackgroundMusicThrowsNullPointerException() {
+    String incorrectSoundFile = "non_existent_sound.wav";
+
+    assertThrows(NullPointerException.class, () -> gui.playBackgroundMusic(incorrectSoundFile, 1));
+  }
+
+  @Test
+  void testPlaySoundThrowsNullPointerException() {
+    String incorrectSoundFile = "non_existent_sound.wav";
+    assertThrows(NullPointerException.class, () -> gui.playSound(incorrectSoundFile, 1));
   }
 
   @Test
@@ -47,8 +129,8 @@ class GuiTest {
   @Test
   void setMovingPlayer() {
     init();
-    String expected = "Ход:Moto...";
-    gui.setMovingPlayer("Moto");
+    String expected = "Ход белых...";
+    gui.setMovingPlayer("бел");
     String actual = guiContainer.getMovingPlayerLabel().getText();
     assertEquals(expected, actual);
   }

@@ -7,12 +7,20 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Objects;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,6 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import lombok.Getter;
 
 /** Класс-контейнер для графического интерфейса, хранит в себе компоненты. */
@@ -32,6 +42,7 @@ public class GuiContainer {
   private JButton[][] cells;
   private JFrame frame;
   private JPanel chessPanel;
+  private JPanel volumePanel;
   private JLabel[] bottomNumberLabels;
   private JLabel[] topNumberLabels;
   private JLabel[] rightNumberLabels;
@@ -40,8 +51,10 @@ public class GuiContainer {
   private boolean isWhitePlacement;
   private boolean isBlackPlacement;
   private JLabel movingPlayerLabel;
+  private JTextArea logTextArea;
   private final Color originalBlackColor = new Color(81, 42, 42);
   private final Color originalWhiteColor = new Color(124, 76, 62);
+  private ArrayList<String> logs;
 
   public GuiContainer() {
     createGameGui();
@@ -49,14 +62,19 @@ public class GuiContainer {
 
   /** Метод для инициализации всех компонент графического интерфейса. */
   private void createGameGui() {
+    logs = new ArrayList<>();
+    loadCustomFont("/fonts/kanit.ttf");
     // Создание окна и установка его позиции
-    frame = new JFrame("Chess Board");
+    frame = new JFrame("Grandmastery");
     // Используем getResource для загрузки иконки из ресурсов
-    ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("GrandmasteryIcon.png"));
+    ImageIcon icon =
+        new ImageIcon(
+            Objects.requireNonNull(
+                getClass().getClassLoader().getResource("images/GrandmasteryIcon.png")));
     frame.setIconImage(icon.getImage());
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     int windowWidth = 630; // ширина окна
-    int windowHeight = 530; // высота окна
+    int windowHeight = 550; // высота окна
     frame.setSize(windowWidth, windowHeight);
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int screenWidth = screenSize.width;
@@ -70,7 +88,7 @@ public class GuiContainer {
     mainPanel.setBackground(new Color(245, 245, 220));
     // Создание и панели с кнопками завершения игры
     JPanel endGameButtonsPanel = createEndGameButtonsPanel();
-    endGameButtonsPanel.setBounds(0, 0, 630, 30);
+    endGameButtonsPanel.setBounds(0, 0, windowWidth, 30);
     mainPanel.add(endGameButtonsPanel);
     // Создание и установка шахматной доски
     JPanel chessPanel = createChessPanel();
@@ -82,17 +100,90 @@ public class GuiContainer {
     createRightNumberLabels(mainPanel, x, y);
     createBottomNumberLabels(mainPanel, x, y);
     createLeftNumberLabels(mainPanel, x, y);
+    setBottomNumberLabels();
+    setTopNumberLabels();
+    setLeftNumberLabels();
+    setRightNumberLabels();
     JScrollPane scrollPane = createTextArea();
     mainPanel.add(scrollPane);
+    logTextArea = createLogTextArea(windowHeight, windowWidth, frame);
+    mainPanel.add(logTextArea);
     // Создание и установка лейбла игрока, производящего ход
-    JLabel movingPlayerLabel = createMovingPlayerLabel();
+    movingPlayerLabel = createMovingPlayerLabel();
     mainPanel.add(movingPlayerLabel);
+    // Установка панели громкости
+    volumePanel = createVolumePanel();
+    mainPanel.add(volumePanel);
     // Установка главной панели во фрейм
     frame.add(mainPanel);
   }
 
   /**
+   * Метод инициализирует панель с кнопкой громкости.
+   * @return Панель.
+   */
+  public JPanel createVolumePanel() {
+    // Создание панели и настройка макета.
+    JPanel volumePanel = new JPanel();
+    volumePanel.setBounds(445, 35, 160, 40);
+    volumePanel.setBackground(new Color(245, 245, 220));
+
+    // Создание метки "Звук:".
+    JLabel soundLabel = new JLabel("Громкость:");
+
+    // Создание кнопки с текущим изображением громкости.
+    JButton volumeButton = new JButton();
+    volumeButton.setPreferredSize(new Dimension(16, 16));
+    volumeButton.setBackground(new Color(245, 245, 220));
+    // Добавление компонентов на панель.
+    volumePanel.add(soundLabel);
+    volumePanel.add(volumeButton);
+    return volumePanel;
+  }
+
+  void loadCustomFont(String fontResourcePath) {
+    try {
+      // Создаем URL для ресурса шрифта
+      URL fontUrl = getClass().getResource(fontResourcePath);
+
+      if (fontUrl == null) {
+        System.err.println("Не удается загрузить файл шрифта.");
+        return;
+      }
+
+      // Получаем InputStream на основе URL
+      try (InputStream fontStream = fontUrl.openStream()) {
+        if (fontStream == null) {
+          System.err.println("Не удается загрузить файл шрифта.");
+          return;
+        }
+
+        // Создание объекта Font
+        Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+
+        // Установка размера и стиля шрифта
+        customFont = customFont.deriveFont(Font.PLAIN, 14);
+        Color customColor = new Color(50, 20, 20);
+        // Задаем кастомный шрифт глобально
+        UIManager.getLookAndFeelDefaults().put("Label.font", customFont);
+        UIManager.getLookAndFeelDefaults().put("Button.font", customFont);
+        UIManager.getLookAndFeelDefaults().put("TextArea.font", customFont);
+        UIManager.getLookAndFeelDefaults().put("TextField.font", customFont);
+        UIManager.getLookAndFeelDefaults().put("Label.foreground", customColor);
+        UIManager.getLookAndFeelDefaults().put("Button.foreground", customColor);
+        UIManager.getLookAndFeelDefaults().put("TextArea.foreground", customColor);
+        UIManager.getLookAndFeelDefaults().put("TextField.foreground", customColor);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } catch (FontFormatException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
    * Метод для инициализации TextArea.
+   *
    * @return Панель с textArea
    */
   public JScrollPane createTextArea() {
@@ -292,10 +383,76 @@ public class GuiContainer {
     movingPlayerLabel = new JLabel();
     movingPlayerLabel.setName("movingPlayerLabel");
     movingPlayerLabel.setBounds(450, 465, 160, 15);
-    Font font = new Font("Arial", Font.BOLD, 15);
-    movingPlayerLabel.setFont(font);
     movingPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
     return movingPlayerLabel;
+  }
+
+  /** Метод создания logTextArea. */
+  public JTextArea createLogTextArea(int windowHeight, int windowWidth, JFrame parentFrame) {
+    JTextArea logTextArea = new JTextArea();
+    logTextArea.setBackground(new Color(225, 225, 200));
+
+    logTextArea.setName("logTextArea");
+    logTextArea.setEditable(false);
+    logTextArea.setLineWrap(true);
+    logTextArea.setWrapStyleWord(true);
+    logTextArea.setBounds(20, windowHeight - 62, windowWidth - 50, 15);
+    logTextArea.setVisible(true);
+
+    // Add a MouseListener to handle the popup window
+    logTextArea.addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            showDialogWithTextArea(parentFrame);
+          }
+        });
+
+    return logTextArea;
+  }
+
+  private void showDialogWithTextArea(JFrame parentFrame) {
+    JDialog logDialog = new JDialog(parentFrame, "Логи", true);
+    logDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    logDialog.setSize(400, 200);
+    logDialog.setLocationRelativeTo(parentFrame);
+
+    JTextArea logContentArea = new JTextArea();
+
+    if (!logs.isEmpty()) {
+      StringBuilder logStringBuilder = new StringBuilder();
+      for (String log : logs) {
+        logStringBuilder.append(log);
+        logStringBuilder.append(System.lineSeparator());
+      }
+      logContentArea.setText(logStringBuilder.toString());
+      updateLog();
+    }
+
+    logContentArea.setEditable(false);
+    logContentArea.setLineWrap(true);
+    logContentArea.setWrapStyleWord(true);
+    logContentArea.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+    JScrollPane scrollPane = new JScrollPane(logContentArea);
+    logDialog.add(scrollPane);
+    logDialog.setVisible(true);
+  }
+
+  // Обновляет текст logTextArea на основе записей логов в ArrayList
+  void updateLog() {
+    if (!logs.isEmpty()) {
+      String lastLog = logs.get(logs.size() - 1);
+      logTextArea.setText(lastLog);
+    } else {
+      logTextArea.setText("");
+    }
+  }
+
+  // Добавить новую запись лога и обновить logTextArea
+  public void addLog(String log) {
+    logs.add(log);
+    updateLog();
   }
 
   /**
@@ -403,12 +560,14 @@ public class GuiContainer {
    * @param y Координата панели
    */
   public void createBottomNumberLabels(JPanel mainPanel, int x, int y) {
-    x += 20;
-    y += 410;
+    x += 17;
+    y += 405;
     bottomNumberLabels = new JLabel[8];
     for (int i = 0; i < 8; i++) {
       bottomNumberLabels[i] = new JLabel();
-      bottomNumberLabels[i].setBounds(x, y, 10, 10);
+      bottomNumberLabels[i].setBounds(x, y, 15, 15);
+      bottomNumberLabels[i].setHorizontalAlignment(JLabel.CENTER);
+      bottomNumberLabels[i].setVerticalAlignment(JLabel.CENTER);
       mainPanel.add(bottomNumberLabels[i]);
       x += 50;
     }
@@ -422,12 +581,14 @@ public class GuiContainer {
    * @param y Координата панели
    */
   public void createTopNumberLabels(JPanel mainPanel, int x, int y) {
-    x += 20;
+    x += 17;
     y -= 20;
     topNumberLabels = new JLabel[8];
     for (int i = 0; i < 8; i++) {
       topNumberLabels[i] = new JLabel();
-      topNumberLabels[i].setBounds(x, y, 10, 10);
+      topNumberLabels[i].setBounds(x, y, 15, 15);
+      topNumberLabels[i].setHorizontalAlignment(JLabel.CENTER);
+      topNumberLabels[i].setVerticalAlignment(JLabel.CENTER);
       mainPanel.add(topNumberLabels[i]);
       x += 50;
     }
@@ -441,12 +602,14 @@ public class GuiContainer {
    * @param y Координата панели
    */
   public void createRightNumberLabels(JPanel mainPanel, int x, int y) {
-    x += 410;
+    x += 405;
     y += 20;
     rightNumberLabels = new JLabel[8];
     for (int i = 0; i < 8; i++) {
       rightNumberLabels[i] = new JLabel();
-      rightNumberLabels[i].setBounds(x, y, 10, 10);
+      rightNumberLabels[i].setBounds(x, y, 15, 15);
+      rightNumberLabels[i].setHorizontalAlignment(JLabel.LEFT);
+      rightNumberLabels[i].setVerticalAlignment(JLabel.CENTER);
       mainPanel.add(rightNumberLabels[i]);
       y += 50;
     }
@@ -465,7 +628,9 @@ public class GuiContainer {
     leftNumberLabels = new JLabel[8];
     for (int i = 0; i < 8; i++) {
       leftNumberLabels[i] = new JLabel();
-      leftNumberLabels[i].setBounds(x, y, 10, 10);
+      leftNumberLabels[i].setBounds(x, y, 15, 15);
+      leftNumberLabels[i].setHorizontalAlignment(JLabel.LEFT);
+      leftNumberLabels[i].setVerticalAlignment(JLabel.CENTER);
       mainPanel.add(leftNumberLabels[i]);
       y += 50;
     }
@@ -541,7 +706,7 @@ public class GuiContainer {
     } else {
       color = "Black";
     }
-    String imageName = color + figureSymbol + ".png";
+    String imageName = "images/" + color + figureSymbol + ".png";
 
     try {
       URL imageUrl = getClass().getClassLoader().getResource(imageName);
