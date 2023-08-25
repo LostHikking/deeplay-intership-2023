@@ -1,4 +1,4 @@
-package io.deeplay.grandmastery.helps;
+package io.deeplay.grandmastery.ui;
 
 import java.io.BufferedReader;
 import java.io.IOException;

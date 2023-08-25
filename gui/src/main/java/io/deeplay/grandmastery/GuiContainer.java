@@ -67,7 +67,7 @@ public class GuiContainer {
   /** Метод для инициализации всех компонент графического интерфейса. */
   private void createGameGui() {
     eventMessages = new ArrayList<>();
-    loadCustomFont("/fonts/kanit.ttf");
+    loadCustomFont();
     // Создание окна и установка его позиции
     frame = new JFrame("Grandmastery");
     // Используем getResource для загрузки иконки из ресурсов
@@ -124,6 +124,7 @@ public class GuiContainer {
 
   /**
    * Метод инициализирует панель с кнопкой громкости.
+   *
    * @return Панель.
    */
   public JPanel createVolumePanel() {
@@ -145,10 +146,10 @@ public class GuiContainer {
     return volumePanel;
   }
 
-  void loadCustomFont(String fontResourcePath) {
+  void loadCustomFont() {
     try {
       // Создаем URL для ресурса шрифта
-      URL fontUrl = getClass().getResource(fontResourcePath);
+      URL fontUrl = getClass().getResource("/fonts/kanit.ttf");
 
       if (fontUrl == null) {
         log.error("Не удается загрузить файл шрифта.");
@@ -217,18 +218,16 @@ public class GuiContainer {
     panel.add(messageLabel);
     panel.add(Box.createVerticalGlue()); // Пространство снизу
     Object[] options = {"Human vs Bot", "Human vs Human", "Bot vs Bot"};
-    int choice =
-        JOptionPane.showOptionDialog(
-            null,
-            panel,
-            "Выбор режима игры",
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            options,
-            options[0]);
 
-    return choice;
+    return JOptionPane.showOptionDialog(
+        null,
+        panel,
+        "Выбор режима игры",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.PLAIN_MESSAGE,
+        null,
+        options,
+        options[0]);
   }
 
   /** Метод выводит диалоговое окно для выбора начальной расстановки. */
@@ -246,18 +245,16 @@ public class GuiContainer {
     panel.add(Box.createVerticalGlue());
 
     Object[] options = {"Классические", "Фишера"};
-    int choice =
-        JOptionPane.showOptionDialog(
-            null,
-            panel,
-            "Выбор начальной расстановки шахмат",
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            options,
-            options[0]);
 
-    return choice;
+    return JOptionPane.showOptionDialog(
+        null,
+        panel,
+        "Выбор начальной расстановки шахмат",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.PLAIN_MESSAGE,
+        null,
+        options,
+        options[0]);
   }
 
   /** Метод выводит диалоговое окно для выбора цвета. */
@@ -271,17 +268,15 @@ public class GuiContainer {
     panel.add(messageLabel);
     panel.add(Box.createVerticalGlue());
     Object[] options = {"Белый", "Черный"};
-    int choice =
-        JOptionPane.showOptionDialog(
-            null,
-            panel,
-            "Выбор цвета",
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            options,
-            options[0]);
-    return choice;
+    return JOptionPane.showOptionDialog(
+        null,
+        panel,
+        "Выбор цвета",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.PLAIN_MESSAGE,
+        null,
+        options,
+        options[0]);
   }
 
   /** Метод выводит диалоговое окно для подтверждения сдачи. */
@@ -296,17 +291,15 @@ public class GuiContainer {
     panel.add(messageLabel);
     panel.add(Box.createVerticalGlue());
     Object[] options = {"Да", "Нет"};
-    int choice =
-        JOptionPane.showOptionDialog(
-            null,
-            panel,
-            "Подтверждение сдачи",
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            options,
-            options[0]);
-    return choice;
+    return JOptionPane.showOptionDialog(
+        null,
+        panel,
+        "Подтверждение сдачи",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.PLAIN_MESSAGE,
+        null,
+        options,
+        options[0]);
   }
 
   /** Метод выводит диалоговое окно для подтверждения ничьей. */
@@ -322,17 +315,15 @@ public class GuiContainer {
     panel.add(Box.createVerticalGlue());
 
     Object[] options = {"Отказываюсь", "Соглашаюсь"};
-    int choice =
-        JOptionPane.showOptionDialog(
-            null,
-            panel,
-            "Подтверждение ничьей",
-            JOptionPane.DEFAULT_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            options,
-            options[0]);
-    return choice;
+    return JOptionPane.showOptionDialog(
+        null,
+        panel,
+        "Подтверждение ничьей",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.PLAIN_MESSAGE,
+        null,
+        options,
+        options[0]);
   }
 
   /** Метод выводит диалоговое окно для ввода имени игрока. */
@@ -443,9 +434,7 @@ public class GuiContainer {
     logDialog.setVisible(true);
   }
 
-  /**
-   * Обновляет сообщения.
-   */
+  /** Обновляет сообщения. */
   void updateEventMessages() {
     if (!eventMessages.isEmpty()) {
       String lastLog = eventMessages.get(eventMessages.size() - 1);
@@ -457,6 +446,7 @@ public class GuiContainer {
 
   /**
    * Добавляет новое сообщение в logTextArea.
+   *
    * @param message сообщение
    */
   public void addEventMessage(String message) {
@@ -515,7 +505,7 @@ public class GuiContainer {
         JButton cellsButton = new JButton();
         cellsButton.setBounds(x, y, cellSize, cellSize);
         cells[row][col] = cellsButton;
-        cells[row][col].setName(Integer.toString(row) + Integer.toString(col));
+        cells[row][col].setName(String.format("%d%d", row, col));
         if ((row + col) % 2 == 0) {
           cellsButton.setBackground(originalBlackColor);
         } else {
@@ -727,7 +717,7 @@ public class GuiContainer {
         cellButton.setIcon(null);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       cellButton.setIcon(null);
     }
   }
@@ -747,6 +737,7 @@ public class GuiContainer {
    *
    * @return Последняя строка.
    */
+  @SuppressWarnings("StringSplitter")
   public String getLastLine() {
     String text = textArea.getText();
     if (text.isEmpty()) {

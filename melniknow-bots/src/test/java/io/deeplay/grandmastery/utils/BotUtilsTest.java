@@ -50,8 +50,8 @@ class BotUtilsTest {
         BotUtils.getCopyBoardAfterMove(LongAlgebraicNotation.getMoveFromString("e2e4"), board);
 
     Assertions.assertAll(
-        () -> Assertions.assertTrue(Boards.isEqualsBoards(startBoard, board)),
-        () -> Assertions.assertFalse(Boards.isEqualsBoards(startBoard, newBoard)));
+        () -> Assertions.assertTrue(Boards.equals(startBoard, board)),
+        () -> Assertions.assertFalse(Boards.equals(startBoard, newBoard)));
   }
 
   @Test

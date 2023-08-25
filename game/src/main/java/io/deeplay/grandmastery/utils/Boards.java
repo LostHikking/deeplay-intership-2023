@@ -126,7 +126,7 @@ public class Boards {
    * @return Наследник {@link Board}, который копирует исходную доску в целевую доску.
    * @throws GameException если sourceBoard равен null.
    */
-  public static Consumer<Board> copyBoard(Board sourceBoard) throws GameException {
+  public static Consumer<Board> copy(Board sourceBoard) throws GameException {
     return destinationBoard -> {
       if (sourceBoard == null) {
         throw GameErrorCode.NULL_POINTER_SOURCE_BOARD.asException();
@@ -201,7 +201,7 @@ public class Boards {
    * @param board Board
    * @return String
    */
-  public static String getStringFromBoard(Board board) {
+  public static String getString(Board board) {
     var result = new StringBuilder();
 
     for (int i = 0; i < 8; i++) {
@@ -229,7 +229,7 @@ public class Boards {
    * @param string String
    * @return Board
    */
-  public static Board getBoardFromString(String string) {
+  public static Board fromString(String string) {
     var board = new HashBoard();
 
     for (int i = 0; i < string.length(); i++) {
@@ -261,7 +261,7 @@ public class Boards {
    * @param second Вторая доска
    * @return Равны ли доски
    */
-  public static boolean isEqualsBoards(Board first, Board second) {
+  public static boolean equals(Board first, Board second) {
     List<Position> allOldPosition = first.getAllPiecePosition();
 
     for (Position position : allOldPosition) {

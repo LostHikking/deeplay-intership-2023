@@ -33,7 +33,7 @@ public class PlayerTest {
 
     Assertions.assertAll(
         () -> assertFalse(player.isGameOver(), "Is game over"),
-        () -> assertTrue(Boards.isEqualsBoards(board, player.getBoard()), "Equals boards"));
+        () -> assertTrue(Boards.equals(board, player.getBoard()), "Equals boards"));
   }
 
   @Test

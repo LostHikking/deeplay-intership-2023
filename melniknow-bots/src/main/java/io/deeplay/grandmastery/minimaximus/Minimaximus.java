@@ -98,7 +98,7 @@ public class Minimaximus extends Player {
       GameHistory gameHistory,
       List<Move> possibleMove) {
     var copyBoard = new HashBoard();
-    Boards.copyBoard(board).accept(copyBoard);
+    Boards.copy(board).accept(copyBoard);
 
     if (deep == 0
         || GameStateChecker.isMate(copyBoard, currentColor)

@@ -70,7 +70,7 @@ public class Gui implements UI {
     guiContainer.getFrame().repaint();
   }
 
-  /** Конструктор для GUI. Булева showGui отвечает за показ GUI(выводить или нет)*/
+  /** Конструктор для GUI. Булева showGui отвечает за показ GUI(выводить или нет) */
   public Gui(boolean showGui) {
     wantsSurrender = false;
     firstClick = null;
@@ -84,7 +84,7 @@ public class Gui implements UI {
       showGui();
     }
   }
-  
+
   /**
    * Метод проигрывания музыки в фоновом режиме.
    *
@@ -96,9 +96,9 @@ public class Gui implements UI {
    *     использован.
    */
   void playBackgroundMusic(String soundFile, int volumeIndex)
-          throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+      throws UnsupportedAudioFileException, IOException, LineUnavailableException {
     URL url = getClass().getResource("/sounds/" + soundFile);
-    audioInputStream = AudioSystem.getAudioInputStream(url);
+    audioInputStream = AudioSystem.getAudioInputStream(Objects.requireNonNull(url));
     clip = AudioSystem.getClip();
     clip.open(audioInputStream);
     setVolume(volumeLevels[volumeIndex]);
@@ -107,7 +107,8 @@ public class Gui implements UI {
   }
 
   /**
-   * Метод умтанавливает нужную громкость.
+   * Метод устанавливает нужную громкость.
+   *
    * @param volumeLevel Громкость.
    */
   public void setVolume(float volumeLevel) {
@@ -123,36 +124,32 @@ public class Gui implements UI {
   public void activateVolumePanel() {
     JPanel volumePanel = guiContainer.getVolumePanel();
     JButton volumeButton =
-        (JButton) volumePanel.getComponent(1); // Получаем кнопку из номером компонента 1.
-    currentVolumeIndex = 0; 
+        (JButton) volumePanel.getComponent(1); // Получаем кнопку из номера компонента 1.
+    currentVolumeIndex = 0;
     String[] volumeImageNames = {
       "/volumeIcons/volume0.png", "/volumeIcons/volume1.png", "/volumeIcons/volume2.png"
     };
     volumeButton.setIcon(
-        new ImageIcon(Objects.requireNonNull(
-                        getClass().getResource(volumeImageNames[currentVolumeIndex]))));
+        new ImageIcon(
+            Objects.requireNonNull(getClass().getResource(volumeImageNames[currentVolumeIndex]))));
     // Создание слушателя событий для кнопки.
     setVolume(volumeLevels[currentVolumeIndex]);
     volumeButton.addActionListener(
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            currentVolumeIndex =
-                (currentVolumeIndex + 1)
-                    % volumeLevels.length;
-            setVolume(
-                volumeLevels[currentVolumeIndex]); 
-                                          
+            currentVolumeIndex = (currentVolumeIndex + 1) % volumeLevels.length;
+            setVolume(volumeLevels[currentVolumeIndex]);
 
             // Меняем иконку кнопки на соответствующую текущему индексу громкости.
             volumeButton.setIcon(
                 new ImageIcon(
-                        Objects.requireNonNull(
-                                getClass().getResource(volumeImageNames[currentVolumeIndex]))));
+                    Objects.requireNonNull(
+                        getClass().getResource(volumeImageNames[currentVolumeIndex]))));
           }
         });
   }
-  
+
   /**
    * Метод, обрабатывающий выбор пользователя в диалоговом окне для выбора расстановки.
    *
@@ -161,7 +158,7 @@ public class Gui implements UI {
   @Override
   public ChessType selectChessType() {
     int choice = guiContainer.showChessTypeSelectionWindow();
-    ChessType selectedChessType = switch (choice) {
+    return switch (choice) {
       case 0 -> {
         playSound("clickSound.wav", currentVolumeIndex);
         yield ChessType.CLASSIC;
@@ -172,7 +169,6 @@ public class Gui implements UI {
       }
       default -> null;
     };
-    return selectedChessType;
   }
 
   /**
@@ -342,6 +338,7 @@ public class Gui implements UI {
 
   /**
    * Метод добавления событий в gui.
+   *
    * @param message событие
    */
   @Override
@@ -522,31 +519,25 @@ public class Gui implements UI {
           }
         });
   }
-  
+
   /** Метод, активирующий кнопки для сдачи и ничьей. */
   void activateEndGamePanel() {
     JButton surrenderButton = guiContainer.getSurrenderButton();
     JButton offerDrawButton = guiContainer.getOfferDrawButton();
     surrenderButton.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            playSound("clickSound.wav", currentVolumeIndex);
-            wantsSurrender = true;
-            synchronized (monitor) {
-              monitor.notify();
-            }
+        listener -> {
+          playSound("clickSound.wav", currentVolumeIndex);
+          wantsSurrender = true;
+          synchronized (monitor) {
+            monitor.notify();
           }
         });
     offerDrawButton.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            playSound("clickSound.wav", currentVolumeIndex);
-            wantsDraw = true;
-            synchronized (monitor) {
-              monitor.notify();
-            }
+        listener -> {
+          playSound("clickSound.wav", currentVolumeIndex);
+          wantsDraw = true;
+          synchronized (monitor) {
+            monitor.notify();
           }
         });
   }
@@ -557,7 +548,7 @@ public class Gui implements UI {
             () -> {
               try {
                 URL soundUrl = getClass().getResource("/sounds/" + soundFile);
-                  assert soundUrl != null;
+                assert soundUrl != null;
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundUrl);
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioInputStream);
@@ -567,8 +558,8 @@ public class Gui implements UI {
                 if (currentVolumeIndex >= 0 && currentVolumeIndex < volumeLevels.length) {
                   FloatControl gainControl =
                       (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                  float gaindB = (float) (70 * Math.log10(volumeLevels[currentVolumeIndex]));
-                  gainControl.setValue(gaindB);
+                  float gaineB = (float) (70 * Math.log10(volumeLevels[currentVolumeIndex]));
+                  gainControl.setValue(gaineB);
                 }
 
                 clip.start();

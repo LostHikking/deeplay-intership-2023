@@ -1,14 +1,23 @@
 package io.deeplay.grandmastery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.ui.ConsoleUi;
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -55,5 +64,74 @@ public class LocalGameTest {
     Assertions.assertAll(
         () -> assertEquals(0, errorGameOver, "Game errors"),
         () -> assertEquals(0, incorrectMove, "Incorrect moves"));
+  }
+
+  @Test
+  public void createGameControllerBotVsBotTest() throws IOException {
+    UI mockUI = mock(UI.class);
+    when(mockUI.selectMode()).thenReturn(GameMode.BOT_VS_BOT);
+
+    Grandmastery.ui = mockUI;
+    GameController gameController = Grandmastery.createGameController();
+    Assertions.assertAll(
+        () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
+        () -> assertEquals(Color.BLACK, gameController.getBlack().getColor()));
+  }
+
+  @Test
+  public void createGameControllerWhiteHumanVsBotTest() throws IOException {
+    UI mockUI = mock(UI.class);
+    when(mockUI.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
+    when(mockUI.selectColor()).thenReturn(Color.WHITE);
+    when(mockUI.inputPlayerName(any())).thenReturn("TestPlayer");
+
+    Grandmastery.ui = mockUI;
+    GameController gameController = Grandmastery.createGameController();
+    Assertions.assertAll(
+        () -> assertEquals("TestPlayer", gameController.getWhite().getName()),
+        () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
+        () -> assertEquals(Color.BLACK, gameController.getBlack().getColor()));
+  }
+
+  @Test
+  public void createGameControllerBlackHumanVsBotTest() throws IOException {
+    UI mockUI = mock(UI.class);
+    when(mockUI.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
+    when(mockUI.selectColor()).thenReturn(Color.BLACK);
+    when(mockUI.inputPlayerName(any())).thenReturn("TestPlayer");
+
+    Grandmastery.ui = mockUI;
+    GameController gameController = Grandmastery.createGameController();
+    Assertions.assertAll(
+        () -> assertEquals("TestPlayer", gameController.getBlack().getName()),
+        () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
+        () -> assertEquals(Color.BLACK, gameController.getBlack().getColor()));
+  }
+
+  @Test
+  public void createGameControllerHumanVsHumanTest() throws IOException {
+    UI mockUI = mock(UI.class);
+    when(mockUI.selectMode()).thenReturn(GameMode.HUMAN_VS_HUMAN);
+    when(mockUI.inputPlayerName(Color.WHITE)).thenReturn("TestWhitePlayer");
+    when(mockUI.inputPlayerName(Color.BLACK)).thenReturn("TestBlackPlayer");
+
+    Grandmastery.ui = mockUI;
+    GameController gameController = Grandmastery.createGameController();
+    Assertions.assertAll(
+        () -> assertEquals("TestWhitePlayer", gameController.getWhite().getName()),
+        () -> assertEquals("TestBlackPlayer", gameController.getBlack().getName()),
+        () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
+        () -> assertEquals(Color.BLACK, gameController.getBlack().getColor()));
+  }
+
+  @Test
+  public void createUiTest() {
+    Grandmastery.createUi("tui");
+    assertTrue(Grandmastery.ui instanceof ConsoleUi);
+  }
+
+  @Test
+  public void tryCreateUnknownUiTest() {
+    assertThrows(IllegalArgumentException.class, () -> Grandmastery.createUi("ababa"));
   }
 }

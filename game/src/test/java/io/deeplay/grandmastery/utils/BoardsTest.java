@@ -59,7 +59,7 @@ public class BoardsTest {
     board.setLastMove(lastMove);
 
     Board copyBoard = new HashBoard();
-    Boards.copyBoard(board).accept(copyBoard);
+    Boards.copy(board).accept(copyBoard);
 
     Assertions.assertAll(
         () -> assertNotSame(board, copyBoard, "Refer to different objects"),
@@ -86,7 +86,7 @@ public class BoardsTest {
   @Test
   public void copyEmptyBoardTest() {
     Board copyBoard = new HashBoard();
-    Boards.copyBoard(board).accept(copyBoard);
+    Boards.copy(board).accept(copyBoard);
 
     Assertions.assertAll(
         () -> assertNotSame(board, copyBoard, "Refer to different objects"),
@@ -98,27 +98,27 @@ public class BoardsTest {
   @Test
   public void copyNullSourceBoardTest() {
     Board copyBoard = new HashBoard();
-    assertThrows(GameException.class, () -> Boards.copyBoard(null).accept(copyBoard));
+    assertThrows(GameException.class, () -> Boards.copy(null).accept(copyBoard));
   }
 
   @Test
   void equalsTwoClassicBoards() {
     Boards.defaultChess().accept(board);
 
-    var string = Boards.getStringFromBoard(board);
-    var newBoard = Boards.getBoardFromString(string);
+    var string = Boards.getString(board);
+    var newBoard = Boards.fromString(string);
 
-    Assertions.assertTrue(Boards.isEqualsBoards(board, newBoard));
+    Assertions.assertTrue(Boards.equals(board, newBoard));
   }
 
   @Test
   void equalsTwoFisherBoards() {
     Boards.fischerChess().accept(board);
 
-    var string = Boards.getStringFromBoard(board);
-    var newBoard = Boards.getBoardFromString(string);
+    var string = Boards.getString(board);
+    var newBoard = Boards.fromString(string);
 
-    Assertions.assertTrue(Boards.isEqualsBoards(board, newBoard));
+    Assertions.assertTrue(Boards.equals(board, newBoard));
   }
 
   @Test
@@ -128,7 +128,7 @@ public class BoardsTest {
     var newBoard = new HashBoard();
     Boards.fischerChess().accept(newBoard);
 
-    Assertions.assertFalse(Boards.isEqualsBoards(board, newBoard));
+    Assertions.assertFalse(Boards.equals(board, newBoard));
   }
 
   /**

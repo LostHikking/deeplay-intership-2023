@@ -4,6 +4,7 @@ import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.exceptions.GameException;
@@ -13,8 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 
 /** Главный класс, который запускает локальную игру в шахматы. */
 @Slf4j
-public class LocalGame {
-  private static final ConsoleUi consoleUi = new ConsoleUi(System.in, System.out);
+public class Grandmastery {
+  protected static UI ui;
+
+  protected static void createUi(String uiName) throws IllegalArgumentException {
+    switch (uiName) {
+      case "gui" -> ui = new Gui(true);
+      case "tui" -> ui = new ConsoleUi(System.in, System.out);
+      default -> throw new IllegalArgumentException("Неизвестный ui: " + uiName);
+    }
+  }
 
   /**
    * Создает экземпляр GameController на основе выбранного режима игры и игроков.
@@ -22,17 +31,17 @@ public class LocalGame {
    * @return Экземпляр GameController для текущей игры.
    * @throws IOException Если возникает ошибка ввода-вывода при взаимодействии с консолью.
    */
-  private static GameController createGameController() throws IOException {
+  protected static GameController createGameController() throws IOException {
     Player firstPlayer;
     Player secondPlayer;
-    GameMode gameMode = consoleUi.selectMode();
+    GameMode gameMode = ui.selectMode();
 
     if (gameMode == GameMode.BOT_VS_BOT) {
       firstPlayer = new AiPlayer(Color.WHITE);
       secondPlayer = new AiPlayer(Color.BLACK);
     } else if (gameMode == GameMode.HUMAN_VS_BOT) {
-      Color color = consoleUi.selectColor();
-      firstPlayer = new HumanPlayer(consoleUi.inputPlayerName(color), color, consoleUi, false);
+      Color color = ui.selectColor();
+      firstPlayer = new HumanPlayer(ui.inputPlayerName(color), color, ui, false);
 
       if (color == Color.WHITE) {
         secondPlayer = new AiPlayer(Color.BLACK);
@@ -40,10 +49,8 @@ public class LocalGame {
         secondPlayer = new AiPlayer(Color.WHITE);
       }
     } else {
-      firstPlayer =
-          new HumanPlayer(consoleUi.inputPlayerName(Color.WHITE), Color.WHITE, consoleUi, false);
-      secondPlayer =
-          new HumanPlayer(consoleUi.inputPlayerName(Color.BLACK), Color.BLACK, consoleUi, false);
+      firstPlayer = new HumanPlayer(ui.inputPlayerName(Color.WHITE), Color.WHITE, ui, false);
+      secondPlayer = new HumanPlayer(ui.inputPlayerName(Color.BLACK), Color.BLACK, ui, false);
     }
 
     return new GameController(firstPlayer, secondPlayer);
@@ -56,26 +63,28 @@ public class LocalGame {
    */
   public static void main(String[] args) {
     try {
+      createUi(UI.getUiFromConfig());
       GameController gameController = createGameController();
-      gameController.beginPlay(consoleUi.selectChessType());
-      consoleUi.printHelp();
-      consoleUi.showBoard(gameController.getBoard(), Color.WHITE);
+      gameController.beginPlay(ui.selectChessType());
+      ui.printHelp();
+      ui.showBoard(gameController.getBoard(), Color.WHITE);
       while (!gameController.isGameOver()) {
         try {
           gameController.nextMove();
-          consoleUi.showMove(
+          ui.showMove(
               gameController.getOpponentPlayer().getLastMove(),
               gameController.getOpponentPlayer().getColor());
-          consoleUi.showBoard(
-              gameController.getBoard(), gameController.getCurrentPlayer().getColor());
+          ui.showBoard(gameController.getBoard(), gameController.getCurrentPlayer().getColor());
         } catch (GameException e) {
-          consoleUi.incorrectMove();
+          ui.incorrectMove();
         }
       }
-      consoleUi.showBoard(gameController.getBoard(), Color.WHITE);
-      consoleUi.showResultGame(gameController.getGameStatus());
+      ui.showBoard(gameController.getBoard(), Color.WHITE);
+      ui.showResultGame(gameController.getGameStatus());
     } catch (GameException | IOException e) {
       log.error(e.getMessage());
+    } finally {
+      ui.close();
     }
   }
 }

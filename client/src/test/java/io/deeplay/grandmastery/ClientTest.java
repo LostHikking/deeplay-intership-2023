@@ -23,10 +23,10 @@ import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.dto.ResultGame;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.dto.StartGameResponse;
+import io.deeplay.grandmastery.ui.ConsoleUi;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class ClientTest {
   private Client client;
   private ServerSocket server;
   private ListAppender<ILoggingEvent> listAppender;
-  
+
   private void setupLogCheck() {
     Logger clientLogger = (Logger) LoggerFactory.getLogger(Client.class);
     listAppender = new ListAppender<>();
@@ -54,7 +54,6 @@ public class ClientTest {
    *
    * @throws IOException ошибка при закрытии.
    */
-  @AfterEach
   public void closeTestServer() throws IOException {
     if (!server.isClosed()) {
       server.close();
@@ -71,12 +70,21 @@ public class ClientTest {
     Assertions.assertAll(
         () -> assertEquals("Соединение с сервером установлено.", logs.get(0).getMessage()),
         () -> assertFalse(client.reconnect));
+    closeTestServer();
   }
-  
+
   @Test
   public void failedConnectionTest() throws Exception {
     setupLogCheck();
-    Thread connectThread = new Thread(() -> client = new Client(mockUi));
+    Thread connectThread =
+        new Thread(
+            () -> {
+              try {
+                client = new Client(mockUi);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            });
     connectThread.start();
     Thread.sleep(2000);
     runTestServer();
@@ -84,12 +92,15 @@ public class ClientTest {
 
     List<ILoggingEvent> logs = listAppender.list;
     Assertions.assertAll(
-            () -> assertFalse(client.reconnect),
+        () -> assertFalse(client.reconnect),
+        () -> assertEquals("localhost", client.host),
+        () -> assertEquals(8080, client.port),
         () ->
             assertEquals(
                 "Сервер недоступен. Попробуем снова через некоторое время...",
                 logs.get(0).getMessage()),
         () -> assertEquals("Соединение с сервером установлено.", logs.get(1).getMessage()));
+    closeTestServer();
   }
 
   @Test
@@ -102,6 +113,7 @@ public class ClientTest {
         () -> assertTrue(client.reconnect),
         () -> assertFalse(client.clientController.isClosed()),
         () -> assertTrue(client.gameHistory.isEmpty()));
+    closeTestServer();
   }
 
   @Test
@@ -118,6 +130,7 @@ public class ClientTest {
     client.clientController = mockClientController;
     Assertions.assertAll(
         () -> assertDoesNotThrow(client::run), () -> assertFalse(client.reconnect));
+    closeTestServer();
   }
 
   @Test
@@ -135,6 +148,7 @@ public class ClientTest {
     Assertions.assertAll(
         () -> assertThrows(IllegalStateException.class, client::run),
         () -> verify(mockClientController, times(1)).close());
+    closeTestServer();
   }
 
   @Test
@@ -168,5 +182,16 @@ public class ClientTest {
         () -> assertTrue(client.player.isGameOver(), "Player game over"),
         () -> assertTrue(client.gameHistory.isGameOver(), "History game over"),
         () -> verify(mockClientController, times(1)).close());
+    closeTestServer();
+  }
+
+  @Test
+  public void createUiTest() {
+    assertTrue(Client.createUi("tui") instanceof ConsoleUi);
+  }
+
+  @Test
+  public void tryCreateUnknownUiTest() {
+    assertThrows(IllegalArgumentException.class, () -> Client.createUi("ababa"));
   }
 }

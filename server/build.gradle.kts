@@ -12,5 +12,6 @@ tasks {
             attributes["Main-Class"] = "io.deeplay.grandmastery.Server"
         }
         archiveBaseName.set("server")
+        archiveClassifier.set("")
     }
 }

@@ -43,7 +43,7 @@ public class GameControllerTest {
 
     Assertions.assertAll(
         () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()),
-        () -> assertTrue(Boards.isEqualsBoards(expectBoard, gameController.getBoard())),
+        () -> assertTrue(Boards.equals(expectBoard, gameController.getBoard())),
         () -> assertEquals("White", gameController.getWhite().getName()),
         () -> assertEquals("Black", gameController.getBlack().getName()),
         () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
@@ -106,7 +106,7 @@ public class GameControllerTest {
     Assertions.assertAll(
         () -> assertThrows(GameException.class, gameController::nextMove),
         () -> assertEquals(GameState.BLACK_MOVE, gameController.getGameStatus()),
-        () -> assertTrue(Boards.isEqualsBoards(expectBoard, gameController.getBoard())));
+        () -> assertTrue(Boards.equals(expectBoard, gameController.getBoard())));
   }
 
   @Test

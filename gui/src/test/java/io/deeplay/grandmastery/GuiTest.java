@@ -33,8 +33,6 @@ import javax.swing.JPanel;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 class GuiTest {
   private Gui gui;
@@ -44,124 +42,106 @@ class GuiTest {
     gui = new Gui(false);
     guiContainer = gui.getGuiContainer();
   }
-  
+
   @Test
   public void testAnswerDrawForDecline() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showAnswerDrawWindow()).thenReturn(0);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод answerDraw() и проверяем результат
-      assertFalse(gui.answerDraw());
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showAnswerDrawWindow()).thenReturn(0);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод answerDraw() и проверяем результат
+    assertFalse(gui.answerDraw());
   }
 
   @Test
   public void testAnswerDrawForAccept() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showAnswerDrawWindow()).thenReturn(1);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод answerDraw() и проверяем результат
-      assertTrue(gui.answerDraw());
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showAnswerDrawWindow()).thenReturn(1);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод answerDraw() и проверяем результат
+    assertTrue(gui.answerDraw());
   }
-  
+
   @Test
   public void testConfirmSurForYes() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showConfirmSurWindow()).thenReturn(0);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод confirmSur() и проверяем результат
-      assertTrue(gui.confirmSur());
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showConfirmSurWindow()).thenReturn(0);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод confirmSur() и проверяем результат
+    assertTrue(gui.confirmSur());
   }
 
   @Test
   public void testConfirmSurForNo() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showConfirmSurWindow()).thenReturn(1);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод confirmSur() и проверяем результат
-      assertFalse(gui.confirmSur());
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showConfirmSurWindow()).thenReturn(1);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод confirmSur() и проверяем результат
+    assertFalse(gui.confirmSur());
   }
-  
+
   @Test
   public void testSelectColorForWhite() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showColorSelectionWindow()).thenReturn(0);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод selectColor() и проверяем результат
-      assertEquals(gui.selectColor(), Color.WHITE);
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showColorSelectionWindow()).thenReturn(0);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод selectColor() и проверяем результат
+    assertEquals(gui.selectColor(), Color.WHITE);
   }
 
   @Test
   public void testSelectColorForBlack() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showColorSelectionWindow()).thenReturn(1);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод selectColor() и проверяем результат
-      assertEquals(gui.selectColor(), Color.BLACK);
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showColorSelectionWindow()).thenReturn(1);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод selectColor() и проверяем результат
+    assertEquals(gui.selectColor(), Color.BLACK);
   }
-  
+
   @Test
   public void testSelectModeForHumanVsBot() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showModeSelectionWindow()).thenReturn(0);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод selectMode() и проверяем результат
-      assertEquals(gui.selectMode(), GameMode.HUMAN_VS_BOT);
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showModeSelectionWindow()).thenReturn(0);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод selectMode() и проверяем результат
+    assertEquals(gui.selectMode(), GameMode.HUMAN_VS_BOT);
   }
 
   @Test
   public void testSelectModeForBotVsBot() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showModeSelectionWindow()).thenReturn(2);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод selectMode() и проверяем результат
-      assertEquals(gui.selectMode(), GameMode.BOT_VS_BOT);
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showModeSelectionWindow()).thenReturn(2);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод selectMode() и проверяем результат
+    assertEquals(gui.selectMode(), GameMode.BOT_VS_BOT);
   }
-  
+
   @Test
   public void testSelectModeForHumanVsHuman() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showModeSelectionWindow()).thenReturn(1);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод selectMode() и проверяем результат
-      assertEquals(gui.selectMode(), GameMode.HUMAN_VS_HUMAN);
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showModeSelectionWindow()).thenReturn(1);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод selectMode() и проверяем результат
+    assertEquals(gui.selectMode(), GameMode.HUMAN_VS_HUMAN);
   }
-  
+
   @Test
   public void testSelectChessTypeForClassic() throws IllegalAccessException {
     Gui gui = new Gui(false); // создаем объект Gui
@@ -171,29 +151,26 @@ class GuiTest {
     // вызываем метод selectChessType() и проверяем результат
     assertEquals(gui.selectChessType(), ChessType.CLASSIC);
   }
-  
+
   @Test
   public void testSelectChessTypeForFishers() throws IllegalAccessException {
-    try (MockedStatic<GuiContainer> mocked = Mockito.mockStatic(GuiContainer.class)) {
-      Gui gui = new Gui(false); // создаем объект Gui
-      GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
-      when(guiContainerMock.showChessTypeSelectionWindow()).thenReturn(1);
-      // устанавливаем mock-объект в Gui
-      FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
-      // вызываем метод selectChessType() и проверяем результат
-      assertEquals(gui.selectChessType(), ChessType.FISHERS);
-    }
+    Gui gui = new Gui(false); // создаем объект Gui
+    GuiContainer guiContainerMock = mock(GuiContainer.class); // создаем mock-объект GuiContainer
+    when(guiContainerMock.showChessTypeSelectionWindow()).thenReturn(1);
+    // устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+    // вызываем метод selectChessType() и проверяем результат
+    assertEquals(gui.selectChessType(), ChessType.FISHERS);
   }
-  
+
   @Test
   public void testPlaySoundUnsupportedFile() {
     init();
 
     String incorrectSoundFile = "file.txt";
     int volumeIndex = 1;
-    assertThrows(NullPointerException.class,
-            () -> gui.playBackgroundMusic(incorrectSoundFile, volumeIndex));
-  
+    assertThrows(
+        NullPointerException.class, () -> gui.playBackgroundMusic(incorrectSoundFile, volumeIndex));
   }
 
   @Test
@@ -210,12 +187,12 @@ class GuiTest {
     verify(mockVolumePanel).getComponent(1);
     verify(mockVolumeButton).setIcon(any());
     verify(mockVolumeButton).addActionListener(any());
-  }  
-  
+  }
+
   @Test
   public void testPrintEventMessage() {
     init();
-    
+
     String testMessage = "Test message";
     gui.printEventMessage(testMessage);
 
@@ -223,7 +200,7 @@ class GuiTest {
 
     assertEquals(testMessage, actualContent);
   }
-  
+
   @Test
   public void testActivateExitButton() {
     init();
@@ -391,7 +368,7 @@ class GuiTest {
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         if (i <= 5) {
-          assertTrue(guiContainer.getCell(j, i).getMouseListeners().length == 0);
+          assertEquals(0, guiContainer.getCell(j, i).getMouseListeners().length);
         } else {
           assertTrue(guiContainer.getCell(j, i).getMouseListeners().length > 0);
           String cellName = guiContainer.getCell(j, i).getName();
@@ -414,7 +391,7 @@ class GuiTest {
           String cellName = guiContainer.getCell(j, i).getName();
           assertTrue(cellName.contains("WHITE"));
         } else {
-          assertTrue(guiContainer.getCell(j, i).getMouseListeners().length == 0);
+          assertEquals(0, guiContainer.getCell(j, i).getMouseListeners().length);
         }
       }
     }
