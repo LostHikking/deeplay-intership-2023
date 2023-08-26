@@ -4,15 +4,18 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.listeners.GameListener;
+import lombok.Getter;
+import lombok.Setter;
 
 /** Абстрактный класс, представляющий игрока. */
 public abstract class Player implements GameListener, PlayerInfo {
   protected final Game game;
   protected final String name;
   protected final Color color;
+  @Setter protected GameHistory gameHistory;
 
   protected Move lastMove;
-  protected boolean gameOver;
+  @Getter protected boolean gameOver;
 
   /**
    * Конструктор с параметрами.
@@ -82,10 +85,6 @@ public abstract class Player implements GameListener, PlayerInfo {
   public void gameOver(GameState gameState) {
     gameOver = true;
     game.gameOver(gameState);
-  }
-
-  public boolean isGameOver() {
-    return gameOver;
   }
 
   public Board getBoard() {

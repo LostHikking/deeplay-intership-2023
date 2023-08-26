@@ -48,6 +48,9 @@ public class GameController {
 
     this.game = new Game();
     this.gameHistory = new GameHistory();
+    firstPlayer.setGameHistory(gameHistory);
+    secondPlayer.setGameHistory(gameHistory);
+
     this.gameListener = game;
     this.historyAndPlayers.add(gameHistory);
     this.historyAndPlayers.add(white);

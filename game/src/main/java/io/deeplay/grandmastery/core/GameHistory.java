@@ -139,4 +139,21 @@ public class GameHistory implements GameListener {
             .filter(historyBoard -> Boards.isEqualsBoards(historyBoard, checkBoard))
             .count();
   }
+
+  /**
+   * Метод возвращает копию истории.
+   *
+   * @return история
+   */
+  public GameHistory getCopy() {
+    var gameHistory = new GameHistory();
+    gameHistory.gameOver = this.gameOver;
+    gameHistory.movesWithoutTakingAndAdvancingPawns = this.movesWithoutTakingAndAdvancingPawns;
+    gameHistory.resultGame = this.resultGame;
+
+    gameHistory.moves.addAll(this.moves);
+    gameHistory.boards.addAll(this.boards);
+
+    return gameHistory;
+  }
 }
