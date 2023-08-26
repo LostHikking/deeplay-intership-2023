@@ -6,14 +6,12 @@ import io.deeplay.grandmastery.core.GameStateChecker;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
-import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.BotUtils;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +63,7 @@ public class Minimaximus extends Player {
             Integer.MIN_VALUE,
             Integer.MAX_VALUE,
             gameHistory,
-            getPossibleMoves(getBoard(), color));
+            BotUtils.getPossibleMoves(getBoard(), color));
 
     this.setLastMove(moveAndEst.move);
     return moveAndEst.move;
@@ -99,23 +97,17 @@ public class Minimaximus extends Player {
       int beta,
       GameHistory gameHistory,
       List<Move> possibleMove) {
-    var board1 = new HashBoard();
-    var board2 = new HashBoard();
-    var board3 = new HashBoard();
-    var board4 = new HashBoard();
-    Boards.copyBoard(board).accept(board1);
-    Boards.copyBoard(board).accept(board2);
-    Boards.copyBoard(board).accept(board3);
-    Boards.copyBoard(board).accept(board4);
+    var copyBoard = new HashBoard();
+    Boards.copyBoard(board).accept(copyBoard);
 
     if (deep == 0
-        || GameStateChecker.isMate(board1, currentColor)
-        || GameStateChecker.isMate(board4, BotUtils.getOtherColor(currentColor))
-        || GameStateChecker.isDraw(board2, gameHistory.getCopy())) {
+        || GameStateChecker.isMate(copyBoard, currentColor)
+        || GameStateChecker.isMate(copyBoard, BotUtils.getOtherColor(currentColor))
+        || GameStateChecker.isDraw(copyBoard, gameHistory)) {
       return new MoveAndEst(
           lastMove,
           getEstimationForBoard(
-              board3, mainColor, gameHistory.getCopy(), BotUtils.getOtherColor(currentColor)));
+              copyBoard, mainColor, gameHistory, BotUtils.getOtherColor(currentColor)));
     }
 
     var isMax = currentColor == mainColor;
@@ -126,7 +118,7 @@ public class Minimaximus extends Player {
     }
 
     for (Move move : possibleMove) {
-      var tempBoard = getTempBoardForMinimax(move, board);
+      var tempBoard = BotUtils.getCopyBoardAfterMove(move, board);
       tempBoard.setLastMove(move);
 
       var tempGameHistory = gameHistory.getCopy();
@@ -143,7 +135,7 @@ public class Minimaximus extends Player {
               alpha,
               beta,
               tempGameHistory,
-              getPossibleMoves(tempBoard, BotUtils.getOtherColor(currentColor)));
+              BotUtils.getPossibleMoves(tempBoard, BotUtils.getOtherColor(currentColor)));
 
       if (isMax) {
         alpha = Math.max(alpha, recursiveValue.est);
@@ -164,40 +156,6 @@ public class Minimaximus extends Player {
     }
 
     return moveAndEst;
-  }
-
-  /**
-   * Функция возвращает новую доску, после хода, не меняя передаваемую доску.
-   *
-   * @param board Доска
-   * @param move Ход
-   * @return Новая доска
-   */
-  public static Board getTempBoardForMinimax(Move move, Board board) {
-    var tempBoard = new HashBoard();
-    Boards.copyBoard(board).accept(tempBoard);
-    var piece = tempBoard.getPiece(move.from());
-    piece.move(tempBoard, move);
-
-    return tempBoard;
-  }
-
-  /**
-   * Функция возвращает список доступных ходов для определённого цвета на доске.
-   *
-   * @param board Доска
-   * @param color Цвет
-   * @return Список ходов
-   */
-  public static List<Move> getPossibleMoves(Board board, Color color) {
-    var possibleMove = new ArrayList<Move>();
-    var positions = board.getAllPieceByColorPosition(color);
-
-    for (Position position : positions) {
-      possibleMove.addAll(board.getPiece(position).getAllMoves(board, position));
-    }
-
-    return possibleMove;
   }
 
   /**
@@ -227,22 +185,18 @@ public class Minimaximus extends Player {
    */
   public static int getEstimationForColor(
       Board board, Color mainColor, GameHistory gameHistory, Color currentColor) {
-    var board1 = new HashBoard();
-    var board2 = new HashBoard();
-    Boards.copyBoard(board).accept(board1);
-    Boards.copyBoard(board).accept(board2);
 
     if (mainColor == currentColor) {
-      if (GameStateChecker.isMate(board1, BotUtils.getOtherColor(mainColor))) {
+      if (GameStateChecker.isMate(board, BotUtils.getOtherColor(mainColor))) {
         return getSimpleEstimationForColor(board, mainColor) + 2000;
       }
     } else {
-      if (GameStateChecker.isMate(board1, mainColor)) {
+      if (GameStateChecker.isMate(board, mainColor)) {
         return getSimpleEstimationForColor(board, mainColor) - 2000;
       }
     }
 
-    if (GameStateChecker.isDraw(board2, gameHistory)) {
+    if (GameStateChecker.isDraw(board, gameHistory)) {
       return getSimpleEstimationForColor(board, BotUtils.getOtherColor(mainColor));
     }
 
