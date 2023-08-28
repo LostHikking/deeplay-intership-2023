@@ -82,7 +82,7 @@ public abstract class Board {
     return hasPiece(new Position(new Column(col), new Row(row)));
   }
 
-  public abstract List<Position> getAllPieceByColorPosition(Color color);
+  public abstract List<Position> getAllPiecePositionByColor(Color color);
 
   public abstract List<Position> getAllPiecePosition();
 

@@ -53,8 +53,8 @@ public abstract class Piece {
    * @return {@code true}, если ход не вызывает шах, иначе {@code false}.
    */
   protected boolean simulationMoveAndCheck(Board board, Move move) {
-    Piece removePiece = board.removePiece(move.to());
     Piece piece = board.removePiece(move.from());
+    Piece removePiece = board.removePiece(move.to());
     board.setPiece(move.to(), piece);
 
     final boolean isCheck = GameStateChecker.isCheck(board, this.color);

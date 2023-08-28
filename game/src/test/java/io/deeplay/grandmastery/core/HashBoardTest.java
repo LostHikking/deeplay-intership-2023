@@ -102,7 +102,7 @@ public class HashBoardTest {
     positions.forEach(position -> board.setPiece(position, new Pawn(Color.WHITE)));
     board.setPiece(Position.fromString("a1"), new Pawn(Color.BLACK));
 
-    assertEquals(positions, new HashSet<>(board.getAllPieceByColorPosition(Color.WHITE)));
+    assertEquals(positions, new HashSet<>(board.getAllPiecePositionByColor(Color.WHITE)));
   }
 
   @Test
@@ -115,7 +115,7 @@ public class HashBoardTest {
     positions.forEach(position -> board.setPiece(position, new Pawn(Color.BLACK)));
     board.setPiece(Position.fromString("a1"), new Pawn(Color.WHITE));
 
-    assertEquals(positions, new HashSet<>(board.getAllPieceByColorPosition(Color.BLACK)));
+    assertEquals(positions, new HashSet<>(board.getAllPiecePositionByColor(Color.BLACK)));
   }
 
   @Test
