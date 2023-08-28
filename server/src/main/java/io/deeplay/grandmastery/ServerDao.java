@@ -163,6 +163,12 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
     if (playerTwo instanceof ServerPlayer serverPlayer) {
       serverPlayer.getSocket().close();
     }
+    if (playerOne instanceof FarmPlayer farmPlayer) {
+      farmPlayer.getSocket().close();
+    }
+    if (playerTwo instanceof FarmPlayer farmPlayer) {
+      farmPlayer.getSocket().close();
+    }
     if (socket != null) {
       socket.close();
     }

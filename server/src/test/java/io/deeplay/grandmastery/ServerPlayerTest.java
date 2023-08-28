@@ -29,7 +29,6 @@ public class ServerPlayerTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_BOT,
             ChessType.CLASSIC);
 
     Assertions.assertDoesNotThrow(serverPlayer::createMove);
@@ -47,7 +46,6 @@ public class ServerPlayerTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_BOT,
             ChessType.CLASSIC);
 
     Assertions.assertThrows(GameException.class, serverPlayer::createMove);
@@ -65,7 +63,6 @@ public class ServerPlayerTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_BOT,
             ChessType.CLASSIC);
 
     Assertions.assertTrue(serverPlayer.answerDraw());

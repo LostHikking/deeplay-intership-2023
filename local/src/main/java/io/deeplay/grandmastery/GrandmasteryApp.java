@@ -1,6 +1,6 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.core.AiPlayer;
+import io.deeplay.grandmastery.bots.Randomus;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Player;
@@ -23,16 +23,16 @@ public class GrandmasteryApp {
     GameMode gameMode = GUI.selectMode();
 
     if (gameMode == GameMode.BOT_VS_BOT) {
-      firstPlayer = new AiPlayer(Color.WHITE);
-      secondPlayer = new AiPlayer(Color.BLACK);
+      firstPlayer = new Randomus(Color.WHITE);
+      secondPlayer = new Randomus(Color.BLACK);
     } else if (gameMode == GameMode.HUMAN_VS_BOT) {
       Color color = GUI.selectColor();
       if (color == Color.WHITE) {
         firstPlayer = new HumanPlayer(GUI.inputPlayerName(color), color, GUI);
-        secondPlayer = new AiPlayer(Color.BLACK);
+        secondPlayer = new Randomus(Color.BLACK);
       } else {
         firstPlayer = new HumanPlayer(GUI.inputPlayerName(color), color, GUI);
-        secondPlayer = new AiPlayer(Color.WHITE);
+        secondPlayer = new Randomus(Color.WHITE);
       }
     } else {
       firstPlayer = new HumanPlayer(GUI.inputPlayerName(Color.WHITE), Color.WHITE, GUI);
@@ -43,10 +43,9 @@ public class GrandmasteryApp {
   }
 
   /**
-   * Это основной метод программы, который отвечает за запуск игры.
-   * Показывается GUI, и доска отображается с начальным положением фигур.
-   * SwingWorker используется для выполнения игровой логики в фоновом потоке, обновляя
-   * GUI в основном потоке.(чтобы не было фризов).
+   * Это основной метод программы, который отвечает за запуск игры. Показывается GUI, и доска
+   * отображается с начальным положением фигур. SwingWorker используется для выполнения игровой
+   * логики в фоновом потоке, обновляя GUI в основном потоке.(чтобы не было фризов).
    *
    * @param args аргументы
    */
@@ -60,7 +59,7 @@ public class GrandmasteryApp {
             GUI.showBoard(gameController.getBoard(), Color.WHITE);
 
             SwingWorker<Void, Void> worker =
-                new SwingWorker<Void, Void>() {
+                new SwingWorker<>() {
                   @Override
                   protected Void doInBackground() {
                     while (!gameController.isGameOver()) {
@@ -79,8 +78,9 @@ public class GrandmasteryApp {
                   protected void process(List<Void> chunks) {
                     GUI.showBoard(
                         gameController.getBoard(), gameController.getCurrentPlayer().getColor());
-                      GUI.showMove(gameController.getOpponentPlayer().getLastMove(),
-                              gameController.getOpponentPlayer().getColor());
+                    GUI.showMove(
+                        gameController.getOpponentPlayer().getLastMove(),
+                        gameController.getOpponentPlayer().getColor());
                   }
 
                   @Override

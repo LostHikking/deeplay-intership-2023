@@ -6,7 +6,10 @@ import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.dto.CreateMoveFarmRequest;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.exceptions.QueryException;
+import io.deeplay.grandmastery.service.ConversationService;
 import java.io.IOException;
 import java.net.Socket;
 import lombok.Getter;
@@ -18,12 +21,26 @@ public class ServerGame implements Runnable {
   private final ServerController serverController;
   private final GameController gameController;
 
-  /** Конструктор для объектов типа ServerGame. */
+  /**
+   * Конструктор для объектов типа ServerGame.
+   *
+   * @throws RuntimeException Ошибка инициализации игрока/игроков
+   */
   public ServerGame(Player playerOne, Player playerTwo, ChessType chessType, Socket socket) {
     this.serverController = new ServerController(new ServerDao(playerOne, playerTwo, socket));
 
     gameController = new GameController(playerOne, playerTwo);
     gameController.beginPlay(chessType);
+    try {
+      if (playerOne instanceof FarmPlayer farmPlayer) {
+        farmPlayer.init(gameController.getBoard());
+      }
+      if (playerTwo instanceof FarmPlayer farmPlayer) {
+        farmPlayer.init(gameController.getBoard());
+      }
+    } catch (QueryException e) {
+      throw new RuntimeException(e);
+    }
 
     log.info("Игра создана");
   }
@@ -39,6 +56,28 @@ public class ServerGame implements Runnable {
           PlayerInfo currentPlayer = gameController.getCurrentPlayer();
           gameController.nextMove();
           if (gameController.isGameOver()) {
+            if (serverController.serverDao().playerOne() instanceof FarmPlayer player
+                && serverController.serverDao().playerOne().getColor()
+                    != currentPlayer.getColor()) {
+              log.info("SEND FOR " + currentPlayer.getColor().getOpposite());
+              var dto = new CreateMoveFarmRequest(gameController.getGameHistory().getLastMove());
+              player.send(ConversationService.serialize(dto));
+            }
+
+            if (serverController.serverDao().playerTwo() instanceof FarmPlayer player
+                && serverController.serverDao().playerTwo().getColor()
+                    != currentPlayer.getColor()) {
+              log.info("SEND FOR " + currentPlayer.getColor().getOpposite());
+              var dto = new CreateMoveFarmRequest(gameController.getGameHistory().getLastMove());
+              player.send(ConversationService.serialize(dto));
+            }
+
+            serverController
+                .serverDao()
+                .notifySuccessMove(
+                    gameController.getCurrentPlayer().getColor(),
+                    gameController.getGameHistory().getLastMove());
+
             break;
           }
 

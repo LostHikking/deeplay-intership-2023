@@ -1,6 +1,6 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.core.AiPlayer;
+import io.deeplay.grandmastery.bots.Randomus;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Player;
@@ -28,16 +28,16 @@ public class LocalGame {
     GameMode gameMode = consoleUi.selectMode();
 
     if (gameMode == GameMode.BOT_VS_BOT) {
-      firstPlayer = new AiPlayer(Color.WHITE);
-      secondPlayer = new AiPlayer(Color.BLACK);
+      firstPlayer = new Randomus(Color.WHITE);
+      secondPlayer = new Randomus(Color.BLACK);
     } else if (gameMode == GameMode.HUMAN_VS_BOT) {
       Color color = consoleUi.selectColor();
       firstPlayer = new HumanPlayer(consoleUi.inputPlayerName(color), color, consoleUi, false);
 
       if (color == Color.WHITE) {
-        secondPlayer = new AiPlayer(Color.BLACK);
+        secondPlayer = new Randomus(Color.BLACK);
       } else {
-        secondPlayer = new AiPlayer(Color.WHITE);
+        secondPlayer = new Randomus(Color.WHITE);
       }
     } else {
       firstPlayer =

@@ -2,7 +2,6 @@ package io.deeplay.grandmastery.service;
 
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.dto.ResultGame;
@@ -20,7 +19,8 @@ class ConversationServiceTest {
   @Test
   void serializeAndDeserialize() throws QueryException {
     var startGameRequest =
-        new StartGameRequest("name", GameMode.BOT_VS_BOT, ChessType.CLASSIC, Color.WHITE);
+        new StartGameRequest(
+            "name", ChessType.CLASSIC, Color.WHITE, null, null);
     var startGameResponse = new StartGameResponse("board");
     var acceptMove = new AcceptMove(null);
     var sendMove = new SendMove(null);

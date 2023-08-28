@@ -40,7 +40,6 @@ public class ServerDaoTest {
             Mockito.mock(BufferedWriter.class),
             "Alex",
             Color.WHITE,
-            GameMode.HUMAN_VS_BOT,
             ChessType.CLASSIC);
   }
 
@@ -100,7 +99,6 @@ public class ServerDaoTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_HUMAN,
             ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
@@ -121,7 +119,6 @@ public class ServerDaoTest {
             out,
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_HUMAN,
             ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
@@ -142,7 +139,6 @@ public class ServerDaoTest {
             out,
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_HUMAN,
             ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     Mockito.when(socket.getOutputStream()).thenReturn(System.out);
@@ -161,7 +157,6 @@ public class ServerDaoTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_HUMAN,
             ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
@@ -179,7 +174,6 @@ public class ServerDaoTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_HUMAN,
             ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
@@ -197,7 +191,6 @@ public class ServerDaoTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_HUMAN,
             ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
@@ -218,7 +211,6 @@ public class ServerDaoTest {
             Mockito.mock(),
             "name",
             Color.WHITE,
-            GameMode.HUMAN_VS_HUMAN,
             ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);

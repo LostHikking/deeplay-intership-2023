@@ -2,7 +2,6 @@ package io.deeplay.grandmastery;
 
 import static io.deeplay.grandmastery.Server.GAMES;
 
-import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.service.ConversationService;
@@ -59,15 +58,26 @@ public class CreateGame implements Runnable {
    * @throws IllegalArgumentException неизвестный GameMode.
    */
   public ServerGame createServerGame(StartGameRequest request) {
-    switch (request.getGameMode()) {
-      case BOT_VS_BOT -> {
-        var firstPlayer = new AiPlayer(Color.WHITE);
-        var secondPlayer = new AiPlayer(Color.BLACK);
+    if (request.getNameBotOne() != null && request.getNameBotTwo() != null) {
+      var firstPlayer =
+          new FarmPlayer(request.getNameBotOne(), Color.WHITE, request.getChessType());
+      var secondPlayer =
+          new FarmPlayer(request.getNameBotTwo(), Color.BLACK, request.getChessType());
 
-        log.info("Создали игру BOT_VS_BOT");
-        return new ServerGame(firstPlayer, secondPlayer, request.getChessType(), socket);
-      }
-      case HUMAN_VS_BOT -> {
+      log.info("Создали игру BOT_VS_BOT");
+      return new ServerGame(firstPlayer, secondPlayer, request.getChessType(), socket);
+    } else if (request.getNameBotOne() != null) {
+      var player1 =
+          new ServerPlayer(
+              socket, in, out, request.getPlayerName(), request.getColor(), request.getChessType());
+
+      var otherColor = request.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE;
+      var player2 = new FarmPlayer(request.getNameBotOne(), otherColor, request.getChessType());
+
+      log.info("Создали игру HUMAN_VS_BOT");
+      return new ServerGame(player1, player2, request.getChessType(), null);
+    } else {
+      synchronized (MUTEX) {
         var player1 =
             new ServerPlayer(
                 socket,
@@ -75,41 +85,19 @@ public class CreateGame implements Runnable {
                 out,
                 request.getPlayerName(),
                 request.getColor(),
-                request.getGameMode(),
                 request.getChessType());
 
-        var otherColor = request.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE;
-        var player2 = new AiPlayer(otherColor);
+        var player2 = hasMatch(player1);
+        if (player2 != null) {
+          players.remove(player2);
+          log.info("Создали игру HUMAN_VS_HUMAN");
 
-        log.info("Создали игру HUMAN_VS_BOT");
-        return new ServerGame(player1, player2, request.getChessType(), null);
-      }
-      case HUMAN_VS_HUMAN -> {
-        synchronized (MUTEX) {
-          var player1 =
-              new ServerPlayer(
-                  socket,
-                  in,
-                  out,
-                  request.getPlayerName(),
-                  request.getColor(),
-                  request.getGameMode(),
-                  request.getChessType());
-
-          var player2 = hasMatch(player1);
-          if (player2 != null) {
-            players.remove(player2);
-            log.info("Создали игру HUMAN_VS_HUMAN");
-
-            return new ServerGame(player1, player2, request.getChessType(), null);
-          } else {
-            players.add(player1);
-            return null;
-          }
+          return new ServerGame(player1, player2, request.getChessType(), null);
+        } else {
+          players.add(player1);
+          return null;
         }
       }
-      default -> throw new IllegalArgumentException(
-          "Неизвестный GameMode " + request.getGameMode());
     }
   }
 
@@ -124,10 +112,7 @@ public class CreateGame implements Runnable {
 
     return players.stream()
         .filter(
-            pl ->
-                pl.getColor() != player.getColor()
-                    && pl.getGameMode() == player.getGameMode()
-                    && pl.getChessType() == player.getChessType())
+            pl -> pl.getColor() != player.getColor() && pl.getChessType() == player.getChessType())
         .findAny()
         .orElse(null);
   }

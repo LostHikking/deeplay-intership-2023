@@ -1,4 +1,4 @@
-package io.deeplay.grandmastery.minimaximus;
+package io.deeplay.grandmastery.bots;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
@@ -45,6 +45,10 @@ public class Minimaximus extends Player {
   public Minimaximus(Color color, int deep) {
     super("Melniknow-minimaximus", color);
     this.deep = deep;
+  }
+
+  public Minimaximus(Color color) {
+    this(color, 3);
   }
 
   @Override
@@ -102,12 +106,11 @@ public class Minimaximus extends Player {
 
     if (deep == 0
         || GameStateChecker.isMate(copyBoard, currentColor)
-        || GameStateChecker.isMate(copyBoard, BotUtils.getOtherColor(currentColor))
+        || GameStateChecker.isMate(copyBoard, currentColor.getOpposite())
         || GameStateChecker.isDraw(copyBoard, gameHistory)) {
       return new MoveAndEst(
           lastMove,
-          getEstimationForBoard(
-              copyBoard, mainColor, gameHistory, BotUtils.getOtherColor(currentColor)));
+          getEstimationForBoard(copyBoard, mainColor, gameHistory, currentColor.getOpposite()));
     }
 
     var isMax = currentColor == mainColor;
@@ -129,13 +132,13 @@ public class Minimaximus extends Player {
           startMiniMax(
               deep - 1,
               tempBoard,
-              BotUtils.getOtherColor(currentColor),
+              currentColor.getOpposite(),
               move,
               mainColor,
               alpha,
               beta,
               tempGameHistory,
-              BotUtils.getPossibleMoves(tempBoard, BotUtils.getOtherColor(currentColor)));
+              BotUtils.getPossibleMoves(tempBoard, currentColor.getOpposite()));
 
       if (isMax) {
         alpha = Math.max(alpha, recursiveValue.est);
@@ -170,8 +173,7 @@ public class Minimaximus extends Player {
   public static int getEstimationForBoard(
       Board board, Color mainColor, GameHistory gameHistory, Color currentColor) {
     return getEstimationForColor(board, mainColor, gameHistory, currentColor)
-        - getEstimationForColor(
-            board, BotUtils.getOtherColor(mainColor), gameHistory, currentColor);
+        - getEstimationForColor(board, mainColor.getOpposite(), gameHistory, currentColor);
   }
 
   /**
@@ -187,7 +189,7 @@ public class Minimaximus extends Player {
       Board board, Color mainColor, GameHistory gameHistory, Color currentColor) {
 
     if (mainColor == currentColor) {
-      if (GameStateChecker.isMate(board, BotUtils.getOtherColor(mainColor))) {
+      if (GameStateChecker.isMate(board, mainColor.getOpposite())) {
         return getSimpleEstimationForColor(board, mainColor) + 2000;
       }
     } else {
@@ -197,7 +199,7 @@ public class Minimaximus extends Player {
     }
 
     if (GameStateChecker.isDraw(board, gameHistory)) {
-      return getSimpleEstimationForColor(board, BotUtils.getOtherColor(mainColor));
+      return getSimpleEstimationForColor(board, mainColor.getOpposite());
     }
 
     return getSimpleEstimationForColor(board, mainColor);

@@ -100,6 +100,16 @@ public class GameController {
   }
 
   /**
+   * Запускает игру по доске.
+   *
+   * @param board Доска
+   */
+  public void beginPlay(Board board) {
+    notifyGameStartup(board);
+    gameStatus = GameState.WHITE_MOVE;
+  }
+
+  /**
    * Выполняет следующий игровой ход в соответствии с текущим состоянием игры.
    *
    * @throws GameException если возникла ошибка во время игры

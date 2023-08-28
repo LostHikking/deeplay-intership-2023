@@ -1,10 +1,12 @@
 package io.deeplay.grandmastery.listeners;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 
+@JsonSerialize
 public interface GameListener {
   /**
    * Вызывается при запуске игры для передачи начального состояния доски.

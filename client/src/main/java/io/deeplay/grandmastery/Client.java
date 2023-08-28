@@ -129,7 +129,10 @@ public class Client {
           ChessType chessType = clientController.selectChessType();
 
           player = new HumanPlayer(name, color, ui);
-          StartGameRequest request = new StartGameRequest(name, gameMode, chessType, color);
+          StartGameRequest request =
+              gameMode == GameMode.HUMAN_VS_BOT
+                  ? new StartGameRequest(name, chessType, color, "Minimaximus", null)
+                  : new StartGameRequest(name, chessType, color, null, null);
           IDto response = clientController.query(request);
 
           if (response instanceof StartGameResponse responseDto) {
@@ -167,7 +170,7 @@ public class Client {
    */
   private void botVsBot(ChessType chessType) throws IOException, IllegalStateException {
     StartGameRequest request =
-        new StartGameRequest("AI", GameMode.BOT_VS_BOT, chessType, Color.WHITE);
+        new StartGameRequest("AI", chessType, Color.WHITE, "Randomus", "Randomus");
     IDto response = clientController.query(request);
 
     if (response instanceof ResultGame resultGame) {

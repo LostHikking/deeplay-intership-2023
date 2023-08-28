@@ -7,6 +7,7 @@ import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
+import lombok.Getter;
 
 public class Game implements GameListener {
   private GameState gameState;

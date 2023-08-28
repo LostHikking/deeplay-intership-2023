@@ -1,13 +1,17 @@
-package io.deeplay.grandmastery.core;
+package io.deeplay.grandmastery.bots;
 
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.exceptions.GameException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AiPlayer extends Player {
-  public AiPlayer(Color color) {
+public class Randomus extends Player {
+  public Randomus(Color color) {
     super("Bot", color);
   }
 
