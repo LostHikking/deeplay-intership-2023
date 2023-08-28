@@ -317,6 +317,25 @@ public class PawnTest {
                 blackPawn, board.getPiece(lastMove.to()), "Check black blackPawn not remove"));
   }
 
+  /** Тест для проверки того, что "взятие на проходе" работает только на одну клетку. */
+  @Test
+  public void captureEnPassantOnlyOnePositionTest() {
+    Move lastMove = LongAlgebraicNotation.getMoveFromString("d7d5");
+
+    Position whitePawnPos = Position.fromString("c5");
+    Piece whitePawn = new Pawn(Color.WHITE);
+    Piece blackPawn = new Pawn(Color.BLACK);
+    whitePawn.setMoved(true);
+    board.setPiece(whitePawnPos, whitePawn);
+    board.setPiece(lastMove.to(), blackPawn);
+    board.setLastMove(lastMove);
+
+    List<Move> expectMoves = new ArrayList<>();
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("c5c6"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("c5d6"));
+    assertEquals(expectMoves, whitePawn.getAllMoves(board, whitePawnPos));
+  }
+
   /**
    * Тест для проверки того, что "взятие на проходе" не работает с другими фигурами, кроме пешек.
    */

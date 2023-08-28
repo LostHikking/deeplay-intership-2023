@@ -76,15 +76,21 @@ public class Pawn extends Piece {
   }
 
   private boolean checkCaptureEnPassant(Move move, Board board) {
-    int lastDeltaRow =
-        deltaRowByColor(board.getLastMove(), board.getPiece(board.getLastMove().to()).getColor());
-    FigureType figure = board.getPiece(board.getLastMove().to()).getFigureType();
+    Move lastMove = board.getLastMove();
+    int lastDeltaRow = deltaRowByColor(lastMove, board.getPiece(lastMove.to()).getColor());
+    FigureType figure = board.getPiece(lastMove.to()).getFigureType();
 
-    int deltaCol = Math.abs(move.from().col().value() - board.getLastMove().to().col().value());
-    int deltaRow = move.from().row().value() - board.getLastMove().to().row().value();
+    int deltaCol = Math.abs(move.from().col().value() - lastMove.to().col().value());
+    int deltaRow = move.from().row().value() - lastMove.to().row().value();
+    int colEnemyPiece = lastMove.to().col().value();
+    int toCol = move.to().col().value();
 
-    if (deltaCol == 1 && deltaRow == 0 && lastDeltaRow == 2 && figure == FigureType.PAWN) {
-      this.captureEnPassant = Math.abs(deltaRowByColor(move, this.getColor())) == 1;
+    if (deltaCol == 1
+        && deltaRow == 0
+        && lastDeltaRow == 2
+        && figure == FigureType.PAWN
+        && colEnemyPiece == toCol) {
+      this.captureEnPassant = deltaRowByColor(move, this.getColor()) == 1;
     }
 
     return captureEnPassant;
