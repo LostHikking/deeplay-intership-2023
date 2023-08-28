@@ -142,4 +142,15 @@ class GameHistoryTest {
     gameHistory.clear();
     Assertions.assertTrue(gameHistory.isEmpty());
   }
+
+  @Test
+  void getCopyTest() {
+    var board = new HashBoard();
+    Boards.fischerChess().accept(board);
+
+    var gameHistory = new GameHistory();
+    gameHistory.addBoard(board);
+
+    Assertions.assertEquals(gameHistory, gameHistory.getCopy());
+  }
 }

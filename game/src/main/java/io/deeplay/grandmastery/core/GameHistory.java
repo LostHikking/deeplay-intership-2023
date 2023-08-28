@@ -8,10 +8,12 @@ import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /** Класс для сохранения истории партии. */
 @Getter
+@EqualsAndHashCode
 public class GameHistory implements GameListener {
   private final List<Move> moves = new ArrayList<>();
 
@@ -138,5 +140,22 @@ public class GameHistory implements GameListener {
         boards.stream()
             .filter(historyBoard -> Boards.isEqualsBoards(historyBoard, checkBoard))
             .count();
+  }
+
+  /**
+   * Метод возвращает копию истории.
+   *
+   * @return история
+   */
+  public GameHistory getCopy() {
+    var gameHistory = new GameHistory();
+    gameHistory.gameOver = this.gameOver;
+    gameHistory.movesWithoutTakingAndAdvancingPawns = this.movesWithoutTakingAndAdvancingPawns;
+    gameHistory.resultGame = this.resultGame;
+
+    gameHistory.moves.addAll(this.moves);
+    gameHistory.boards.addAll(this.boards);
+
+    return gameHistory;
   }
 }
