@@ -31,12 +31,16 @@ public class Pawn extends Piece {
       return false;
     }
 
-    int toRow = move.to().row().value();
     captureEnPassant = false;
     if (move.promotionPiece() != null) {
-      return (canMoveForward(move, board) || canCapture(move, board)) && canRevive(move);
+      if (move.from().col().value() == move.to().col().value()) {
+        return canMoveForward(move, board) && canRevive(move);
+      } else {
+        return canCapture(move, board) && canRevive(move);
+      }
     }
 
+    int toRow = move.to().row().value();
     if (toRow == 0 || toRow == 7) {
       return false;
     }
@@ -54,7 +58,7 @@ public class Pawn extends Piece {
   private boolean canMoveForward(Move move, Board board) {
     int deltaRow = deltaRowByColor(move, this.getColor());
 
-    if (deltaRow == 1 && board.getPiece(move.to()) == null) {
+    if (deltaRow == 1 && !board.hasPiece(move.to())) {
       return true;
     } else {
       return deltaRow == 2
