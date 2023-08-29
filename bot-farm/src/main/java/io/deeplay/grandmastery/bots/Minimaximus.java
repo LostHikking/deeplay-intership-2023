@@ -213,7 +213,7 @@ public class Minimaximus extends Player {
    * @return оценка
    */
   public static int getSimpleEstimationForColor(Board board, Color color) {
-    return board.getAllPieceByColorPosition(color).stream()
+    return board.getAllPiecePositionByColor(color).stream()
         .map(pos -> PRICE_MAP.get(board.getPiece(pos).getFigureType()))
         .reduce(0, Integer::sum);
   }

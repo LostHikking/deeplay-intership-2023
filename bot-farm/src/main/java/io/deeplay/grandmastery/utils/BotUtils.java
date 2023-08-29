@@ -23,7 +23,7 @@ public class BotUtils {
    */
   public static List<Move> getPossibleMoves(Board board, Color color) {
     var possibleMove = new ArrayList<Move>();
-    var positions = board.getAllPieceByColorPosition(color);
+    var positions = board.getAllPiecePositionByColor(color);
 
     for (Position position : positions) {
       possibleMove.addAll(board.getPiece(position).getAllMoves(board, position));

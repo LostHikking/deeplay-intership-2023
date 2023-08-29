@@ -22,7 +22,9 @@ public class King extends Piece {
 
   private Position rookToCastling;
 
-  private boolean isCastling;
+  private final Position targetLeftCastling;
+
+  private final Position targetRightCastling;
 
   /**
    * Конструктор для короля.
@@ -34,23 +36,33 @@ public class King extends Piece {
     this.setFigureType(FigureType.KING);
     rookToCastling = null;
     rookFromCastling = null;
-    isCastling = false;
+    if (color == Color.WHITE) {
+      targetLeftCastling = Position.fromString("c1");
+      targetRightCastling = Position.fromString("g1");
+    } else {
+      targetLeftCastling = Position.fromString("c8");
+      targetRightCastling = Position.fromString("g8");
+    }
   }
 
   @Override
   public boolean canMove(Board board, Move move, boolean withKingCheck) {
+    final int deltaRow = deltaRow(move);
+    final int deltaCol = deltaCol(move);
+    final int row = move.to().row().value();
+
+    if (deltaRow == 0 && (row == 0 || row == 7)) {
+      if (canCastling(board, move)) {
+        return true;
+      }
+    }
+
     if (!Figures.basicValidMove(move, board, withKingCheck)) {
       return false;
     }
 
-    final int deltaRow = deltaRow(move);
-    final int deltaCol = deltaCol(move);
-
-    if (!isMoved() && deltaRow == 0 && deltaCol == 2) {
-      return canCastling(board, move);
-    }
-
-    isCastling = false;
+    rookFromCastling = null;
+    rookToCastling = null;
     return deltaRow < 2 && deltaCol < 2;
   }
 
@@ -62,66 +74,107 @@ public class King extends Piece {
     return Math.abs(move.to().col().value() - move.from().col().value());
   }
 
+  private boolean findRookForCastling(Board board, Move move) {
+    int toCol = move.to().col().value();
+    int fromCol = move.from().col().value();
+    int row = move.from().row().value();
+    int start;
+    int end;
+
+    if (toCol == 2) {
+      start = 0;
+      end = fromCol;
+    } else if (toCol == 6) {
+      start = fromCol;
+      end = 8;
+    } else {
+      return false;
+    }
+
+    for (int i = start; i < end; i++) {
+      Piece piece = board.getPiece(i, row);
+      if (piece != null
+          && piece.getFigureType() == FigureType.ROOK
+          && !piece.isMoved()
+          && piece.getColor() == getColor()) {
+        rookFromCastling = new Position(new Column(i), new Row(row));
+        return true;
+      }
+    }
+    return false;
+  }
+
   private boolean canCastling(Board board, Move move) {
+    if (isMoved()) {
+      return false;
+    }
+
     final int toCol = move.to().col().value();
     final int row = move.from().row().value();
     final int fromCol = move.from().col().value();
 
-    int rookCol;
-    switch (toCol) {
-      case 2 -> rookCol = 0;
-      case 6 -> rookCol = 7;
-      default -> {
-        return false;
-      }
-    }
-
-    if (row != 0 && row != 7) {
+    if (!findRookForCastling(board, move)) {
       return false;
     }
 
-    rookFromCastling = new Position(new Column(rookCol), new Row(row));
-    Piece rook = board.getPiece(rookFromCastling);
-    if (rook == null || rook.isMoved() || rook.getColor() != this.getColor()) {
+    if (!Figures.hasNotFigureBetweenCols(
+        board,
+        row,
+        fromCol,
+        rookFromCastling.col().value(),
+        List.of(board.getPiece(rookFromCastling)))) {
       return false;
     }
-    if (Figures.hasFigureOnHorizontalBetweenColPosition(board, row, fromCol, rookCol)) {
+
+    if (rookFromCastling.col().value() < fromCol) {
+      rookToCastling = new Position(new Column(3), rookFromCastling.row());
+    } else {
+      rookToCastling = new Position(new Column(5), rookFromCastling.row());
+    }
+
+    if (!rookFromCastling.equals(rookToCastling)
+        && !move.from().equals(rookToCastling)
+        && board.hasPiece(rookToCastling)) {
       return false;
     }
 
     List<Position> positions =
-        board.getAllPieceByColorPosition(
+        board.getAllPiecePositionByColor(
             this.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
 
-    Move tmpMove;
     for (int i = Math.min(fromCol, toCol); i < Math.max(fromCol, toCol); i++) {
       for (Position position : positions) {
-        tmpMove = new Move(position, new Position(new Column(i), move.to().row()), null);
+        FigureType promotionPiece = null;
+        if (board.getPiece(position).getFigureType() == FigureType.PAWN) {
+          promotionPiece = FigureType.QUEEN;
+        }
+
+        Move tmpMove =
+            new Move(position, new Position(new Column(i), move.to().row()), promotionPiece);
         if (board.getPiece(position).canMove(board, tmpMove)) {
           return false;
         }
       }
     }
-
-    if (rookFromCastling.col().value() == 0) {
-      rookToCastling = new Position(new Column(3), rookFromCastling.row());
-    } else {
-      rookToCastling = new Position(new Column(5), rookFromCastling.row());
-    }
-    isCastling = true;
     return true;
   }
 
   @Override
   public boolean move(Board board, Move move) {
+    Piece left = board.getPiece(this.targetLeftCastling);
+    Piece right = board.getPiece(this.targetRightCastling);
+
     boolean result = super.move(board, move);
-    if (result && isCastling) {
-      Piece rook = board.removePiece(rookFromCastling);
-      board.setPiece(rookToCastling, rook);
-
-      isCastling = false;
+    if (result && rookToCastling != null) {
+      if (rookFromCastling.equals(this.targetLeftCastling)) {
+        board.setPiece(rookToCastling, left);
+      } else if (rookFromCastling.equals(this.targetRightCastling)) {
+        board.setPiece(rookToCastling, right);
+      } else {
+        Piece rook = board.removePiece(rookFromCastling);
+        board.setPiece(rookToCastling, rook);
+      }
     }
-
     return result;
   }
 

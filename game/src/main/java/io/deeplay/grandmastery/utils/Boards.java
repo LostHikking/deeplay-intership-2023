@@ -9,6 +9,7 @@ import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
+import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Knight;
@@ -18,9 +19,11 @@ import io.deeplay.grandmastery.figures.Queen;
 import io.deeplay.grandmastery.figures.Rook;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Consumer;
 
 /**
@@ -39,29 +42,20 @@ public class Boards {
   public static Consumer<Board> defaultChess() {
     return defaultBoard -> {
       for (Color color : Color.values()) {
-        int actualRow;
+        int row = color == Color.WHITE ? 0 : 7;
+        setPawnsByRow(defaultBoard, row, color);
 
-        if (color == Color.WHITE) {
-          actualRow = 0;
-        } else {
-          actualRow = 7;
-        }
-        for (int j = 0; j < 8; j++) {
-          defaultBoard.setPiece(
-              new Position(new Column(j), new Row(Math.abs(actualRow - 1))), new Pawn(color));
-        }
+        defaultBoard.setPiece(new Position(new Column(0), new Row(row)), new Rook(color));
+        defaultBoard.setPiece(new Position(new Column(7), new Row(row)), new Rook(color));
 
-        defaultBoard.setPiece(new Position(new Column(0), new Row(actualRow)), new Rook(color));
-        defaultBoard.setPiece(new Position(new Column(7), new Row(actualRow)), new Rook(color));
+        defaultBoard.setPiece(new Position(new Column(1), new Row(row)), new Knight(color));
+        defaultBoard.setPiece(new Position(new Column(6), new Row(row)), new Knight(color));
 
-        defaultBoard.setPiece(new Position(new Column(1), new Row(actualRow)), new Knight(color));
-        defaultBoard.setPiece(new Position(new Column(6), new Row(actualRow)), new Knight(color));
+        defaultBoard.setPiece(new Position(new Column(2), new Row(row)), new Bishop(color));
+        defaultBoard.setPiece(new Position(new Column(5), new Row(row)), new Bishop(color));
 
-        defaultBoard.setPiece(new Position(new Column(2), new Row(actualRow)), new Bishop(color));
-        defaultBoard.setPiece(new Position(new Column(5), new Row(actualRow)), new Bishop(color));
-
-        defaultBoard.setPiece(new Position(new Column(3), new Row(actualRow)), new Queen(color));
-        defaultBoard.setPiece(new Position(new Column(4), new Row(actualRow)), new King(color));
+        defaultBoard.setPiece(new Position(new Column(3), new Row(row)), new Queen(color));
+        defaultBoard.setPiece(new Position(new Column(4), new Row(row)), new King(color));
       }
     };
   }
@@ -75,72 +69,53 @@ public class Boards {
    */
   public static Consumer<Board> fischerChess() {
     return fischerBoard -> {
-      for (int i = 0; i < 8; i++) {
-        fischerBoard.setPiece(new Position(new Column(i), new Row(1)), new Pawn(Color.WHITE));
-        fischerBoard.setPiece(new Position(new Column(i), new Row(6)), new Pawn(Color.BLACK));
+      List<Integer> positions = new ArrayList<>(List.of(0, 1, 2, 3, 4, 5, 6, 7));
+      Random random = new Random();
+
+      int blackBishop = positions.get(random.nextInt(4)) * 2;
+      int whiteBishop = positions.get(random.nextInt(4)) * 2 + 1;
+      positions.remove(Integer.valueOf(blackBishop));
+      positions.remove(Integer.valueOf(whiteBishop));
+
+      int queen = positions.get(random.nextInt(positions.size()));
+      positions.remove(Integer.valueOf(queen));
+      int firstKnight = positions.get(random.nextInt(positions.size()));
+      positions.remove(Integer.valueOf(firstKnight));
+      int secondKnight = positions.get(random.nextInt(positions.size()));
+      positions.remove(Integer.valueOf(secondKnight));
+
+      Collections.sort(positions);
+      int leftRook = positions.get(0);
+      int king = positions.get(1);
+      int rightRook = positions.get(2);
+
+      for (Color color : Color.values()) {
+        int row = color == Color.WHITE ? 0 : 7;
+        setPawnsByRow(fischerBoard, row, color);
+
+        fischerBoard.setPiece(new Position(new Column(king), new Row(row)), new King(color));
+        fischerBoard.setPiece(new Position(new Column(queen), new Row(row)), new Queen(color));
+
+        fischerBoard.setPiece(new Position(new Column(leftRook), new Row(row)), new Rook(color));
+        fischerBoard.setPiece(new Position(new Column(rightRook), new Row(row)), new Rook(color));
+
+        fischerBoard.setPiece(
+            new Position(new Column(firstKnight), new Row(row)), new Knight(color));
+        fischerBoard.setPiece(
+            new Position(new Column(secondKnight), new Row(row)), new Knight(color));
+
+        fischerBoard.setPiece(
+            new Position(new Column(blackBishop), new Row(row)), new Bishop(color));
+        fischerBoard.setPiece(
+            new Position(new Column(whiteBishop), new Row(row)), new Bishop(color));
       }
-      ArrayList<Integer> positions = new ArrayList<>(List.of(0, 1, 2, 3, 4, 5, 6, 7));
-      // ставим короля
-      int posKing = (int) (Math.random() * 5) + 1;
-      fischerBoard.setPiece(new Position(new Column(posKing), new Row(0)), new King(Color.WHITE));
-      fischerBoard.setPiece(new Position(new Column(posKing), new Row(7)), new King(Color.BLACK));
-      positions.remove(Integer.valueOf(posKing));
-      // ставим ладью по левую сторону
-      int posRook1 = (int) (Math.random() * posKing);
-      fischerBoard.setPiece(new Position(new Column(posRook1), new Row(0)), new Rook(Color.WHITE));
-      fischerBoard.setPiece(new Position(new Column(posRook1), new Row(7)), new Rook(Color.BLACK));
-      positions.remove(Integer.valueOf(posRook1));
-      // по правую
-      int posRook2 = (int) (Math.random() * (7 - posKing)) + posKing + 1;
-      fischerBoard.setPiece(new Position(new Column(posRook2), new Row(0)), new Rook(Color.WHITE));
-      fischerBoard.setPiece(new Position(new Column(posRook2), new Row(7)), new Rook(Color.BLACK));
-      positions.remove(Integer.valueOf(posRook2));
-      // ставим первого слона в рандомную клетку из оставшихся
-      int ind = (int) (Math.random() * 5);
-      int posBishop1 = positions.get(ind);
-      fischerBoard.setPiece(
-          new Position(new Column(posBishop1), new Row(0)), new Bishop(Color.WHITE));
-      fischerBoard.setPiece(
-          new Position(new Column(posBishop1), new Row(7)), new Bishop(Color.BLACK));
-      positions.remove(Integer.valueOf(posBishop1));
-      // ставим второго слона в клетку противоположного цвета
-      int posBishop2;
-      ind = (int) (Math.random() * 4);
-      if (posBishop1 % 2 == 0) {
-        while (positions.get(ind) % 2 == 0) {
-          ind = (int) (Math.random() * 3);
-        }
-        posBishop2 = positions.get(ind);
-      } else {
-        while (positions.get(ind) % 2 != 0) {
-          ind = (int) (Math.random() * 3);
-        }
-        posBishop2 = positions.get(ind);
-      }
-      fischerBoard.setPiece(
-          new Position(new Column(posBishop2), new Row(0)), new Bishop(Color.WHITE));
-      fischerBoard.setPiece(
-          new Position(new Column(posBishop2), new Row(7)), new Bishop(Color.BLACK));
-      positions.remove(Integer.valueOf(posBishop2));
-      // ставим рандомно двух коней и ферзя
-      ind = (int) (Math.random() * 3);
-      int posKnight1 = positions.get(ind);
-      fischerBoard.setPiece(
-          new Position(new Column(posKnight1), new Row(0)), new Knight(Color.WHITE));
-      fischerBoard.setPiece(
-          new Position(new Column(posKnight1), new Row(7)), new Knight(Color.BLACK));
-      positions.remove(Integer.valueOf(posKnight1));
-      ind = (int) (Math.random() * 2);
-      int posKnight2 = positions.get(ind);
-      fischerBoard.setPiece(
-          new Position(new Column(posKnight2), new Row(0)), new Knight(Color.WHITE));
-      fischerBoard.setPiece(
-          new Position(new Column(posKnight2), new Row(7)), new Knight(Color.BLACK));
-      positions.remove(Integer.valueOf(posKnight2));
-      int posQueen = positions.get(0);
-      fischerBoard.setPiece(new Position(new Column(posQueen), new Row(0)), new Queen(Color.WHITE));
-      fischerBoard.setPiece(new Position(new Column(posQueen), new Row(7)), new Queen(Color.BLACK));
     };
+  }
+
+  private static void setPawnsByRow(Board board, int row, Color color) {
+    for (int j = 0; j < 8; j++) {
+      board.setPiece(new Position(new Column(j), new Row(Math.abs(row - 1))), new Pawn(color));
+    }
   }
 
   /**
@@ -149,9 +124,9 @@ public class Boards {
    *
    * @param sourceBoard исходная шахматная доска, которую необходимо скопировать.
    * @return Наследник {@link Board}, который копирует исходную доску в целевую доску.
-   * @throws io.deeplay.grandmastery.exceptions.GameException если sourceBoard равен null.
+   * @throws GameException если sourceBoard равен null.
    */
-  public static Consumer<Board> copyBoard(Board sourceBoard) {
+  public static Consumer<Board> copyBoard(Board sourceBoard) throws GameException {
     return destinationBoard -> {
       if (sourceBoard == null) {
         throw GameErrorCode.NULL_POINTER_SOURCE_BOARD.asException();
@@ -184,7 +159,7 @@ public class Boards {
     return new Move(from, to, move.promotionPiece());
   }
 
-  private static Piece copyPiece(Piece sourcePiece) {
+  private static Piece copyPiece(Piece sourcePiece) throws GameException {
     switch (sourcePiece.getFigureType()) {
       case KING -> {
         Piece king = new King(sourcePiece.getColor());

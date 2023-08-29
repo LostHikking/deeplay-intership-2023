@@ -79,7 +79,7 @@ public class HashBoard extends Board {
   }
 
   @Override
-  public List<Position> getAllPieceByColorPosition(Color color) {
+  public List<Position> getAllPiecePositionByColor(Color color) {
     return pieces.entrySet().stream()
         .filter(entry -> entry.getValue().getColor() == color)
         .map(Map.Entry::getKey)

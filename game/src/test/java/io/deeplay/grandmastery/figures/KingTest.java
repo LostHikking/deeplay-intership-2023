@@ -136,68 +136,148 @@ public class KingTest {
     assertFalse(king.move(board, move), "Check " + color + " pawn");
   }
 
-  @Test
-  public void leftCastlingWhiteTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e1c1");
+  /**
+   * Тест для проверки всех возможных рокировок влево белыми фигурами.
+   *
+   * @param kingPos Позиция короля перед рокировкой.
+   * @param rookPos Позиция ладьи перед рокировкой.
+   */
+  @ParameterizedTest
+  @MethodSource("positionsForLeftWhiteCastling")
+  public void leftCastlingWhiteTest(Position kingPos, Position rookPos) {
+    Move move = new Move(kingPos, Position.fromString("c1"), null);
     Piece king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
-    board.setPiece(move.from(), king);
-    board.setPiece(Position.fromString("a1"), rook);
+    board.setPiece(kingPos, king);
+    board.setPiece(rookPos, rook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
-        () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.fromString("d1")), "Check rook after castling"));
+        () -> assertSame(king, board.getPiece(move.to()), "King after castling"),
+        () -> assertSame(rook, board.getPiece(Position.fromString("d1")), "Rook after castling"));
   }
 
-  @Test
-  public void rightCastlingWhiteTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e1g1");
+  private static Stream<Arguments> positionsForLeftWhiteCastling() {
+    List<Arguments> positions = new ArrayList<>();
+
+    String[] columns = {"a", "b", "c", "d", "e", "f", "g"};
+    for (int i = 1; i < columns.length; i++) {
+      for (int j = 0; j < i; j++) {
+        String rook = columns[j] + "1";
+        String king = columns[i] + "1";
+        positions.add(Arguments.of(Position.fromString(king), Position.fromString(rook)));
+      }
+    }
+
+    return positions.stream();
+  }
+
+  /**
+   * Тест для проверки всех возможных рокировок вправо белыми фигурами.
+   *
+   * @param kingPos Позиция короля перед рокировкой.
+   * @param rookPos Позиция ладьи перед рокировкой.
+   */
+  @ParameterizedTest
+  @MethodSource("positionsForRightWhiteCastling")
+  public void rightCastlingWhiteTest(Position kingPos, Position rookPos) {
+    Move move = new Move(kingPos, Position.fromString("g1"), null);
     Piece king = new King(Color.WHITE);
     Piece rook = new Rook(Color.WHITE);
-    board.setPiece(move.from(), king);
-    board.setPiece(Position.fromString("h1"), rook);
+    board.setPiece(kingPos, king);
+    board.setPiece(rookPos, rook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
-        () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.fromString("f1")), "Check rook after castling"));
+        () -> assertSame(king, board.getPiece(move.to()), "King after castling"),
+        () -> assertSame(rook, board.getPiece(Position.fromString("f1")), "Rook after castling"));
   }
 
-  @Test
-  public void leftCastlingBlackTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e8c8");
-    Piece king = new King(Color.BLACK);
-    Piece rook = new Rook(Color.BLACK);
-    board.setPiece(move.from(), king);
-    board.setPiece(Position.fromString("a8"), rook);
+  private static Stream<Arguments> positionsForRightWhiteCastling() {
+    List<Arguments> positions = new ArrayList<>();
 
-    Assertions.assertAll(
-        () -> assertTrue(king.move(board, move)),
-        () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.fromString("d8")), "Check rook after castling"));
+    String[] columns = {"b", "c", "d", "e", "f", "g", "h"};
+    for (int i = 0; i < columns.length; i++) {
+      for (int j = i + 1; j < columns.length; j++) {
+        String rook = columns[j] + "1";
+        String king = columns[i] + "1";
+        positions.add(Arguments.of(Position.fromString(king), Position.fromString(rook)));
+      }
+    }
+
+    return positions.stream();
   }
 
-  @Test
-  public void rightCastlingBlackTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e8g8");
+  /**
+   * Тест для проверки всех возможных рокировок влево черными фигурами.
+   *
+   * @param kingPos Позиция короля перед рокировкой.
+   * @param rookPos Позиция ладьи перед рокировкой.
+   */
+  @ParameterizedTest
+  @MethodSource("positionsForLeftBlackCastling")
+  public void leftCastlingBlackTest(Position kingPos, Position rookPos) {
+    Move move = new Move(kingPos, Position.fromString("c8"), null);
     Piece king = new King(Color.BLACK);
     Piece rook = new Rook(Color.BLACK);
-    board.setPiece(move.from(), king);
-    board.setPiece(Position.fromString("h8"), rook);
+    board.setPiece(kingPos, king);
+    board.setPiece(rookPos, rook);
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
-        () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.fromString("f8")), "Check rook after castling"));
+        () -> assertSame(king, board.getPiece(move.to()), "King after castling"),
+        () -> assertSame(rook, board.getPiece(Position.fromString("d8")), "Rook after castling"));
+  }
+
+  private static Stream<Arguments> positionsForLeftBlackCastling() {
+    List<Arguments> positions = new ArrayList<>();
+
+    String[] columns = {"a", "b", "c", "d", "e", "f", "g"};
+    for (int i = 1; i < columns.length; i++) {
+      for (int j = 0; j < i; j++) {
+        String rook = columns[j] + "8";
+        String king = columns[i] + "8";
+        positions.add(Arguments.of(Position.fromString(king), Position.fromString(rook)));
+      }
+    }
+
+    return positions.stream();
+  }
+
+  /**
+   * Тест для проверки всех возможных рокировок вправо черными фигурами.
+   *
+   * @param kingPos Позиция короля перед рокировкой.
+   * @param rookPos Позиция ладьи перед рокировкой.
+   */
+  @ParameterizedTest
+  @MethodSource("positionsForRightBlackCastling")
+  public void rightCastlingBlackTest(Position kingPos, Position rookPos) {
+    Move move = new Move(kingPos, Position.fromString("g8"), null);
+    Piece king = new King(Color.BLACK);
+    Piece rook = new Rook(Color.BLACK);
+    board.setPiece(kingPos, king);
+    board.setPiece(rookPos, rook);
+
+    Assertions.assertAll(
+        () -> assertTrue(king.move(board, move)),
+        () -> assertSame(king, board.getPiece(move.to()), "King after castling"),
+        () -> assertSame(rook, board.getPiece(Position.fromString("f8")), "Rook after castling"));
+  }
+
+  private static Stream<Arguments> positionsForRightBlackCastling() {
+    List<Arguments> positions = new ArrayList<>();
+
+    String[] columns = {"b", "c", "d", "e", "f", "g", "h"};
+    for (int i = 0; i < columns.length; i++) {
+      for (int j = i + 1; j < columns.length; j++) {
+        String rook = columns[j] + "8";
+        String king = columns[i] + "8";
+        positions.add(Arguments.of(Position.fromString(king), Position.fromString(rook)));
+      }
+    }
+
+    return positions.stream();
   }
 
   @Test
@@ -285,10 +365,8 @@ public class KingTest {
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
-        () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.fromString("d1")), "Check rook after castling"));
+        () -> assertSame(king, board.getPiece(move.to()), "King after castling"),
+        () -> assertSame(rook, board.getPiece(Position.fromString("d1")), "Rook after castling"));
   }
 
   @Test
@@ -304,7 +382,6 @@ public class KingTest {
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
         () -> assertSame(king, board.getPiece(move.to()), "Check king pos"),
-        () -> assertFalse(king.isCastling(), "isCastling"),
         () -> assertSame(rook, board.getPiece(Position.fromString("a1")), "Check rook pos"));
   }
 
@@ -320,10 +397,8 @@ public class KingTest {
 
     Assertions.assertAll(
         () -> assertTrue(king.move(board, move)),
-        () -> assertSame(king, board.getPiece(move.to()), "Check king after castling"),
-        () ->
-            assertSame(
-                rook, board.getPiece(Position.fromString("f1")), "Check rook after castling"));
+        () -> assertSame(king, board.getPiece(move.to()), "King after castling"),
+        () -> assertSame(rook, board.getPiece(Position.fromString("f1")), "Rook after castling"));
   }
 
   @Test
@@ -374,7 +449,7 @@ public class KingTest {
   }
 
   @Test
-  @Description("Pawns block forward moves, but all castlings possible")
+  @Description("Pawns block forward moves, but all castling possible")
   public void allMovesKingInStartPositionTest() {
     Piece king = new King(Color.WHITE);
     Position position = Position.fromString("e1");
