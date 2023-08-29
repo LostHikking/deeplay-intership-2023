@@ -6,12 +6,15 @@ import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.FigureType;
+import io.deeplay.grandmastery.figures.Piece;
+import java.util.Collections;
+import java.util.List;
 
 /** Класс FigureUtils предоставляет утилиты для работы с фигурами, позициями и ходами. */
 public class Figures {
 
   /**
-   * Метод валидирует позицию.
+   * Метод проверяет позицию.
    *
    * @param position Позиция
    * @return Валидна ли позиция
@@ -75,7 +78,7 @@ public class Figures {
    * @param endRow Конечная позиция по row
    * @return Есть ли фигура
    */
-  public static boolean hasNotFigureOnVerticalBetweenRowPosition(
+  public static boolean hasNotFigureBetweenRows(
       Board board, int colNumber, int startRow, int endRow) {
     for (var pos = Math.min(startRow, endRow) + 1; pos < Math.max(startRow, endRow); pos++) {
       if (board.getPiece(colNumber, pos) != null) {
@@ -86,27 +89,43 @@ public class Figures {
   }
 
   /**
-   * Метод проверяет есть ли какая либо фигура на заданной горизонталями между двумя позициями.
+   * Метод проверяет есть ли какая-либо фигура на заданной горизонталями между двумя позициями. Без
+   * исключений
    *
    * @param board Доска
-   * @param rowNumber Позиция строки по которой мы бежим
+   * @param row Позиция строки по которой мы бежим
    * @param startCol Начальная позиция по col
    * @param endCol Конечная позиция по col
    * @return Есть ли фигура
    */
-  public static boolean hasFigureOnHorizontalBetweenColPosition(
-      Board board, int rowNumber, int startCol, int endCol) {
-    for (var pos = Math.min(startCol, endCol) + 1; pos < Math.max(startCol, endCol); pos++) {
-      if (board.getPiece(pos, rowNumber) != null) {
-        return true;
-      }
-    }
-
-    return false;
+  public static boolean hasNotFigureBetweenCols(Board board, int row, int startCol, int endCol) {
+    return hasNotFigureBetweenCols(board, row, startCol, endCol, Collections.emptyList());
   }
 
   /**
-   * Метод проверяет есть ли какая либо фигура на заданной диагонали между двумя позициями.
+   * Метод проверяет есть ли какая-либо фигура на заданной горизонталями между двумя позициями.
+   *
+   * @param board Доска
+   * @param row Позиция строки по которой мы бежим
+   * @param startCol Начальная позиция по col
+   * @param endCol Конечная позиция по col
+   * @param exception фигуры, которые будет игнорироваться, при проверке
+   * @return Есть ли фигура
+   */
+  public static boolean hasNotFigureBetweenCols(
+      Board board, int row, int startCol, int endCol, List<Piece> exception) {
+    for (var pos = Math.min(startCol, endCol) + 1; pos < Math.max(startCol, endCol); pos++) {
+      Piece piece = board.getPiece(pos, row);
+      if (piece != null && !exception.contains(piece)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Метод проверяет есть ли какая-либо фигура на заданной диагонали между двумя позициями.
    *
    * @param board Доска
    * @param startRow Начальная позиция по row

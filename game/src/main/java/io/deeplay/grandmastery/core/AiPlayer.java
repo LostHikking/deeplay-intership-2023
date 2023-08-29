@@ -19,7 +19,7 @@ public class AiPlayer extends Player {
 
     Board board = this.getBoard();
     List<Move> possibleMove = new ArrayList<>();
-    List<Position> positions = board.getAllPieceByColorPosition(this.getColor());
+    List<Position> positions = board.getAllPiecePositionByColor(this.getColor());
 
     for (Position position : positions) {
       possibleMove.addAll(board.getPiece(position).getAllMoves(board, position));

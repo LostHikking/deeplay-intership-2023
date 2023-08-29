@@ -34,9 +34,9 @@ public class Rook extends Piece {
     }
 
     if (toCol == fromCol) {
-      return Figures.hasNotFigureOnVerticalBetweenRowPosition(board, toCol, toRow, fromRow);
+      return Figures.hasNotFigureBetweenRows(board, toCol, toRow, fromRow);
     } else if (toRow == fromRow) {
-      return !Figures.hasFigureOnHorizontalBetweenColPosition(board, toRow, toCol, fromCol);
+      return Figures.hasNotFigureBetweenCols(board, toRow, toCol, fromCol);
     }
 
     return false;

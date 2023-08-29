@@ -20,7 +20,7 @@ public class GameStateChecker {
         color == Color.WHITE ? board.getWhiteKingPosition() : board.getBlackKingPosition();
 
     List<Position> piecePosition =
-        board.getAllPieceByColorPosition(color == Color.WHITE ? Color.BLACK : Color.WHITE);
+        board.getAllPiecePositionByColor(color == Color.WHITE ? Color.BLACK : Color.WHITE);
     for (Position position : piecePosition) {
       Piece piece = board.getPiece(position);
       FigureType promotionPiece = null;
@@ -50,7 +50,7 @@ public class GameStateChecker {
       return false;
     }
 
-    List<Position> piecePosition = board.getAllPieceByColorPosition(color);
+    List<Position> piecePosition = board.getAllPiecePositionByColor(color);
     for (Position position : piecePosition) {
       Piece piece = board.getPiece(position);
 
@@ -88,8 +88,8 @@ public class GameStateChecker {
       return true;
     }
 
-    List<Position> whites = board.getAllPieceByColorPosition(Color.WHITE);
-    List<Position> blacks = board.getAllPieceByColorPosition(Color.BLACK);
+    List<Position> whites = board.getAllPiecePositionByColor(Color.WHITE);
+    List<Position> blacks = board.getAllPiecePositionByColor(Color.BLACK);
 
     List<FigureType> whiteFiguresList =
         whites.stream()
@@ -114,7 +114,7 @@ public class GameStateChecker {
    * @return Стоит ли на доске пат
    */
   public static boolean isStaleMate(Board board, Color color) {
-    List<Position> positions = board.getAllPieceByColorPosition(color);
+    List<Position> positions = board.getAllPiecePositionByColor(color);
     for (Position position : positions) {
       var piece = board.getPiece(position);
 
