@@ -489,7 +489,7 @@ public class PawnTest {
   }
 
   @Test
-  public void skipCaptureEnPassatTest() {
+  public void skipCaptureEnPassantTest() {
     Piece pawn = new Pawn(Color.WHITE);
     Position position = Position.fromString("e2");
 
@@ -508,7 +508,7 @@ public class PawnTest {
   }
 
   @Test
-  public void checkKingAfterCaptureEnPassatTest() {
+  public void checkKingAfterCaptureEnPassantTest() {
     Piece pawn = new Pawn(Color.WHITE);
     Piece enemyPawn = new Pawn(Color.BLACK);
     Position pawnPosition = Position.fromString("d5");
@@ -653,6 +653,21 @@ public class PawnTest {
   }
 
   @Test
+  public void allMovesReviveOnlyForwardTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.fromString("e7");
+    board.setPiece(position, pawn);
+
+    List<Move> expectMoves = new ArrayList<>();
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8b"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8r"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8q"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8n"));
+
+    assertEquals(expectMoves, pawn.getAllMoves(board, position));
+  }
+
+  @Test
   public void allMovesReviveBlockTest() {
     Piece pawn = new Pawn(Color.WHITE);
     Position position = Position.fromString("h7");
@@ -661,13 +676,7 @@ public class PawnTest {
     board.setPiece(position, pawn);
     board.setPiece(Position.fromString("h8"), king);
 
-    List<Move> expectMoves = new ArrayList<>();
-    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8b"));
-    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8r"));
-    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8q"));
-    expectMoves.add(LongAlgebraicNotation.getMoveFromString("h7g8n"));
-
-    assertEquals(expectMoves, pawn.getAllMoves(board, position));
+    assertEquals(Collections.emptyList(), pawn.getAllMoves(board, position));
   }
 
   @Test
