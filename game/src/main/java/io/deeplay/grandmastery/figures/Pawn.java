@@ -143,7 +143,7 @@ public class Pawn extends Piece {
   }
 
   @Override
-  public List<Move> generateAllMoves(Board board, Position position) {
+  protected List<Move> generateAllMoves(Board board, Position position) {
     List<Move> defaultMoves = new ArrayList<>();
 
     defaultMoves.add(Figures.getMoveByPositionAndDeltas(position, 0, 1));

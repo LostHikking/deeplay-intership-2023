@@ -43,7 +43,7 @@ public class Rook extends Piece {
   }
 
   @Override
-  public List<Move> generateAllMoves(Board board, Position position) {
+  protected List<Move> generateAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
 
     for (int i = 0; i < 8; i++) {

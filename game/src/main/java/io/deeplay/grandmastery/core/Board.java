@@ -89,4 +89,6 @@ public abstract class Board {
   public void clear() {
     lastMove = null;
   }
+
+  public abstract void clearMoves();
 }

@@ -668,6 +668,33 @@ public class PawnTest {
   }
 
   @Test
+  public void saveAllMoveTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.fromString("e7");
+    board.setPiece(position, pawn);
+    pawn.getAllMoves(board, position);
+
+    List<Move> expectMoves = new ArrayList<>();
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8b"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8r"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8q"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("e7e8n"));
+
+    assertEquals(expectMoves, pawn.getAllMoves(board, position));
+  }
+
+  @Test
+  public void clearAllMoveTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.fromString("e7");
+    board.setPiece(position, pawn);
+    pawn.getAllMoves(board, position);
+    pawn.clearMoves();
+
+    assertNull(pawn.moves);
+  }
+
+  @Test
   public void allMovesReviveBlockTest() {
     Piece pawn = new Pawn(Color.WHITE);
     Position position = Position.fromString("h7");

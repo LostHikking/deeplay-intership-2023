@@ -41,7 +41,7 @@ public class Bishop extends Piece {
   }
 
   @Override
-  public List<Move> generateAllMoves(Board board, Position position) {
+  protected List<Move> generateAllMoves(Board board, Position position) {
     var listMove = new ArrayList<Move>();
     int[] dx = {1, -1, 1, -1};
     int[] dy = {1, -1, -1, 1};
