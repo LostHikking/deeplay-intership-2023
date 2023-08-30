@@ -81,13 +81,47 @@ public class Gui implements UI {
       showGui();
     }
   }
+  
+  /**
+   * Метод проигрывания музыки в фоновом режиме.
+   *
+   * @param soundFile Название файла с песней в папке sounds с расширением wav
+   * @param volumeIndex Громкость проигрываемой песни
+   * @throws UnsupportedAudioFileException Если некорректный формат(например mp3).
+   * @throws IOException Если проблемы с чтением файла.
+   * @throws LineUnavailableException Если запрашиваемый тип медиалинии (Line) не может быть
+   *     использован.
+   */
+  void playBackgroundMusic(String soundFile, int volumeIndex)
+          throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    URL url = getClass().getResource("/sounds/" + soundFile);
+    audioInputStream = AudioSystem.getAudioInputStream(url);
+    clip = AudioSystem.getClip();
+    clip.open(audioInputStream);
+    setVolume(volumeLevels[volumeIndex]);
+    clip.loop(Clip.LOOP_CONTINUOUSLY);
+    clip.start();
+  }
+
+  /**
+   * Метод умтанавливает нужную громкость.
+   * @param volumeLevel Громкость.
+   */
+  public void setVolume(float volumeLevel) {
+    if (clip != null && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+      FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+      float range = gainControl.getMaximum() - gainControl.getMinimum();
+      float gain = (range * volumeLevel) + gainControl.getMinimum();
+      gainControl.setValue(gain);
+    }
+  }
 
   /** Метод, активирующий панель громкости. */
   public void activateVolumePanel() {
     JPanel volumePanel = guiContainer.getVolumePanel();
     JButton volumeButton =
         (JButton) volumePanel.getComponent(1); // Получаем кнопку из номером компонента 1.
-    currentVolumeIndex = 1; // Задайте начальный индекс громкости.
+    currentVolumeIndex = 0; 
     String[] volumeImageNames = {
       "/volumeIcons/volume0.png", "/volumeIcons/volume1.png", "/volumeIcons/volume2.png"
     };
@@ -112,41 +146,7 @@ public class Gui implements UI {
           }
         });
   }
-
-  /**
-   * Метод проигрывания музыки в фоновом режиме.
-   *
-   * @param soundFile Название файла с песней в папке sounds с расширением wav
-   * @param volumeIndex Громкость проигрываемой песни
-   * @throws UnsupportedAudioFileException Если некорректный формат(например mp3).
-   * @throws IOException Если проблемы с чтением файла.
-   * @throws LineUnavailableException Если запрашиваемый тип медиалинии (Line) не может быть
-   *     использован.
-   */
-  void playBackgroundMusic(String soundFile, int volumeIndex)
-      throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-    URL url = getClass().getResource("/sounds/" + soundFile);
-    audioInputStream = AudioSystem.getAudioInputStream(url);
-    clip = AudioSystem.getClip();
-    clip.open(audioInputStream);
-    setVolume(volumeLevels[volumeIndex]);
-    clip.loop(Clip.LOOP_CONTINUOUSLY);
-    clip.start();
-  }
-
-  /**
-   * Метод умтанавливает нужную громкость.
-   * @param volumeLevel Громкость.
-   */
-  public void setVolume(float volumeLevel) {
-    if (clip != null && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-      FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-      float range = gainControl.getMaximum() - gainControl.getMinimum();
-      float gain = (range * volumeLevel) + gainControl.getMinimum();
-      gainControl.setValue(gain);
-    }
-  }
-
+  
   /**
    * Метод, обрабатывающий выбор пользователя в диалоговом окне для выбора расстановки.
    *
