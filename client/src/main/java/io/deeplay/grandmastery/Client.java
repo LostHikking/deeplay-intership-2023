@@ -2,8 +2,6 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HumanPlayer;
@@ -39,7 +37,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 
 @Slf4j
 public class Client {
@@ -62,13 +59,20 @@ public class Client {
    */
   public Client(UI ui) {
     this.ui = ui;
-    if (ui instanceof Gui) {
-      setupLogging((Gui) ui);
-    }
     connect();
     reconnect = false;
   }
 
+  /**
+   * Метод который отправляет логи в gui.
+   * @param log Лог
+   */
+  public void addGuiLog(String log) {
+    if (ui instanceof Gui) {
+      ((Gui) ui).addLog(log);
+    }
+  }
+  
   /**
    * Метод для подключения клиента к серверу. Если подключение не возможно, будет повторная попытка
    * через {@code TIME_RECONNECTION} мс. И так до тех пор, пока не будет успешного подключения.
@@ -84,9 +88,11 @@ public class Client {
 
         this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
         log.info("Соединение с сервером установлено.");
+        addGuiLog("Соединение с сервером установлено.");
         break;
       } catch (IOException e) {
         log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
+        addGuiLog("Сервер недоступен. Попробуем снова через некоторое время...");
         waitAndReconnect();
       }
     }
@@ -240,6 +246,7 @@ public class Client {
       } catch (GameException e) {
         if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
           log.error("Игра уже завершилась!");
+          addGuiLog("Игра уже завершилась!");
           return;
         }
       }
@@ -253,26 +260,6 @@ public class Client {
     }
   }
 
-  /**
-   * Метод, настраивающий логи для GUI.
-   *
-   * @param gui Графический интерфейс.
-   */
-  void setupLogging(Gui gui) {
-    // Если используется GUI, добавьте GuiAppender в список аппендеров
-    ch.qos.logback.classic.Logger rootLogger =
-        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-    LoggerContext loggerContext = rootLogger.getLoggerContext();
-
-    // Создайте и добавьте GuiAppender
-    GuiAppender guiAppender = new GuiAppender(gui);
-    guiAppender.setContext(loggerContext);
-    guiAppender.start();
-    rootLogger.addAppender(guiAppender);
-
-    // Выведите внутреннее состояние
-    StatusPrinter.print(loggerContext);
-  }
 
   /** Метод запускает клиент. */
   public static void main(String[] args) {
@@ -280,6 +267,7 @@ public class Client {
     try {
       new Client(ui).run();
     } catch (Exception e) {
+      log.error("Ошибка во время работы клиента", e);
       log.error("Ошибка во время работы клиента", e);
     } finally {
       if (!MAKE_MOVE.isShutdown()) {
