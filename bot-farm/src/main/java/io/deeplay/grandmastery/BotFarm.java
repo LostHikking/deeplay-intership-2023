@@ -37,8 +37,8 @@ public class BotFarm {
    *
    * @throws IllegalStateException Ошибка на сервере
    */
-  public void run(int port) {
-    try (var serverSocket = new ServerSocket(port)) {
+  public void run() {
+    try (var serverSocket = new ServerSocket(2023)) {
       log.info("Server run");
       while (!serverSocket.isClosed()) {
         var socket = serverSocket.accept();
@@ -56,7 +56,12 @@ public class BotFarm {
     }
   }
 
-  private static Map<String, Class<? extends Player>> loadPlayers() {
+  /**
+   * Функция возвращает доступных игроков.
+   *
+   * @return Map игроков
+   */
+  public static Map<String, Class<? extends Player>> loadPlayers() {
     var result = new HashMap<String, Class<? extends Player>>();
 
     var classes = new Reflections("io.deeplay.grandmastery.bots").getSubTypesOf(Player.class);
@@ -67,13 +72,14 @@ public class BotFarm {
     return result;
   }
 
-  private void build() {
+  /** Функция запускает задачи. */
+  public static void build() {
     for (var implClass : ServiceLoader.load(ITask.class)) {
       implClass.init();
     }
   }
 
   public static void main(String[] args) {
-    new BotFarm().run(2023);
+    new BotFarm().run();
   }
 }

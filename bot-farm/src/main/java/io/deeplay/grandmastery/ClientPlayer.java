@@ -11,14 +11,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Getter
+@Setter
 @Slf4j
 public class ClientPlayer extends Player {
-  private final Socket socket;
-  private final BufferedReader in;
-  private final BufferedWriter out;
+  private Socket socket;
+  private BufferedReader in;
+  private BufferedWriter out;
 
   /**
    * Конструктор.

@@ -10,11 +10,7 @@ import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RunGame implements Runnable {
-  private final Player player;
-  private final ClientPlayer clientPlayer;
-  private final Board board;
-
+public record RunGame(Player player, ClientPlayer clientPlayer, Board board) implements Runnable {
   /**
    * Конструктор.
    *

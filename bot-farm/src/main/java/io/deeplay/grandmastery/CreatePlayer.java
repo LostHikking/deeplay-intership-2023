@@ -35,6 +35,16 @@ public class CreatePlayer implements Runnable {
 
   @Override
   public void run() {
+    BotFarm.PLAYERS.execute(getGame());
+  }
+
+  /**
+   * Метод создаёт игру.
+   *
+   * @return Игра
+   * @throws IllegalStateException Ошибка при создании игры
+   */
+  public RunGame getGame() {
     try {
       var req = ConversationService.deserialize(in.readLine(), CreateFarmGameRequest.class);
       var playerClass = BotFarm.playerList.get(req.getName());
@@ -46,18 +56,16 @@ public class CreatePlayer implements Runnable {
 
       var json = ConversationService.serialize(new CreateFarmGameResponse("OK"));
       BotUtils.send(out, json);
-
-      BotFarm.PLAYERS.execute(
-          new RunGame(
-              player,
-              new ClientPlayer(socket, in, out, player.getColor().getOpposite()),
-              Boards.getBoardFromString(req.getBoard())));
+      return new RunGame(
+          player,
+          new ClientPlayer(socket, in, out, player.getColor().getOpposite()),
+          Boards.getBoardFromString(req.getBoard()));
     } catch (IOException
         | NoSuchMethodException
         | InvocationTargetException
         | InstantiationException
         | IllegalAccessException e) {
-      throw new RuntimeException(e);
+      throw new IllegalStateException(e);
     }
   }
 }

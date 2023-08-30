@@ -23,17 +23,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Getter
+@Setter
 @Slf4j
 public class FarmPlayer extends Player {
   private static final String HOST = "localhost";
   private static final int PORT = 2023;
 
-  private final Socket socket;
-  private final BufferedReader in;
-  private final BufferedWriter out;
+  private Socket socket;
+  private BufferedReader in;
+  private BufferedWriter out;
   private final ChessType chessType;
 
   /**
@@ -46,17 +48,8 @@ public class FarmPlayer extends Player {
    */
   public FarmPlayer(String name, Color color, ChessType chessType) {
     super(name, color);
-    try {
-      socket = new Socket(HOST, PORT);
-      in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
-      out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
-      this.chessType = chessType;
-
-      log.info("Создали FarmPlayer - " + name);
-    } catch (IOException e) {
-      log.error("Ошибка при создании игрока - " + name);
-      throw new IllegalStateException(e);
-    }
+    this.chessType = chessType;
+    log.info("Создали FarmPlayer - " + name);
   }
 
   /**
@@ -67,6 +60,15 @@ public class FarmPlayer extends Player {
    * @throws IllegalStateException Ошибка при создании бота на фабрике
    */
   public void init(Board board) throws QueryException {
+    try {
+      socket = new Socket(HOST, PORT);
+      in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
+      out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
+    } catch (IOException e) {
+      log.error("Ошибка при создании игрока - " + name);
+      throw new IllegalStateException(e);
+    }
+
     var status =
         query(
                 new CreateFarmGameRequest(name, color, chessType, Boards.getStringFromBoard(board)),

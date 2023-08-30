@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Randomus extends Player {
   public Randomus(Color color) {
-    super("Bot", color);
+    super("Randomus", color);
   }
 
   @Override
