@@ -285,7 +285,7 @@ public class Gui implements UI {
   /** Метод, делающий наш фрейм видимым. */
   public void showGui() {
     guiContainer.showGameFrame();
-    currentVolumeIndex = 1;
+    currentVolumeIndex = 0;
     try {
       playBackgroundMusic("backgroundMusic.wav", currentVolumeIndex);
     } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
