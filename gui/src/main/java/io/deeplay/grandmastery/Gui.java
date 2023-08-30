@@ -25,6 +25,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.sound.sampled.AudioInputStream;
@@ -69,7 +70,7 @@ public class Gui implements UI {
     guiContainer.getFrame().repaint();
   }
 
-  /** Конструктор для GUI. */
+  /** Конструктор для GUI. Булева showGui отвечает за показ GUI(выводить или нет)*/
   public Gui(boolean showGui) {
     wantsSurrender = false;
     firstClick = null;
@@ -79,7 +80,7 @@ public class Gui implements UI {
     activateVolumePanel();
     monitor = new Object();
     setMovingPlayer("бел");
-    if (showGui == true) {
+    if (showGui) {
       showGui();
     }
   }
@@ -128,7 +129,8 @@ public class Gui implements UI {
       "/volumeIcons/volume0.png", "/volumeIcons/volume1.png", "/volumeIcons/volume2.png"
     };
     volumeButton.setIcon(
-        new ImageIcon(getClass().getResource(volumeImageNames[currentVolumeIndex])));
+        new ImageIcon(Objects.requireNonNull(
+                        getClass().getResource(volumeImageNames[currentVolumeIndex]))));
     // Создание слушателя событий для кнопки.
     setVolume(volumeLevels[currentVolumeIndex]);
     volumeButton.addActionListener(
@@ -144,7 +146,9 @@ public class Gui implements UI {
 
             // Меняем иконку кнопки на соответствующую текущему индексу громкости.
             volumeButton.setIcon(
-                new ImageIcon(getClass().getResource(volumeImageNames[currentVolumeIndex])));
+                new ImageIcon(
+                        Objects.requireNonNull(
+                                getClass().getResource(volumeImageNames[currentVolumeIndex]))));
           }
         });
   }
@@ -157,19 +161,17 @@ public class Gui implements UI {
   @Override
   public ChessType selectChessType() {
     int choice = guiContainer.showChessTypeSelectionWindow();
-    ChessType selectedChessType;
-    switch (choice) {
-      case 0:
+    ChessType selectedChessType = switch (choice) {
+      case 0 -> {
         playSound("clickSound.wav", currentVolumeIndex);
-        selectedChessType = ChessType.CLASSIC;
-        break;
-      case 1:
+        yield ChessType.CLASSIC;
+      }
+      case 1 -> {
         playSound("clickSound.wav", currentVolumeIndex);
-        selectedChessType = ChessType.FISHERS;
-        break;
-      default:
-        selectedChessType = null;
-    }
+        yield ChessType.FISHERS;
+      }
+      default -> null;
+    };
     return selectedChessType;
   }
 
@@ -310,7 +312,7 @@ public class Gui implements UI {
     String messageBuilder =
         color.toString() + ": " + LongAlgebraicNotation.moveToString(move) + "\n";
     String lastLine = guiContainer.getLastLine();
-    if (move != null && !messageBuilder.equals(lastLine)) {
+    if (!messageBuilder.equals(lastLine)) {
       guiContainer.printMessage(messageBuilder);
     }
   }
@@ -555,6 +557,7 @@ public class Gui implements UI {
             () -> {
               try {
                 URL soundUrl = getClass().getResource("/sounds/" + soundFile);
+                  assert soundUrl != null;
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundUrl);
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioInputStream);

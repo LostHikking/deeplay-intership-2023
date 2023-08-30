@@ -151,14 +151,14 @@ public class GuiContainer {
       URL fontUrl = getClass().getResource(fontResourcePath);
 
       if (fontUrl == null) {
-        System.err.println("Не удается загрузить файл шрифта.");
+        log.error("Не удается загрузить файл шрифта.");
         return;
       }
 
       // Получаем InputStream на основе URL
       try (InputStream fontStream = fontUrl.openStream()) {
         if (fontStream == null) {
-          System.err.println("Не удается загрузить файл шрифта.");
+          log.error("Не удается загрузить файл шрифта.");
           return;
         }
 

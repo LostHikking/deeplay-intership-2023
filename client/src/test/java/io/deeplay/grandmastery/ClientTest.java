@@ -28,7 +28,6 @@ import java.net.ServerSocket;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
@@ -73,16 +72,14 @@ public class ClientTest {
         () -> assertEquals("Соединение с сервером установлено.", logs.get(0).getMessage()),
         () -> assertFalse(client.reconnect));
   }
-
-  @Disabled
+  
   @Test
   public void failedConnectionTest() throws Exception {
     setupLogCheck();
-    Thread connectThread = new Thread(() -> client = new Client(new Gui(false)));
+    Thread connectThread = new Thread(() -> client = new Client(mockUi));
     connectThread.start();
     Thread.sleep(2000);
     runTestServer();
-
     connectThread.join();
 
     List<ILoggingEvent> logs = listAppender.list;

@@ -47,6 +47,7 @@ public class Client {
   private static final String HOST = "localhost";
   private static final int PORT = 8080;
   private static final int TIME_RECONNECTION = 5000;
+  
   protected final UI ui;
   protected ClientController clientController;
   protected final GameHistory gameHistory = new GameHistory();
@@ -66,6 +67,16 @@ public class Client {
   }
   
   /**
+   * Метод для отправки сообщений в UI.
+   * @param message Сообщение.
+   */
+  public void printEventMessage(String message) {
+    if (ui != null) {
+      ui.printEventMessage(message);
+    }
+  }
+  
+  /**
    * Метод для подключения клиента к серверу. Если подключение не возможно, будет повторная попытка
    * через {@code TIME_RECONNECTION} мс. И так до тех пор, пока не будет успешного подключения.
    */
@@ -77,14 +88,14 @@ public class Client {
             new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
         BufferedWriter out =
             new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
-
+        
         this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
         log.info("Соединение с сервером установлено.");
-        clientController.printEventMessage("Соединение с сервером установлено.");
+        printEventMessage("Соединение с сервером установлено.");
         break;
       } catch (IOException e) {
         log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
-        clientController.printEventMessage("Сервер недоступен. " 
+        printEventMessage("Сервер недоступен. " 
                   + "Попробуем снова через некоторое время...");
         waitAndReconnect();
       }
@@ -239,7 +250,7 @@ public class Client {
       } catch (GameException e) {
         if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
           log.error("Игра уже завершилась!");
-          clientController.printEventMessage("Игра уже завершилась!");
+          printEventMessage("Игра уже завершилась!");
           return;
         }
       }
