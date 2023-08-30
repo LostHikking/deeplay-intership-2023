@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -32,8 +34,10 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /** Класс-контейнер для графического интерфейса, хранит в себе компоненты. */
+@Slf4j
 @Getter
 public class GuiContainer {
 
@@ -54,7 +58,7 @@ public class GuiContainer {
   private JTextArea logTextArea;
   private final Color originalBlackColor = new Color(81, 42, 42);
   private final Color originalWhiteColor = new Color(124, 76, 62);
-  private ArrayList<String> logs;
+  private List<String> eventMessages;
 
   public GuiContainer() {
     createGameGui();
@@ -62,7 +66,7 @@ public class GuiContainer {
 
   /** Метод для инициализации всех компонент графического интерфейса. */
   private void createGameGui() {
-    logs = new ArrayList<>();
+    eventMessages = new ArrayList<>();
     loadCustomFont("/fonts/kanit.ttf");
     // Создание окна и установка его позиции
     frame = new JFrame("Grandmastery");
@@ -174,10 +178,10 @@ public class GuiContainer {
         UIManager.getLookAndFeelDefaults().put("TextArea.foreground", customColor);
         UIManager.getLookAndFeelDefaults().put("TextField.foreground", customColor);
       } catch (IOException e) {
-        e.printStackTrace();
+        log.error("Проблемы с доступом к файлу со шрифтами.");
       }
     } catch (FontFormatException e) {
-      e.printStackTrace();
+      log.error("Неверный формат шрифтов.");
     }
   }
 
@@ -419,14 +423,14 @@ public class GuiContainer {
 
     JTextArea logContentArea = new JTextArea();
 
-    if (!logs.isEmpty()) {
+    if (!eventMessages.isEmpty()) {
       StringBuilder logStringBuilder = new StringBuilder();
-      for (String log : logs) {
+      for (String log : eventMessages) {
         logStringBuilder.append(log);
         logStringBuilder.append(System.lineSeparator());
       }
       logContentArea.setText(logStringBuilder.toString());
-      updateLog();
+      updateEventMessages();
     }
 
     logContentArea.setEditable(false);
@@ -439,20 +443,25 @@ public class GuiContainer {
     logDialog.setVisible(true);
   }
 
-  // Обновляет текст logTextArea на основе записей логов в ArrayList
-  void updateLog() {
-    if (!logs.isEmpty()) {
-      String lastLog = logs.get(logs.size() - 1);
+  /**
+   * Обновляет сообщения.
+   */
+  void updateEventMessages() {
+    if (!eventMessages.isEmpty()) {
+      String lastLog = eventMessages.get(eventMessages.size() - 1);
       logTextArea.setText(lastLog);
     } else {
       logTextArea.setText("");
     }
   }
 
-  // Добавить новую запись лога и обновить logTextArea
-  public void addLog(String log) {
-    logs.add(log);
-    updateLog();
+  /**
+   * Добавляет новое сообщение в logTextArea.
+   * @param message сообщение
+   */
+  public void addEventMessage(String message) {
+    eventMessages.add(message);
+    updateEventMessages();
   }
 
   /**
@@ -743,8 +752,9 @@ public class GuiContainer {
     if (text.isEmpty()) {
       return null;
     }
-    String[] lines = text.split("\n");
-    return lines[lines.length - 1].trim() + "\n";
+    String[] linesArray = text.split("\n");
+    ArrayList<String> lines = new ArrayList<>(Arrays.asList(linesArray));
+    return lines.get(lines.size() - 1).trim() + "\n";
   }
 
   /**

@@ -236,7 +236,8 @@ public class ConsoleUi implements UI {
   }
 
   @Override
-  public void addLog(String log) {
+  public void printEventMessage(String message) {
+    printStream.println(message);
   }
 
   /** Метод для вывода сообщения о некорректном ходе на консоль. */

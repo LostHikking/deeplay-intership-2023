@@ -60,11 +60,11 @@ class GuiContainerTest {
   @Test
   void testAddLogWithEmptyLogs() {
     init();
-    guiContainer.addLog("Test log");
+    guiContainer.addEventMessage("Test log");
     String lastLog =
-        guiContainer.getLogs().isEmpty()
+        guiContainer.getEventMessages().isEmpty()
             ? ""
-            : guiContainer.getLogs().get(guiContainer.getLogs().size() - 1);
+            : guiContainer.getEventMessages().get(guiContainer.getEventMessages().size() - 1);
 
     assertEquals("Test log", lastLog);
     assertEquals("Test log", guiContainer.getLogTextArea().getText());
@@ -73,13 +73,13 @@ class GuiContainerTest {
   @Test
   void testAddLogWithNonEmptyLogs() {
     init();
-    guiContainer.addLog("First log");
-    guiContainer.addLog("Second log");
+    guiContainer.addEventMessage("First log");
+    guiContainer.addEventMessage("Second log");
 
     String lastLog =
-        guiContainer.getLogs().isEmpty()
+        guiContainer.getEventMessages().isEmpty()
             ? ""
-            : guiContainer.getLogs().get(guiContainer.getLogs().size() - 1);
+            : guiContainer.getEventMessages().get(guiContainer.getEventMessages().size() - 1);
 
     assertEquals("Second log", lastLog);
     assertEquals("Second log", guiContainer.getLogTextArea().getText());
@@ -88,9 +88,9 @@ class GuiContainerTest {
   @Test
   void testUpdateLogWithEmptyLogs() {
     init();
-    guiContainer.addLog("Test log");
-    guiContainer.getLogs().clear();
-    guiContainer.updateLog();
+    guiContainer.addEventMessage("Test log");
+    guiContainer.getEventMessages().clear();
+    guiContainer.updateEventMessages();
 
     assertEquals("", guiContainer.getLogTextArea().getText());
   }
@@ -98,9 +98,9 @@ class GuiContainerTest {
   @Test
   void testUpdateLogWithNonEmptyLogs() {
     init();
-    guiContainer.addLog("First log");
-    guiContainer.addLog("Second log");
-    guiContainer.updateLog();
+    guiContainer.addEventMessage("First log");
+    guiContainer.addEventMessage("Second log");
+    guiContainer.updateEventMessages();
 
     assertEquals("Second log", guiContainer.getLogTextArea().getText());
   }

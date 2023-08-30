@@ -41,7 +41,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Setter
 public class Gui implements UI {
@@ -289,7 +291,7 @@ public class Gui implements UI {
     try {
       playBackgroundMusic("backgroundMusic.wav", currentVolumeIndex);
     } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-      e.printStackTrace();
+      log.error("Возникла ошибка при воспроизведении музыки.");
     }
   }
 
@@ -337,12 +339,12 @@ public class Gui implements UI {
   }
 
   /**
-   * Метод добавления логов в gui.
-   * @param log Лог
+   * Метод добавления событий в gui.
+   * @param message событие
    */
   @Override
-  public void addLog(String log) {
-    guiContainer.addLog(log);
+  public void printEventMessage(String message) {
+    guiContainer.addEventMessage(message);
   }
 
   /** Метод для вывода справки. */
@@ -568,7 +570,7 @@ public class Gui implements UI {
 
                 clip.start();
               } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-                e.printStackTrace();
+                log.error("Возникла ошибка при воспроизведении звука.");
               }
             })
         .start();

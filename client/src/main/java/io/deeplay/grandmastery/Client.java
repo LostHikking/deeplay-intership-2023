@@ -36,8 +36,10 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
 public class Client {
   private static final ExecutorService MAKE_MOVE = Executors.newSingleThreadExecutor();
@@ -62,15 +64,7 @@ public class Client {
     connect();
     reconnect = false;
   }
-
-  /**
-   * Метод который отправляет логи в gui.
-   * @param log Лог
-   */
-  public void addUiLog(String log) {
-    ui.addLog(log);
-  }
-
+  
   /**
    * Метод для подключения клиента к серверу. Если подключение не возможно, будет повторная попытка
    * через {@code TIME_RECONNECTION} мс. И так до тех пор, пока не будет успешного подключения.
@@ -86,11 +80,12 @@ public class Client {
 
         this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
         log.info("Соединение с сервером установлено.");
-        addUiLog("Соединение с сервером установлено.");
+        clientController.printEventMessage("Соединение с сервером установлено.");
         break;
       } catch (IOException e) {
         log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
-        addUiLog("Сервер недоступен. Попробуем снова через некоторое время...");
+        clientController.printEventMessage("Сервер недоступен. " 
+                  + "Попробуем снова через некоторое время...");
         waitAndReconnect();
       }
     }
@@ -244,7 +239,7 @@ public class Client {
       } catch (GameException e) {
         if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
           log.error("Игра уже завершилась!");
-          addUiLog("Игра уже завершилась!");
+          clientController.printEventMessage("Игра уже завершилась!");
           return;
         }
       }

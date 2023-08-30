@@ -54,4 +54,8 @@ public record ClientController(ClientDao clientDao, UI ui) {
   public boolean isClosed() {
     return clientDao.isClosed();
   }
+
+  public void printEventMessage(String message) {
+    ui.printEventMessage(message);
+  }
 }

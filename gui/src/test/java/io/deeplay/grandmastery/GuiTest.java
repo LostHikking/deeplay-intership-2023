@@ -213,11 +213,11 @@ class GuiTest {
   }  
   
   @Test
-  public void testAddLog() {
+  public void testPrintEventMessage() {
     init();
     
     String testMessage = "Test message";
-    gui.addLog(testMessage);
+    gui.printEventMessage(testMessage);
 
     String actualContent = guiContainer.getLogTextArea().getText();
 

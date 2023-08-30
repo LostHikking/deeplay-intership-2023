@@ -33,5 +33,5 @@ public interface UI {
 
   void close();
 
-  void addLog(String log);
+  void printEventMessage(String message);
 }

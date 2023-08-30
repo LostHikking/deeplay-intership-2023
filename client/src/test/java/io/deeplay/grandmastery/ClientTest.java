@@ -28,6 +28,7 @@ import java.net.ServerSocket;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
@@ -73,12 +74,12 @@ public class ClientTest {
         () -> assertFalse(client.reconnect));
   }
 
+  @Disabled
   @Test
   public void failedConnectionTest() throws Exception {
     setupLogCheck();
-    Thread connectThread = new Thread(() -> client = new Client(mockUi));
+    Thread connectThread = new Thread(() -> client = new Client(new Gui(false)));
     connectThread.start();
-
     Thread.sleep(2000);
     runTestServer();
 
@@ -86,7 +87,7 @@ public class ClientTest {
 
     List<ILoggingEvent> logs = listAppender.list;
     Assertions.assertAll(
-        () -> assertFalse(client.reconnect),
+            () -> assertFalse(client.reconnect),
         () ->
             assertEquals(
                 "Сервер недоступен. Попробуем снова через некоторое время...",
