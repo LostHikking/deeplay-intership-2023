@@ -32,4 +32,6 @@ public interface UI {
   boolean answerDraw() throws IOException;
 
   void close();
+
+  void addLog(String log);
 }

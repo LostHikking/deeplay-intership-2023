@@ -67,12 +67,10 @@ public class Client {
    * Метод который отправляет логи в gui.
    * @param log Лог
    */
-  public void addGuiLog(String log) {
-    if (ui instanceof Gui) {
-      ((Gui) ui).addLog(log);
-    }
+  public void addUiLog(String log) {
+    ui.addLog(log);
   }
-  
+
   /**
    * Метод для подключения клиента к серверу. Если подключение не возможно, будет повторная попытка
    * через {@code TIME_RECONNECTION} мс. И так до тех пор, пока не будет успешного подключения.
@@ -88,11 +86,11 @@ public class Client {
 
         this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
         log.info("Соединение с сервером установлено.");
-        addGuiLog("Соединение с сервером установлено.");
+        addUiLog("Соединение с сервером установлено.");
         break;
       } catch (IOException e) {
         log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
-        addGuiLog("Сервер недоступен. Попробуем снова через некоторое время...");
+        addUiLog("Сервер недоступен. Попробуем снова через некоторое время...");
         waitAndReconnect();
       }
     }
@@ -246,7 +244,7 @@ public class Client {
       } catch (GameException e) {
         if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
           log.error("Игра уже завершилась!");
-          addGuiLog("Игра уже завершилась!");
+          addUiLog("Игра уже завершилась!");
           return;
         }
       }

@@ -336,6 +336,11 @@ public class Gui implements UI {
     JOptionPane.showMessageDialog(null, message, "Результат игры", JOptionPane.INFORMATION_MESSAGE);
   }
 
+  /**
+   * Метод добавления логов в gui.
+   * @param log Лог
+   */
+  @Override
   public void addLog(String log) {
     guiContainer.addLog(log);
   }
