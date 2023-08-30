@@ -36,8 +36,10 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
 public class Client {
   private static final ExecutorService MAKE_MOVE = Executors.newSingleThreadExecutor();
@@ -45,7 +47,7 @@ public class Client {
   private static final String HOST = "localhost";
   private static final int PORT = 8080;
   private static final int TIME_RECONNECTION = 5000;
-
+  
   protected final UI ui;
   protected ClientController clientController;
   protected final GameHistory gameHistory = new GameHistory();
@@ -63,7 +65,17 @@ public class Client {
     connect();
     reconnect = false;
   }
-
+  
+  /**
+   * Метод для отправки сообщений в UI.
+   * @param message Сообщение.
+   */
+  public void printEventMessage(String message) {
+    if (ui != null) {
+      ui.printEventMessage(message);
+    }
+  }
+  
   /**
    * Метод для подключения клиента к серверу. Если подключение не возможно, будет повторная попытка
    * через {@code TIME_RECONNECTION} мс. И так до тех пор, пока не будет успешного подключения.
@@ -76,12 +88,15 @@ public class Client {
             new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
         BufferedWriter out =
             new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
-
+        
         this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
         log.info("Соединение с сервером установлено.");
+        printEventMessage("Соединение с сервером установлено.");
         break;
       } catch (IOException e) {
         log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
+        printEventMessage("Сервер недоступен. " 
+                  + "Попробуем снова через некоторое время...");
         waitAndReconnect();
       }
     }
@@ -235,6 +250,7 @@ public class Client {
       } catch (GameException e) {
         if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
           log.error("Игра уже завершилась!");
+          printEventMessage("Игра уже завершилась!");
           return;
         }
       }
@@ -248,12 +264,14 @@ public class Client {
     }
   }
 
+
   /** Метод запускает клиент. */
   public static void main(String[] args) {
-    UI ui = new Gui();
+    UI ui = new Gui(true);
     try {
       new Client(ui).run();
     } catch (Exception e) {
+      log.error("Ошибка во время работы клиента", e);
       log.error("Ошибка во время работы клиента", e);
     } finally {
       if (!MAKE_MOVE.isShutdown()) {

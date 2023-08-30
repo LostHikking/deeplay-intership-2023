@@ -33,12 +33,11 @@ import org.slf4j.LoggerFactory;
 
 public class ClientTest {
   private static final int PORT = 8080;
-
   private final UI mockUi = mock(UI.class);
   private Client client;
   private ServerSocket server;
   private ListAppender<ILoggingEvent> listAppender;
-
+  
   private void setupLogCheck() {
     Logger clientLogger = (Logger) LoggerFactory.getLogger(Client.class);
     listAppender = new ListAppender<>();
@@ -73,21 +72,19 @@ public class ClientTest {
         () -> assertEquals("Соединение с сервером установлено.", logs.get(0).getMessage()),
         () -> assertFalse(client.reconnect));
   }
-
+  
   @Test
   public void failedConnectionTest() throws Exception {
     setupLogCheck();
     Thread connectThread = new Thread(() -> client = new Client(mockUi));
     connectThread.start();
-
     Thread.sleep(2000);
     runTestServer();
-
     connectThread.join();
 
     List<ILoggingEvent> logs = listAppender.list;
     Assertions.assertAll(
-        () -> assertFalse(client.reconnect),
+            () -> assertFalse(client.reconnect),
         () ->
             assertEquals(
                 "Сервер недоступен. Попробуем снова через некоторое время...",

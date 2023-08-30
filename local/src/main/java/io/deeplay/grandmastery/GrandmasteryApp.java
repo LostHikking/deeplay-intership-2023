@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class GrandmasteryApp {
-  private static final Gui GUI = new Gui();
+  private static Gui GUI;
 
   private static GameController createGameController() throws IOException {
     Player firstPlayer;
@@ -43,10 +43,9 @@ public class GrandmasteryApp {
   }
 
   /**
-   * Это основной метод программы, который отвечает за запуск игры.
-   * Показывается GUI, и доска отображается с начальным положением фигур.
-   * SwingWorker используется для выполнения игровой логики в фоновом потоке, обновляя
-   * GUI в основном потоке.(чтобы не было фризов).
+   * Это основной метод программы, который отвечает за запуск игры. Показывается GUI, и доска
+   * отображается с начальным положением фигур. SwingWorker используется для выполнения игровой
+   * логики в фоновом потоке, обновляя GUI в основном потоке.(чтобы не было фризов).
    *
    * @param args аргументы
    */
@@ -54,9 +53,9 @@ public class GrandmasteryApp {
     SwingUtilities.invokeLater(
         () -> {
           try {
+            GUI = new Gui(true);
             GameController gameController = createGameController();
             gameController.beginPlay(GUI.selectChessType());
-            GUI.showGui();
             GUI.showBoard(gameController.getBoard(), Color.WHITE);
 
             SwingWorker<Void, Void> worker =
@@ -65,8 +64,10 @@ public class GrandmasteryApp {
                   protected Void doInBackground() {
                     while (!gameController.isGameOver()) {
                       try {
-                        GUI.setMovingPlayer(gameController.getCurrentPlayer().getName());
                         gameController.nextMove();
+                        GUI.showMove(
+                            gameController.getOpponentPlayer().getLastMove(),
+                            gameController.getOpponentPlayer().getColor());
                         publish(); // Обновляем интерфейс в основном потоке
                       } catch (GameException e) {
                         GUI.incorrectMove();
@@ -79,8 +80,6 @@ public class GrandmasteryApp {
                   protected void process(List<Void> chunks) {
                     GUI.showBoard(
                         gameController.getBoard(), gameController.getCurrentPlayer().getColor());
-                      GUI.showMove(gameController.getOpponentPlayer().getLastMove(),
-                              gameController.getOpponentPlayer().getColor());
                   }
 
                   @Override

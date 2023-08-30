@@ -235,6 +235,11 @@ public class ConsoleUi implements UI {
     printStream.close();
   }
 
+  @Override
+  public void printEventMessage(String message) {
+    printStream.println(message);
+  }
+
   /** Метод для вывода сообщения о некорректном ходе на консоль. */
   @Override
   public void incorrectMove() {

@@ -54,4 +54,5 @@ public record ClientController(ClientDao clientDao, UI ui) {
   public boolean isClosed() {
     return clientDao.isClosed();
   }
+
 }
