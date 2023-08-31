@@ -79,6 +79,11 @@ public class HashBoard extends Board {
   }
 
   @Override
+  public void clearMoves() {
+    pieces.values().forEach(Piece::clearMoves);
+  }
+
+  @Override
   public List<Position> getAllPiecePositionByColor(Color color) {
     return pieces.entrySet().stream()
         .filter(entry -> entry.getValue().getColor() == color)

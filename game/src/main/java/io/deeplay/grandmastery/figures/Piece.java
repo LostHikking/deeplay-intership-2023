@@ -18,10 +18,17 @@ public abstract class Piece {
   private final Color color;
   private boolean isMoved;
   private FigureType figureType;
+  protected List<Move> moves;
 
+  /**
+   * Конструктор для создания игровой фигуры определенного цвета.
+   *
+   * @param color цвет игровой фигуры.
+   */
   public Piece(Color color) {
     this.color = color;
     isMoved = false;
+    moves = null;
   }
 
   /**
@@ -73,11 +80,22 @@ public abstract class Piece {
    *
    * @param board доска
    * @param move ход
+   * @param withKingCheck флаг, который включает или отключает проверку взятия короля
    * @return true, если фигура может выполнить указанный ход, иначе false
    */
   public abstract boolean canMove(Board board, Move move, boolean withKingCheck);
 
+  /**
+   * Проверяет, может ли фигура выполнить ход на доске.
+   *
+   * @param board доска
+   * @param move ход
+   * @return true, если фигура может выполнить указанный ход, иначе false
+   */
   public boolean canMove(Board board, Move move) {
+    if (moves != null && moves.contains(move)) {
+      return true;
+    }
     return canMove(board, move, true);
   }
 
@@ -88,7 +106,7 @@ public abstract class Piece {
    * @param position позиция фигуры на доске
    * @return {@code List<Move>} список всех возможных ходов
    */
-  public abstract List<Move> generateAllMoves(Board board, Position position);
+  protected abstract List<Move> generateAllMoves(Board board, Position position);
 
   /**
    * Получает все возможные ходы для фигуры с указанной позиции на доске.
@@ -102,7 +120,15 @@ public abstract class Piece {
     if (board.getPiece(position) != this) {
       return Collections.emptyList();
     }
-    return generateAllMoves(board, position);
+
+    if (moves == null) {
+      moves = generateAllMoves(board, position);
+    }
+    return moves;
+  }
+
+  public void clearMoves() {
+    moves = null;
   }
 
   @Override

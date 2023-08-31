@@ -59,7 +59,7 @@ public class GrandmasteryApp {
             GUI.showBoard(gameController.getBoard(), Color.WHITE);
 
             SwingWorker<Void, Void> worker =
-                new SwingWorker<Void, Void>() {
+                new SwingWorker<>() {
                   @Override
                   protected Void doInBackground() {
                     while (!gameController.isGameOver()) {

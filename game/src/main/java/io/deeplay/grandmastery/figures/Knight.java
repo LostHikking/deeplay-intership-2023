@@ -34,7 +34,7 @@ public class Knight extends Piece {
   }
 
   @Override
-  public List<Move> generateAllMoves(Board board, Position position) {
+  protected List<Move> generateAllMoves(Board board, Position position) {
     var moveList = new ArrayList<Move>();
 
     moveList.add(Figures.getMoveByPositionAndDeltas(position, -2, -1));

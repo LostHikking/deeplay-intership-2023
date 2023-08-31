@@ -7,13 +7,14 @@ import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.listeners.GameListener;
 import io.deeplay.grandmastery.utils.Boards;
+import lombok.Getter;
 
 public class Game implements GameListener {
-  private GameState gameState;
+  @Getter private GameState gameState;
 
   private final Board board = new HashBoard();
 
-  private boolean gameOver;
+  @Getter private boolean gameOver;
 
   @Override
   public void startup(Board board) throws GameException {
@@ -40,6 +41,7 @@ public class Game implements GameListener {
       throw GameErrorCode.IMPOSSIBLE_MOVE.asException();
     }
     gameState = gameState == GameState.WHITE_MOVE ? GameState.BLACK_MOVE : GameState.WHITE_MOVE;
+    board.clearMoves();
   }
 
   @Override
@@ -61,13 +63,5 @@ public class Game implements GameListener {
     Board copyBoard = new HashBoard();
     Boards.copyBoard(board).accept(copyBoard);
     return copyBoard;
-  }
-
-  public GameState getGameState() {
-    return gameState;
-  }
-
-  public boolean isGameOver() {
-    return gameOver;
   }
 }
