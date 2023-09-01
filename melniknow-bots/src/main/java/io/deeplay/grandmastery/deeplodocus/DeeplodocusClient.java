@@ -38,11 +38,7 @@ public class DeeplodocusClient extends Player {
 
   @Override
   public Move createMove() throws GameException {
-    var fen =
-        BotUtils.getFenFromBoard(
-            getBoard(),
-            color,
-            gameHistory);
+    var fen = BotUtils.getFenFromBoard(getBoard(), color, gameHistory);
 
     try (var socket = new Socket(HOST, PORT)) {
       var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));

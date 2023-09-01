@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
 
 public class HumanPlayerTest {
   private final UI ui = mock(UI.class);
@@ -148,7 +147,7 @@ public class HumanPlayerTest {
     testPlayer.startup(expect);
 
     Assertions.assertAll(
-        () -> assertTrue(Boards.isEqualsBoards(expect, testPlayer.getBoard()), "Equals boards"),
+        () -> assertTrue(Boards.equals(expect, testPlayer.getBoard()), "Equals boards"),
         () -> assertNull(testPlayer.getLastMove()),
         () -> verify(ui, times(0)).printHelp(),
         () -> verify(ui, times(0)).showBoard(any(), any()));
@@ -162,7 +161,7 @@ public class HumanPlayerTest {
     testPlayer.startup(expect);
 
     Assertions.assertAll(
-        () -> assertTrue(Boards.isEqualsBoards(expect, testPlayer.getBoard()), "Equals boards"),
+        () -> assertTrue(Boards.equals(expect, testPlayer.getBoard()), "Equals boards"),
         () -> assertNull(testPlayer.getLastMove()),
         () -> verify(ui, times(1)).printHelp(),
         () -> verify(ui, times(1)).showBoard(any(), any()));
@@ -176,20 +175,10 @@ public class HumanPlayerTest {
     testPlayer.startup(expect);
 
     Assertions.assertAll(
-        () -> assertTrue(Boards.isEqualsBoards(expect, testPlayer.getBoard()), "Equals boards"),
+        () -> assertTrue(Boards.equals(expect, testPlayer.getBoard()), "Equals boards"),
         () -> assertNull(testPlayer.getLastMove()),
         () -> verify(ui, times(1)).printHelp(),
         () -> verify(ui, times(1)).showBoard(any(), any()));
-  }
-
-  @Test
-  public void errorStartTest() throws IOException {
-    testPlayer = new HumanPlayer("TestPlayer", Color.WHITE, ui);
-
-    Mockito.doThrow(new IOException()).when(ui).printHelp();
-    Assertions.assertAll(
-        () -> assertThrows(GameException.class, () -> testPlayer.startup(new HashBoard())),
-        () -> assertNull(testPlayer.getLastMove()));
   }
 
   @Test

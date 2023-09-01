@@ -7,6 +7,7 @@ import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.figures.Piece;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -134,7 +135,7 @@ public class Figures {
    * @param endCol Конечная позиция по col
    * @return Есть ли фигура
    */
-  public static boolean hasFigureOnDiagonalBetweenPositions(
+  public static boolean hasNoFigureOnDiagonalBetweenPositions(
       Board board, int startRow, int endRow, int startCol, int endCol) {
     int dx;
     int x = startCol;
@@ -154,9 +155,49 @@ public class Figures {
       x += dx;
       y += dy;
       if (board.getPiece(x, y) != null) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
+  }
+
+  /**
+   * Генерирует список всех ходов на диагонали, доступных для данной позиции.
+   *
+   * @param position Позиция.
+   * @return Список ходов.
+   */
+  public static List<Move> allDiagonalMoves(Position position) {
+    List<Move> listMove = new ArrayList<>();
+    int[] dx = {1, -1, 1, -1};
+    int[] dy = {1, -1, -1, 1};
+
+    for (int dir = 0; dir < 4; dir++) {
+      int x = position.col().value() + dx[dir];
+      int y = position.row().value() + dy[dir];
+      while (0 <= x && x <= 7 && 0 <= y && y <= 7) {
+        listMove.add(new Move(position, new Position(new Column(x), new Row(y)), null));
+        x += dx[dir];
+        y += dy[dir];
+      }
+    }
+
+    return listMove;
+  }
+
+  /**
+   * Генерирует список всех ходов на вертикали и горизонтали, доступных для данной позиции.
+   *
+   * @param position Позиция.
+   * @return Список ходов.
+   */
+  public static List<Move> allVerticalAndHorizontalMoves(Position position) {
+    List<Move> listMove = new ArrayList<>();
+    for (int i = 0; i < 8; i++) {
+      listMove.add(new Move(position, new Position(position.col(), new Row(i)), null));
+      listMove.add(new Move(position, new Position(new Column(i), position.row()), null));
+    }
+
+    return listMove;
   }
 }

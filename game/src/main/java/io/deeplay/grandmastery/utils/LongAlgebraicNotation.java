@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 /**
  * Класс для парсинга ходов в формате длинной алгебраической нотации.
  *
- * <p>Строка хода всегда состоит из 4 или из 5-ти символов.
+ * <p>Строка хода всегда состоит из 4 или из пяти символов.
  *
  * <p>e2e4 - обычный ход.
  *
  * <p>e1g1 - рокировка.
  *
- * <p>e7e8q - превращение пешки (единственный случай 5-ти символьной записи хода).
+ * <p>e7e8q - превращение пешки (единственный случай пяти символьной записи хода).
  *
  * <p>Ходы разделяются запятой.
  */
@@ -40,7 +40,7 @@ public class LongAlgebraicNotation {
    */
   public static boolean validMoves(List<Move> moves, Board board) {
     var copyBoard = new HashBoard();
-    Boards.copyBoard(board).accept(copyBoard);
+    Boards.copy(board).accept(copyBoard);
     Game game = new Game();
     game.startup(copyBoard);
     GameHistory gameHistory = new GameHistory();

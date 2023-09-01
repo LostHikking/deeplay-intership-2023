@@ -113,13 +113,13 @@ class GuiContainerTest {
     assertNotNull(volumePanel, "Панель громкости не должна быть null");
 
     assertEquals(
-            new Rectangle(445, 35, 160, 40),
-            volumePanel.getBounds(),
-            "Границы панели громкости должны быть корректными.");
+        new Rectangle(445, 35, 160, 40),
+        volumePanel.getBounds(),
+        "Границы панели громкости должны быть корректными.");
     assertEquals(
-            new Color(245, 245, 220),
-            volumePanel.getBackground(),
-            "Цвет фона панели громкости должен быть корректным.");
+        new Color(245, 245, 220),
+        volumePanel.getBackground(),
+        "Цвет фона панели громкости должен быть корректным.");
 
     Component[] components = volumePanel.getComponents();
     assertEquals(2, components.length, "Панель громкости должна содержать 2 компонента.");
@@ -137,9 +137,9 @@ class GuiContainerTest {
     assertEquals("Громкость:", soundLabel.getText(), "Текст метки звука должен быть корректным.");
 
     assertEquals(
-            new Dimension(16, 16),
-            volumeButton.getPreferredSize(),
-            "Предпочтительный размер кнопки громкости должен быть корректным.");
+        new Dimension(16, 16),
+        volumeButton.getPreferredSize(),
+        "Предпочтительный размер кнопки громкости должен быть корректным.");
   }
 
   @Test
@@ -184,9 +184,8 @@ class GuiContainerTest {
   @Test
   public void testLoadCustomFont() {
     GuiContainer guiContainer = new GuiContainer();
-    guiContainer.loadCustomFont("/fonts/kanit.ttf");
+    guiContainer.loadCustomFont();
 
-    
     Font labelFont = UIManager.getLookAndFeelDefaults().getFont("Label.font");
     assertNotNull(labelFont);
     Font buttonFont = UIManager.getLookAndFeelDefaults().getFont("Button.font");
@@ -291,12 +290,12 @@ class GuiContainerTest {
     init();
     guiContainer.setLeftNumberLabels();
     String expected = guiContainer.isBlackPlacement() ? "12345678" : "87654321";
-    String actual = new String();
+    StringBuilder actual = new StringBuilder();
     JLabel[] labels = guiContainer.getLeftNumberLabels();
     for (int i = 0; i < 8; i++) {
-      actual += labels[i].getText();
+      actual.append(labels[i].getText());
     }
-    assertEquals(expected, actual);
+    assertEquals(expected, actual.toString());
   }
 
   @Test
@@ -304,13 +303,13 @@ class GuiContainerTest {
     init();
     guiContainer.setTopNumberLabels();
     String expected = guiContainer.isWhitePlacement() ? "abcdefgh" : "hgfedcba";
-    String actual = new String();
+    StringBuilder actual = new StringBuilder();
     guiContainer.setTopNumberLabels();
     JLabel[] labels = guiContainer.getTopNumberLabels();
     for (int i = 0; i < 8; i++) {
-      actual += labels[i].getText();
+      actual.append(labels[i].getText());
     }
-    assertEquals(expected, actual);
+    assertEquals(expected, actual.toString());
   }
 
   @Test
@@ -318,13 +317,13 @@ class GuiContainerTest {
     init();
     guiContainer.setBottomNumberLabels();
     String expected = guiContainer.isWhitePlacement() ? "abcdefgh" : "hgfedcba";
-    String actual = new String();
+    StringBuilder actual = new StringBuilder();
     guiContainer.setBottomNumberLabels();
     JLabel[] labels = guiContainer.getBottomNumberLabels();
     for (int i = 0; i < 8; i++) {
-      actual += labels[i].getText();
+      actual.append(labels[i].getText());
     }
-    assertEquals(expected, actual);
+    assertEquals(expected, actual.toString());
   }
 
   @Test

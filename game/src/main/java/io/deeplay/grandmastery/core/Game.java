@@ -18,7 +18,7 @@ public class Game implements GameListener {
 
   @Override
   public void startup(Board board) throws GameException {
-    Boards.copyBoard(board).accept(this.board);
+    Boards.copy(board).accept(this.board);
     gameState = GameState.WHITE_MOVE;
     gameOver = false;
   }
@@ -61,7 +61,7 @@ public class Game implements GameListener {
    */
   public Board getCopyBoard() {
     Board copyBoard = new HashBoard();
-    Boards.copyBoard(board).accept(copyBoard);
+    Boards.copy(board).accept(copyBoard);
     return copyBoard;
   }
 }
