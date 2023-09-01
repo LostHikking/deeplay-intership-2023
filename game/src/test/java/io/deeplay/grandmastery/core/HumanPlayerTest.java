@@ -173,6 +173,7 @@ public class HumanPlayerTest {
     Board expect = new HashBoard();
     Boards.defaultChess().accept(expect);
     testPlayer.startup(expect);
+    testPlayer.startup(expect);
 
     Assertions.assertAll(
         () -> assertTrue(Boards.equals(expect, testPlayer.getBoard()), "Equals boards"),
