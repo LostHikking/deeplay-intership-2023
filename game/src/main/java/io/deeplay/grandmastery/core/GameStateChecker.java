@@ -57,8 +57,9 @@ public class GameStateChecker {
       for (Move move : piece.getAllMoves(board, position)) {
         Board copyBoard = new HashBoard();
         Boards.copy(board).accept(copyBoard);
+        Piece copyPiece = copyBoard.getPiece(position);
 
-        if (piece.move(copyBoard, move)) {
+        if (copyPiece.move(copyBoard, move)) {
           if (!isCheck(copyBoard, color)) {
             return false;
           }
@@ -123,8 +124,9 @@ public class GameStateChecker {
         for (Move move : allMoves) {
           var copyBoard = new HashBoard();
           Boards.copy(board).accept(copyBoard);
+          Piece copyPiece = copyBoard.getPiece(position);
 
-          if (piece.move(copyBoard, move)) {
+          if (copyPiece.move(copyBoard, move)) {
             if (!isCheck(copyBoard, color)) {
               return false;
             }
