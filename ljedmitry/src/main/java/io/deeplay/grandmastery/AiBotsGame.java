@@ -2,6 +2,7 @@ package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.core.GameController;
+import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
@@ -10,10 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 /** Главный класс, который запускает локальную игру в шахматы. */
 @Slf4j
 public class AiBotsGame {
-  private static final int COUNT_TESTS = 10;
-  private static final boolean WITH_GUI = true;
+  private static final int COUNT_TESTS = 100;
+  private static final boolean WITH_GUI = false;
   private static Gui gui;
 
+  // new HumanPlayer("Dima", Color.BLACK, gui)
+  // new AiPlayer(Color.BLACK)
   /**
    * Локальная игра в шахматы.
    *

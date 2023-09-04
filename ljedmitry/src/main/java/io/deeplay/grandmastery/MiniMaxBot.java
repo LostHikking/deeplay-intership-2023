@@ -17,27 +17,26 @@ import java.util.List;
 import java.util.Map;
 
 public class MiniMaxBot {
+  private static final double MAXIMUM = 1.0;
+  private static final double MINIMUM = -1.0;
+  private static final Map<Integer, Integer> PAWN_PRICE =
+      Map.of(1, 1, 2, 1, 3, 2, 4, 3, 5, 5, 6, 8);
   private static final Map<FigureType, Integer> PIECE_PRICE =
       Map.of(
-          FigureType.PAWN,
-          1,
-          FigureType.BISHOP,
-          3,
           FigureType.KNIGHT,
-          3,
+          288,
+          FigureType.BISHOP,
+          345,
           FigureType.ROOK,
-          5,
+          480,
           FigureType.QUEEN,
-          9,
+          1077,
           FigureType.KING,
           0);
 
   private final Color botColor;
-
   private final int deep;
-
   private final boolean isMax;
-
   private final Map<Move, Double> moveThree;
 
   public MiniMaxBot(PlayerInfo playerInfo, int deep) {
@@ -48,7 +47,8 @@ public class MiniMaxBot {
   }
 
   public Move findBestMove(Board board, GameHistory gameHistory) {
-    return findBestMove(board, gameHistory, botColor, this.deep, -1, 1, this.isMax);
+    moveThree.clear();
+    return findBestMove(board, gameHistory, botColor, this.deep, MINIMUM, MAXIMUM, this.isMax);
   }
 
   private Move findBestMove(
@@ -60,14 +60,16 @@ public class MiniMaxBot {
       double beta,
       boolean isMax) {
     if (deep == 0 || isGameOver(board, color, gameHistory)) {
-      double our_rate = evaluationBoard(board, gameHistory, botColor, color);
-      double opponent_rate = evaluationBoard(board, gameHistory, inversColor(botColor), color);
+      double our_rate = evaluationBoard(board, gameHistory, botColor);
+      double opponent_rate = evaluationBoard(board, gameHistory, inversColor(botColor));
+
       moveThree.put(board.getLastMove(), our_rate - opponent_rate);
       return board.getLastMove();
     }
 
     List<Move> allMoves = getPossibleMoves(board, color);
     Move bestMove = allMoves.get(0);
+    moveThree.put(bestMove, isMax ? MINIMUM : MAXIMUM);
 
     for (Move move : allMoves) {
       double eval = moveThree.get(dfs(board, gameHistory, move, color, deep, alpha, beta, isMax));
@@ -104,9 +106,8 @@ public class MiniMaxBot {
       boolean isMax) {
     Board copyBoard = copyAndMove(move, board);
     GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
-    Color opponentColor = inversColor(color);
 
-    return findBestMove(copyBoard, copyHistory, opponentColor, deep - 1, alpha, beta, !isMax);
+    return findBestMove(copyBoard, copyHistory, inversColor(color), deep - 1, alpha, beta, !isMax);
   }
 
   private GameHistory copyHistoryAndMove(Board board, GameHistory gameHistory) {
@@ -145,20 +146,15 @@ public class MiniMaxBot {
         || GameStateChecker.isDraw(board, gameHistory);
   }
 
-  private double evaluationBoard(
-      Board board, GameHistory gameHistory, Color mainColor, Color currentColor) {
-    if (mainColor == currentColor) {
-      if (GameStateChecker.isMate(board, inversColor(mainColor))) {
-        return 1;
-      }
-    } else {
-      if (GameStateChecker.isMate(board, mainColor)) {
-        return -1;
-      }
+  private double evaluationBoard(Board board, GameHistory gameHistory, Color mainColor) {
+    if (GameStateChecker.isMate(board, inversColor(mainColor))) {
+      return MAXIMUM;
+    } else if (GameStateChecker.isMate(board, mainColor)) {
+      return MINIMUM;
     }
 
     if (GameStateChecker.isDraw(board, gameHistory)) {
-      return evaluationFunc(board, inversColor(mainColor));
+      return 0;
     }
 
     return evaluationFunc(board, mainColor);
@@ -167,7 +163,11 @@ public class MiniMaxBot {
   private double evaluationFunc(Board board, Color color) {
     int sumFigurePrice =
         board.getAllPiecePositionByColor(color).stream()
-            .map(pos -> PIECE_PRICE.get(board.getPiece(pos).getFigureType()))
+            .map(
+                pos ->
+                    board.getPiece(pos).getFigureType() == FigureType.PAWN
+                        ? PAWN_PRICE.get(pos.row().value())
+                        : PIECE_PRICE.get(board.getPiece(pos).getFigureType()))
             .reduce(0, Integer::sum);
 
     return (double) sumFigurePrice / Math.pow(10, countDigit(sumFigurePrice));
