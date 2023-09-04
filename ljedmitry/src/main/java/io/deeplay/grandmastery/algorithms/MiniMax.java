@@ -1,4 +1,4 @@
-package io.deeplay.grandmastery;
+package io.deeplay.grandmastery.algorithms;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MiniMaxBot {
+public class MiniMax implements Algorithm {
   private static final double MAXIMUM = 1.0;
   private static final double MINIMUM = -1.0;
   private static final Map<Integer, Integer> PAWN_PRICE =
@@ -39,7 +39,7 @@ public class MiniMaxBot {
   private final boolean isMax;
   private final Map<Move, Double> moveThree;
 
-  public MiniMaxBot(PlayerInfo playerInfo, int deep) {
+  public MiniMax(PlayerInfo playerInfo, int deep) {
     this.botColor = playerInfo.getColor();
     this.isMax = true;
     this.deep = deep;
