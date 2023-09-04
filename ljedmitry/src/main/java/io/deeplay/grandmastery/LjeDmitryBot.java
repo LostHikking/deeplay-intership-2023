@@ -6,7 +6,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
 
 public class LjeDmitryBot extends Player {
-  private final MiniMaxBot bot = new MiniMaxBot(this, 3);
+  private final MiniMaxBot bot = new MiniMaxBot(this, 2);
 
   /**
    * Конструктор с параметрами.
