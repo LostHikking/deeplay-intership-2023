@@ -18,15 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MiniMax implements Algorithm {
+public class NegaMax implements Algorithm {
   private final Color botColor;
   private final int deep;
-  private final boolean isMax;
   private final Map<Move, Double> moveThree;
 
-  public MiniMax(PlayerInfo playerInfo, int deep) {
+  public NegaMax(PlayerInfo playerInfo, int deep) {
     this.botColor = playerInfo.getColor();
-    this.isMax = true;
     this.deep = deep;
     this.moveThree = new HashMap<>();
   }
@@ -34,52 +32,39 @@ public class MiniMax implements Algorithm {
   @Override
   public Move findBestMove(Board board, GameHistory gameHistory) {
     moveThree.clear();
-    return minmax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax);
+    return negamax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL);
   }
 
-  private Move minmax(
-      Board board,
-      GameHistory gameHistory,
-      Color color,
-      int deep,
-      double alpha,
-      double beta,
-      boolean isMax) {
+  private Move negamax(
+      Board board, GameHistory gameHistory, Color color, int deep, double alpha, double beta) {
     if (deep == 0 || isGameOver(board, gameHistory)) {
       double our_rate = evaluationBoard(board, gameHistory, botColor);
       double opponent_rate = evaluationBoard(board, gameHistory, inversColor(botColor));
 
-      moveThree.put(board.getLastMove(), our_rate - opponent_rate);
+      int signEval = color == botColor ? 1 : -1;
+      moveThree.put(board.getLastMove(), (our_rate - opponent_rate) * signEval);
       return board.getLastMove();
     }
 
     List<Move> allMoves = getPossibleMoves(board, color);
     Move bestMove = allMoves.get(0);
-    moveThree.put(bestMove, isMax ? MIN_EVAL : MAX_EVAL);
+    moveThree.put(bestMove, MIN_EVAL);
 
     for (Move move : allMoves) {
       Board copyBoard = copyAndMove(move, board);
       GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
       double eval =
-          moveThree.get(
-              minmax(copyBoard, copyHistory, inversColor(color), deep - 1, alpha, beta, !isMax));
+          -moveThree.get(
+              negamax(copyBoard, copyHistory, inversColor(color), deep - 1, -beta, -alpha));
 
-      if (isMax) {
-        if (eval > alpha) {
-          alpha = eval;
-          moveThree.put(move, eval);
-          bestMove = move;
-        }
-      } else {
-        if (eval < beta) {
-          beta = eval;
-          moveThree.put(move, eval);
-          bestMove = move;
-        }
-      }
+      if (eval > alpha) {
+        alpha = eval;
+        moveThree.put(move, eval);
+        bestMove = move;
 
-      if (beta <= alpha) {
-        break;
+        if (alpha >= beta) {
+          break;
+        }
       }
     }
 
