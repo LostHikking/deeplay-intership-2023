@@ -1,14 +1,20 @@
 package io.deeplay.grandmastery;
 
+import com.sun.tools.javac.Main;
 import io.deeplay.grandmastery.algorithms.Algorithm;
 import io.deeplay.grandmastery.algorithms.MiniMax;
+import io.deeplay.grandmastery.algorithms.NegaMax;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class LjeDmitryBot extends Player {
-  private final Algorithm algorithm = new MiniMax(this, 2);
+  private final Algorithm algorithm;
+  private final int deep;
 
   /**
    * Конструктор с параметрами.
@@ -17,6 +23,29 @@ public class LjeDmitryBot extends Player {
    */
   public LjeDmitryBot(Color color) {
     super("LjeDmitry", color);
+
+    try (InputStream config =
+        Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+      Properties properties = new Properties();
+      properties.load(config);
+
+      deep = Integer.parseInt(properties.getProperty("deep"));
+      algorithm = getAlgorithm(properties.getProperty("algorithm"));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Algorithm getAlgorithm(String algorithmName) {
+    switch (algorithmName) {
+      case "minmax" -> {
+        return new MiniMax(this, deep);
+      }
+      case "negamax" -> {
+        return new NegaMax(this, deep);
+      }
+      default -> throw new RuntimeException("Неизвестное название алгоритма для бота!");
+    }
   }
 
   @Override
