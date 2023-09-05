@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AiBotsGame {
   private static final int COUNT_TESTS = 100;
-  private static final boolean WITH_GUI = false;
+  private static final boolean WITH_GUI = true;
   private static Gui gui;
 
   // new HumanPlayer("Dima", Color.BLACK, gui)
