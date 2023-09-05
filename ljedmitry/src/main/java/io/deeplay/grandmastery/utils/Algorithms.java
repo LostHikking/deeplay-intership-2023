@@ -64,14 +64,14 @@ public class Algorithms {
 
   public static boolean isGameOver(Board board, GameHistory gameHistory) {
     return GameStateChecker.isMate(board, Color.WHITE)
-           || GameStateChecker.isMate(board, Color.BLACK)
-           || GameStateChecker.isDraw(board, gameHistory);
+        || GameStateChecker.isMate(board, Color.BLACK)
+        || GameStateChecker.isDraw(board, gameHistory);
   }
 
-  public static double evaluationBoard(Board board, GameHistory gameHistory, Color mainColor) {
-    if (GameStateChecker.isMate(board, inversColor(mainColor))) {
+  public static double evaluationBoard(Board board, GameHistory gameHistory, Color color) {
+    if (GameStateChecker.isMate(board, inversColor(color))) {
       return MAX_EVAL;
-    } else if (GameStateChecker.isMate(board, mainColor)) {
+    } else if (GameStateChecker.isMate(board, color)) {
       return MIN_EVAL;
     }
 
@@ -79,23 +79,24 @@ public class Algorithms {
       return 0;
     }
 
-    return evaluationFunc(board, mainColor);
+    return evaluationFunc(board, color);
   }
 
-  public static double evaluationFunc(Board board, Color color) {
+  protected static double evaluationFunc(Board board, Color color) {
     int sumFigurePrice =
         board.getAllPiecePositionByColor(color).stream()
             .map(
                 pos ->
                     board.getPiece(pos).getFigureType() == FigureType.PAWN
-                        ? PAWN_PRICE.get(pos.row().value())
+                        ? PAWN_PRICE.get(
+                            color == Color.WHITE ? pos.row().value() : 7 - pos.row().value())
                         : PIECE_PRICE.get(board.getPiece(pos).getFigureType()))
             .reduce(0, Integer::sum);
 
     return (double) sumFigurePrice / Math.pow(10, countDigit(sumFigurePrice));
   }
 
-  private static int countDigit(int number) {
+  protected static int countDigit(int number) {
     int count = 0;
     while (number != 0) {
       number /= 10;

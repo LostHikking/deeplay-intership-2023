@@ -17,7 +17,7 @@ public class LjeDmitryBot extends Player {
   private final int deep;
 
   /**
-   * Конструктор с параметрами.
+   * Конструктор с настройками из конфига.
    *
    * @param color Цвет
    */
@@ -34,6 +34,20 @@ public class LjeDmitryBot extends Player {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /**
+   * Конструктор с настройками вручную.
+   *
+   * @param color Цвет
+   * @param algorithmName название алгоритма
+   * @param deep глубина построения дерева
+   */
+  public LjeDmitryBot(Color color, String algorithmName, int deep) {
+    super("LjeDmitry", color);
+
+    this.deep = deep;
+    this.algorithm = getAlgorithm(algorithmName);
   }
 
   private Algorithm getAlgorithm(String algorithmName) {
