@@ -18,7 +18,7 @@ public class Algorithms {
   public static final double MIN_EVAL = -1.0;
 
   private static final Map<Integer, Integer> PAWN_PRICE =
-      Map.of(1, 1, 2, 1, 3, 2, 4, 3, 5, 5, 6, 8);
+      Map.of(1, 100, 2, 100, 3, 110, 4, 150, 5, 200, 6, 300);
   private static final Map<FigureType, Integer> PIECE_PRICE =
       Map.of(
           FigureType.KNIGHT,
@@ -68,10 +68,10 @@ public class Algorithms {
         || GameStateChecker.isDraw(board, gameHistory);
   }
 
-  public static double evaluationBoard(Board board, GameHistory gameHistory, Color color) {
-    if (GameStateChecker.isMate(board, inversColor(color))) {
+  public static double evaluationFunc(Board board, GameHistory gameHistory, Color botColor) {
+    if (GameStateChecker.isMate(board, inversColor(botColor))) {
       return MAX_EVAL;
-    } else if (GameStateChecker.isMate(board, color)) {
+    } else if (GameStateChecker.isMate(board, botColor)) {
       return MIN_EVAL;
     }
 
@@ -79,21 +79,51 @@ public class Algorithms {
       return 0;
     }
 
-    return evaluationFunc(board, color);
+    int our_rate = evaluationBoard(board, botColor);
+    int opponent_rate = evaluationBoard(board, inversColor(botColor));
+
+    int result = our_rate - opponent_rate;
+    return result / Math.pow(10, countDigit(result));
   }
 
-  protected static double evaluationFunc(Board board, Color color) {
-    int sumFigurePrice =
-        board.getAllPiecePositionByColor(color).stream()
-            .map(
-                pos ->
-                    board.getPiece(pos).getFigureType() == FigureType.PAWN
-                        ? PAWN_PRICE.get(
-                            color == Color.WHITE ? pos.row().value() : 7 - pos.row().value())
-                        : PIECE_PRICE.get(board.getPiece(pos).getFigureType()))
-            .reduce(0, Integer::sum);
+  public static int evaluationBoard(Board board, Color color) {
+    if (board.getAllPiecePositionByColor(color).size() == 1) {
+      return kingEndgameEval(
+          color == Color.WHITE ? board.getWhiteKingPosition() : board.getBlackKingPosition());
+    }
+    return calculatePiecesPrice(board, color);
+  }
 
-    return (double) sumFigurePrice / Math.pow(10, countDigit(sumFigurePrice));
+  protected static int kingEndgameEval(Position kingPos) {
+    int row = kingPos.row().value();
+    int col = kingPos.col().value();
+
+    int rowCenter = row <= 3 ? 3 : 4;
+    int colCenter = col <= 3 ? 3 : 4;
+    int rowDistForCenter = Math.abs(row - rowCenter);
+    int colDistForCenter = Math.abs(col - colCenter);
+
+    return (rowDistForCenter + colDistForCenter) * -1000;
+  }
+
+  protected static int calculatePiecesPrice(Board board, Color color) {
+    return board.getAllPiecePositionByColor(color).stream()
+        .map(
+            pos ->
+                board.getPiece(pos).getFigureType() == FigureType.PAWN
+                    ? calculatePawnPrice(pos, color)
+                    : PIECE_PRICE.get(board.getPiece(pos).getFigureType()))
+        .reduce(0, Integer::sum);
+  }
+
+  protected static int calculatePawnPrice(Position pos, Color color) {
+    int row = pos.row().value();
+    int col = pos.col().value();
+
+    int rowPrice = PAWN_PRICE.get(color == Color.WHITE ? row : 7 - row);
+    int centerBonus = col > 1 && col < 6 && row > 2 && row < 5 ? 500 - ((col % 4 + col % 3) * 100) : 0;
+
+    return rowPrice + centerBonus;
   }
 
   protected static int countDigit(int number) {
