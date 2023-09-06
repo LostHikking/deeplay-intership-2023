@@ -1,14 +1,5 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.evaluationBoard;
-import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
-import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
-import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
-
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
@@ -17,6 +8,8 @@ import io.deeplay.grandmastery.domain.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static io.deeplay.grandmastery.utils.Algorithms.*;
 
 public class NegaMax implements Algorithm {
   private final Color botColor;
@@ -38,11 +31,8 @@ public class NegaMax implements Algorithm {
   private Move negamax(
       Board board, GameHistory gameHistory, Color color, int deep, double alpha, double beta) {
     if (deep == 0 || isGameOver(board, gameHistory)) {
-      double our_rate = evaluationBoard(board, gameHistory, botColor);
-      double opponent_rate = evaluationBoard(board, gameHistory, inversColor(botColor));
-
       int signEval = color == botColor ? 1 : -1;
-      moveThree.put(board.getLastMove(), (our_rate - opponent_rate) * signEval);
+      moveThree.put(board.getLastMove(), evaluationFunc(board, gameHistory, botColor) * signEval);
       return board.getLastMove();
     }
 

@@ -1,13 +1,6 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.evaluationBoard;
-import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
-import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
-import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
+import static io.deeplay.grandmastery.utils.Algorithms.*;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
@@ -46,10 +39,7 @@ public class MiniMax implements Algorithm {
       double beta,
       boolean isMax) {
     if (deep == 0 || isGameOver(board, gameHistory)) {
-      double our_rate = evaluationBoard(board, gameHistory, botColor);
-      double opponent_rate = evaluationBoard(board, gameHistory, inversColor(botColor));
-
-      moveThree.put(board.getLastMove(), our_rate - opponent_rate);
+      moveThree.put(board.getLastMove(), evaluationFunc(board, gameHistory, botColor));
       return board.getLastMove();
     }
 

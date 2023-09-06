@@ -4,11 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.GameHistory;
-import io.deeplay.grandmastery.core.HashBoard;
-import io.deeplay.grandmastery.core.Move;
-import io.deeplay.grandmastery.core.Position;
+import io.deeplay.grandmastery.core.*;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Pawn;
@@ -146,7 +142,7 @@ class AlgorithmsTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(1, Algorithms.evaluationBoard(board, gameHistory, Color.WHITE));
+    assertEquals(1, Algorithms.evaluationBoard(board, Color.WHITE));
   }
 
   @Test
@@ -161,7 +157,7 @@ class AlgorithmsTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(-1, Algorithms.evaluationBoard(board, gameHistory, Color.WHITE));
+    assertEquals(-1, Algorithms.evaluationBoard(board, Color.WHITE));
   }
 
   @Test
@@ -177,7 +173,7 @@ class AlgorithmsTest {
     gameHistory.makeMove(move);
     board.setLastMove(move);
 
-    assertEquals(0, Algorithms.evaluationBoard(board, gameHistory, Color.WHITE));
+    assertEquals(0, Algorithms.evaluationBoard(board, Color.WHITE));
   }
 
   @Test
@@ -198,27 +194,42 @@ class AlgorithmsTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(0.3311, Algorithms.evaluationBoard(board, gameHistory, Color.WHITE));
+    assertEquals(0.3311, Algorithms.evaluationBoard(board, Color.WHITE));
   }
 
   @Test
-  void evaluationFuncWhiteTest() {
+  void calculateWhitePiecePriceTest() {
     Board defaultBoard = new HashBoard();
     Boards.defaultChess().accept(defaultBoard);
 
-    assertEquals(0.3311, Algorithms.evaluationFunc(defaultBoard, Color.WHITE));
+    assertEquals(0.3311, Algorithms.calculatePiecesPrice(defaultBoard, Color.WHITE));
   }
 
   @Test
-  void evaluationFuncBlackTest() {
+  void calculateBlackPiecePriceTest() {
     Board defaultBoard = new HashBoard();
     Boards.defaultChess().accept(defaultBoard);
 
-    assertEquals(0.3311, Algorithms.evaluationFunc(defaultBoard, Color.BLACK));
+    assertEquals(0.3311, Algorithms.calculatePiecesPrice(defaultBoard, Color.BLACK));
   }
 
   @Test
   void countDigitTest() {
     assertEquals(4, Algorithms.countDigit(1234));
+  }
+
+  @Test
+  void kingEndgameEvalTest() {
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        Position position = new Position(new Column(j), new Row(i));
+
+        System.out.println(
+            "Position: "
+                + Position.getString(position)
+                + " = "
+                + Algorithms.kingEndgameEval(position));
+      }
+    }
   }
 }
