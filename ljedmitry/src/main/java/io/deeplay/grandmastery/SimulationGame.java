@@ -3,6 +3,7 @@ package io.deeplay.grandmastery;
 import io.deeplay.grandmastery.core.*;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Queen;
 import io.deeplay.grandmastery.figures.Rook;
@@ -22,8 +23,8 @@ public class SimulationGame {
         Board board = new HashBoard();
         board.setPiece(Position.fromString("e5"), new King(Color.BLACK));
         board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
-        board.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
-        board.setPiece(Position.fromString("d1"), new Queen(Color.WHITE));
+        board.setPiece(Position.fromString("c1"), new Bishop(Color.WHITE));
+        board.setPiece(Position.fromString("f1"), new Bishop(Color.WHITE));
 
         bot.startup(board);
         bot1.startup(board);
