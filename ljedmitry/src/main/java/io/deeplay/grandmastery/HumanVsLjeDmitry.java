@@ -13,7 +13,6 @@ public class HumanVsLjeDmitry {
 
   public static void main(String[] args) {
     Gui gui = new Gui(true);
-    int countWin = 0;
 
     for (int i = 1; i <= COUNT_TESTS; i++) {
       try {
@@ -22,18 +21,20 @@ public class HumanVsLjeDmitry {
                 new LjeDmitryBot(Color.WHITE), new HumanPlayer("Dima", Color.BLACK, gui));
         gameController.beginPlay(ChessType.CLASSIC);
         while (!gameController.isGameOver()) {
+          long startMoveTime = System.currentTimeMillis();
           gameController.nextMove();
+          long endMoveTime = System.currentTimeMillis();
+
+          if (gameController.getGameStatus() == GameState.BLACK_MOVE) {
+            log.info("Move time: " + (endMoveTime - startMoveTime) + " ms.");
+          }
         }
 
         GameState status = gameController.getGameStatus();
-        if (status == GameState.WHITE_WIN) {
-          countWin++;
-        }
         log.info("Complete: " + i + ", result: " + status);
       } catch (Exception e) {
         log.error(e.getMessage(), e);
       }
     }
-    log.info("Result win games: " + countWin * 100 / COUNT_TESTS + "%");
   }
 }

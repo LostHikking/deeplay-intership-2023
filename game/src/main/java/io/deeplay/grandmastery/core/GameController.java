@@ -100,6 +100,17 @@ public class GameController {
     gameStatus = GameState.WHITE_MOVE;
   }
 
+  public void beginPlay(Board customBoard) throws GameException {
+    Board board = new HashBoard();
+    Boards.copy(customBoard).accept(board);
+
+    if (board.getWhiteKingPosition() == null || board.getBlackKingPosition() == null) {
+      throw GameErrorCode.ERROR_START_GAME.asException();
+    }
+    notifyGameStartup(board);
+    gameStatus = GameState.WHITE_MOVE;
+  }
+
   /**
    * Запускает игру по доске.
    *
