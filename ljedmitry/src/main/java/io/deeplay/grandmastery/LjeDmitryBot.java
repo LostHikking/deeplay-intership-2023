@@ -52,7 +52,7 @@ public class LjeDmitryBot extends Player {
 
   private Algorithm getAlgorithm(String algorithmName) {
     switch (algorithmName) {
-      case "minmax" -> {
+      case "minimax" -> {
         return new MiniMax(this, deep);
       }
       case "negamax" -> {

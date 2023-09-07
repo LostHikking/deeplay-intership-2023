@@ -1,7 +1,5 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.*;
-
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
@@ -10,6 +8,8 @@ import io.deeplay.grandmastery.domain.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static io.deeplay.grandmastery.utils.Algorithms.*;
 
 public class MiniMax implements Algorithm {
   private final Color botColor;
@@ -27,7 +27,8 @@ public class MiniMax implements Algorithm {
   @Override
   public Move findBestMove(Board board, GameHistory gameHistory) {
     moveThree.clear();
-    return minmax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax);
+    return minmax(
+        board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax);
   }
 
   private Move minmax(

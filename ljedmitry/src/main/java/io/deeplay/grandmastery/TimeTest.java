@@ -9,17 +9,11 @@ import java.text.DecimalFormat;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AiBotsGame {
-  private static final int COUNT_GAMES = 10;
-  private static final boolean WITH_GUI = true;
+public class TimeTest {
+  private static final int COUNT_GAMES = 1;
   private static final DecimalFormat df = new DecimalFormat("#.###");
-  private static Gui gui;
 
   public static void main(String[] args) {
-    if (WITH_GUI) {
-      gui = new Gui(true);
-    }
-
     int countWin = 0;
     int countMove = 0;
     long totalStartTime = System.currentTimeMillis();
@@ -30,11 +24,9 @@ public class AiBotsGame {
     for (int i = 1; i <= COUNT_GAMES; i++) {
       try {
         GameController gameController =
-            new GameController(new LjeDmitryBot(Color.WHITE), new AiPlayer(Color.BLACK));
+            new GameController(
+                new LjeDmitryBot(Color.WHITE, "minimax", 3), new AiPlayer(Color.BLACK));
         gameController.beginPlay(ChessType.CLASSIC);
-        if (WITH_GUI) {
-          gui.showBoard(gameController.getBoard(), Color.WHITE);
-        }
 
         long startGameTime = System.currentTimeMillis();
         while (!gameController.isGameOver()) {
@@ -52,9 +44,6 @@ public class AiBotsGame {
               maxMoveTime = elapsedMove;
             }
             totalElapsedMoveTime += elapsedMove;
-          }
-          if (WITH_GUI) {
-            gui.showBoard(gameController.getBoard(), Color.WHITE);
           }
         }
         long endGameTime = System.currentTimeMillis();

@@ -214,22 +214,5 @@ class AlgorithmsTest {
   }
 
   @Test
-  void countDigitTest() {
-    assertEquals(4, Algorithms.countDigit(1234));
-  }
-
-  @Test
-  void kingEndgameEvalTest() {
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        Position position = new Position(new Column(j), new Row(i));
-
-        System.out.println(
-            "Position: "
-                + Position.getString(position)
-                + " = "
-                + Algorithms.kingEndgameEval(position));
-      }
-    }
-  }
+  void kingEndgameEvalTest() {}
 }

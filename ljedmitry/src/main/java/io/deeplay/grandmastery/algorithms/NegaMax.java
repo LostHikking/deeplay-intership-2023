@@ -1,14 +1,5 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.evaluationFunc;
-import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
-import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
-import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
-
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
@@ -18,6 +9,15 @@ import io.deeplay.grandmastery.domain.TranspositionFlags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
+import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
+import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.evaluationFunc;
+import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
+import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
+import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
 
 public class NegaMax implements Algorithm {
   private final Color botColor;
@@ -80,23 +80,31 @@ public class NegaMax implements Algorithm {
     List<Move> allMoves = getPossibleMoves(board, color);
     Move bestMove = allMoves.get(0);
     moveThree.put(bestMove, MIN_EVAL);
+    double b = beta;
 
     for (Move move : allMoves) {
       Board copyBoard = copyAndMove(move, board);
       GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
       double eval =
-          -moveThree.get(
-              negamax(copyBoard, copyHistory, inversColor(color), deep - 1, -beta, -alpha));
+          -moveThree.get(negamax(copyBoard, copyHistory, inversColor(color), deep - 1, -b, -alpha));
 
       if (eval > alpha) {
-        alpha = eval;
+        if (alpha == b || deep == 1) {
+          alpha = eval;
+        } else {
+          alpha =
+              -moveThree.get(
+                  negamax(copyBoard, copyHistory, inversColor(color), deep - 1, -beta, -alpha));
+        }
         moveThree.put(move, eval);
         bestMove = move;
-
-        if (alpha >= beta) {
-          break;
-        }
       }
+
+      if (alpha >= beta) {
+        break;
+      }
+
+      b = alpha + 1;
     }
 
     double bestEval = moveThree.get(bestMove);
