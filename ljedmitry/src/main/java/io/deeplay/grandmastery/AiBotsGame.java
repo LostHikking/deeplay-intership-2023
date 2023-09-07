@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AiBotsGame {
   private static final int COUNT_GAMES = 10;
-  private static final boolean WITH_GUI = false;
+  private static final boolean WITH_GUI = true;
   private static final DecimalFormat df = new DecimalFormat("#.###");
   private static Gui gui;
 

@@ -83,7 +83,7 @@ public class Algorithms {
     int opponent_rate = evaluationBoard(board, inversColor(botColor));
 
     int result = our_rate - opponent_rate;
-    return result / Math.pow(10, countDigit(result));
+    return result / Math.pow(10, countDigit(Math.abs(result)));
   }
 
   public static int evaluationBoard(Board board, Color color) {
@@ -91,7 +91,7 @@ public class Algorithms {
       return kingEndgameEval(
           color == Color.WHITE ? board.getWhiteKingPosition() : board.getBlackKingPosition());
     }
-    return calculatePiecesPrice(board, color);
+    return calculatePiecesPrice(board, color) + pieceSecurity(board, color);
   }
 
   protected static int kingEndgameEval(Position kingPos) {
@@ -108,12 +108,14 @@ public class Algorithms {
 
   protected static int calculatePiecesPrice(Board board, Color color) {
     return board.getAllPiecePositionByColor(color).stream()
-        .map(
-            pos ->
-                board.getPiece(pos).getFigureType() == FigureType.PAWN
-                    ? calculatePawnPrice(pos, color)
-                    : PIECE_PRICE.get(board.getPiece(pos).getFigureType()))
+        .map(pos -> calculatePiecePrice(board.getPiece(pos), pos, color))
         .reduce(0, Integer::sum);
+  }
+
+  protected static int calculatePiecePrice(Piece piece, Position pos, Color color) {
+    return piece.getFigureType() == FigureType.PAWN
+        ? calculatePawnPrice(pos, color)
+        : PIECE_PRICE.get(piece.getFigureType());
   }
 
   protected static int calculatePawnPrice(Position pos, Color color) {
@@ -121,9 +123,60 @@ public class Algorithms {
     int col = pos.col().value();
 
     int rowPrice = PAWN_PRICE.get(color == Color.WHITE ? row : 7 - row);
-    int centerBonus = col > 1 && col < 6 && row > 2 && row < 5 ? 500 - ((col % 4 + col % 3) * 100) : 0;
+    int centerBonus =
+        col > 1 && col < 6 && row > 2 && row < 5 ? 500 - ((col % 4 + col % 3) * 100) : 0;
 
     return rowPrice + centerBonus;
+  }
+
+  protected static int pieceSecurity(Board board, Color color) {
+    int result = 0;
+    List<Position> friendlies = board.getAllPiecePositionByColor(color);
+    List<Position> enemies = board.getAllPiecePositionByColor(inversColor(color));
+
+    for (Position friendly : friendlies) {
+      Piece fPiece = board.getPiece(friendly);
+      for (Position enemy : enemies) {
+        Piece ePiece = board.getPiece(enemy);
+        FigureType promotionPiece = null;
+        if (ePiece.getFigureType() == FigureType.PAWN
+            && (friendly.row().value() == 0 || friendly.row().value() == 7)) {
+          promotionPiece = FigureType.QUEEN;
+        }
+
+        Move move = new Move(enemy, friendly, promotionPiece);
+        if (ePiece.canMove(board, move)) {
+          if (isSecurity(board, friendly, color)) {
+            result -=
+                calculatePiecePrice(fPiece, friendly, color)
+                    - calculatePiecePrice(ePiece, enemy, inversColor(color));
+          } else {
+            result -= calculatePiecePrice(fPiece, friendly, color);
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  protected static boolean isSecurity(Board board, Position pos, Color color) {
+    List<Position> friendlies = board.getAllPiecePositionByColor(color);
+
+    for (Position friendly : friendlies) {
+      Piece piece = board.getPiece(friendly);
+      FigureType promotionPiece = null;
+      if (piece.getFigureType() == FigureType.PAWN
+          && (friendly.row().value() == 0 || friendly.row().value() == 7)) {
+        promotionPiece = FigureType.QUEEN;
+      }
+
+      Move move = new Move(friendly, pos, promotionPiece);
+      if (piece.canMove(board, move)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected static int countDigit(int number) {
