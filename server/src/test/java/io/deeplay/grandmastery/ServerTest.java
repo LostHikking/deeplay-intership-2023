@@ -2,7 +2,7 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import io.deeplay.grandmastery.bots.Randomus;
+import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import java.io.BufferedWriter;

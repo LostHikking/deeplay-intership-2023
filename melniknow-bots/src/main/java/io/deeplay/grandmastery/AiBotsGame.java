@@ -1,9 +1,9 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.bots.Minimaximus;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.minimaximus.Minimaximus;
 
 /** Главный класс, который запускает локальную игру в шахматы. */
 public class AiBotsGame {

@@ -2,7 +2,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 dependencies {
     implementation(project(":game"))
-    implementation(project(":bot-farm"))
     implementation(project(":gui"))
 }
 

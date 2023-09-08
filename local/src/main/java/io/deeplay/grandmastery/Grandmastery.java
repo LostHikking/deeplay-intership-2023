@@ -1,9 +1,9 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.bots.Randomus;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;

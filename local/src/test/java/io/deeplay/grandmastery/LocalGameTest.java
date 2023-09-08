@@ -8,9 +8,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import io.deeplay.grandmastery.bots.Randomus;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
