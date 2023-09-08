@@ -2,6 +2,7 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.sun.tools.javac.Main;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HumanPlayer;
@@ -26,42 +27,67 @@ import io.deeplay.grandmastery.dto.WrongMove;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
+import io.deeplay.grandmastery.ui.ConsoleUi;
 import io.deeplay.grandmastery.utils.Boards;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
 public class Client {
   private static final ExecutorService MAKE_MOVE = Executors.newSingleThreadExecutor();
   private static final AtomicReference<IOException> IO_EXCEPTION_REF = new AtomicReference<>();
-  private static final String HOST = "localhost";
-  private static final int PORT = 8080;
   private static final int TIME_RECONNECTION = 5000;
 
+  protected final String host;
+  protected final int port;
   protected final UI ui;
-  protected ClientController clientController;
   protected final GameHistory gameHistory = new GameHistory();
+  protected ClientController clientController;
   protected Player player;
-
   protected boolean reconnect;
 
   /**
    * Конструктор для класса Client.
    *
    * @param ui UI
+   * @throws IOException в случаи ошибки с открытием/чтением конфига.
    */
-  public Client(UI ui) {
+  public Client(UI ui) throws IOException {
+    try (InputStream config =
+        Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+      Properties properties = new Properties();
+      properties.load(config);
+
+      host = properties.getProperty("host");
+      port = Integer.parseInt(properties.getProperty("port"));
+    }
+
     this.ui = ui;
     connect();
     reconnect = false;
+  }
+
+  /**
+   * Метод для отправки сообщений в UI.
+   *
+   * @param message Сообщение.
+   */
+  public void printEventMessage(String message) {
+    if (ui != null) {
+      ui.printEventMessage(message);
+    }
   }
 
   /**
@@ -71,7 +97,7 @@ public class Client {
   protected void connect() {
     while (true) {
       try {
-        Socket socket = new Socket(HOST, PORT);
+        Socket socket = new Socket(host, port);
         BufferedReader in =
             new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
         BufferedWriter out =
@@ -79,9 +105,11 @@ public class Client {
 
         this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
         log.info("Соединение с сервером установлено.");
+        printEventMessage("Соединение с сервером установлено.");
         break;
       } catch (IOException e) {
         log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
+        printEventMessage("Сервер недоступен. Попробуем снова через некоторое время...");
         waitAndReconnect();
       }
     }
@@ -136,7 +164,7 @@ public class Client {
           IDto response = clientController.query(request);
 
           if (response instanceof StartGameResponse responseDto) {
-            Board board = Boards.getBoardFromString(responseDto.getBoard());
+            Board board = Boards.fromString(responseDto.getBoard());
             gameHistory.startup(board);
             player.startup(board);
 
@@ -177,7 +205,7 @@ public class Client {
       var boards = resultGame.getBoards();
       var stringBoard = boards.get(boards.size() - 1);
 
-      clientController.showBoard(Boards.getBoardFromString(stringBoard), Color.WHITE);
+      clientController.showBoard(Boards.fromString(stringBoard), Color.WHITE);
       clientController.showResultGame(resultGame.getGameState());
       reconnect = false;
     } else {
@@ -238,6 +266,7 @@ public class Client {
       } catch (GameException e) {
         if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
           log.error("Игра уже завершилась!");
+          printEventMessage("Игра уже завершилась!");
           return;
         }
       }
@@ -253,8 +282,8 @@ public class Client {
 
   /** Метод запускает клиент. */
   public static void main(String[] args) {
-    UI ui = new Gui();
     try {
+      UI ui = createUi(UI.getUiFromConfig());
       new Client(ui).run();
     } catch (Exception e) {
       log.error("Ошибка во время работы клиента", e);
@@ -263,5 +292,13 @@ public class Client {
         MAKE_MOVE.shutdown();
       }
     }
+  }
+
+  protected static UI createUi(String uiName) {
+    return switch (uiName) {
+      case "gui" -> new Gui(true);
+      case "tui" -> new ConsoleUi(System.in, System.out);
+      default -> throw new IllegalArgumentException("Неизвестный ui: " + uiName);
+    };
   }
 }

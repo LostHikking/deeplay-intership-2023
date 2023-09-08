@@ -134,6 +134,7 @@ class GameHistoryTest {
 
     Assertions.assertAll(
         () -> Assertions.assertTrue(gameHistory.isGameOver()),
+        () -> Assertions.assertEquals(GameState.WHITE_WIN, gameHistory.getResultGame()),
         () -> Assertions.assertThrows(GameException.class, () -> gameHistory.makeMove(move)));
   }
 

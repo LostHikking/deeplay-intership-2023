@@ -179,7 +179,7 @@ public class King extends Piece {
   }
 
   @Override
-  public List<Move> generateAllMoves(Board board, Position position) {
+  protected List<Move> generateAllMoves(Board board, Position position) {
     List<Move> moves = new ArrayList<>();
 
     moves.add(Figures.getMoveByPositionAndDeltas(position, 0, 1));

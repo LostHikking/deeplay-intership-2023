@@ -35,4 +35,9 @@ public class ServerTest {
 
     Assertions.assertDoesNotThrow(serverGame::run);
   }
+
+  @Test
+  public void getPortFromConfigTest() throws IOException {
+    Assertions.assertEquals(8080,  Server.getPortFromConfig());
+  }
 }

@@ -1,7 +1,6 @@
 package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.bots.Minimaximus;
-import io.deeplay.grandmastery.bots.Randomus;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
@@ -19,13 +18,13 @@ public class AiBotsGame {
    */
   public static void main(String[] args) {
     if (WITH_GUI) {
-      gui = new Gui();
+      gui = new Gui(true);
     }
 
     for (int i = 1; i <= COUNT_TESTS; i++) {
       try {
         var gameController =
-            new GameController(new Minimaximus(Color.WHITE, 3), new Randomus(Color.BLACK));
+            new GameController(new Minimaximus(Color.WHITE, 2), new Minimaximus(Color.BLACK, 2));
         gameController.beginPlay(ChessType.CLASSIC);
         if (WITH_GUI) {
           gui.showBoard(gameController.getBoard(), Color.WHITE);

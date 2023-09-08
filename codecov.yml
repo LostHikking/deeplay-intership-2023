@@ -11,4 +11,4 @@ coverage:
         target: 50%
         threshold: 1%
 
-    changes: off
+    changes: false

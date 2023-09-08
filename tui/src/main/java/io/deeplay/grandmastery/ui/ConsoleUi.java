@@ -8,7 +8,6 @@ import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
-import io.deeplay.grandmastery.helps.ConsoleHelp;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -233,6 +232,11 @@ public class ConsoleUi implements UI {
       throw new RuntimeException(e);
     }
     printStream.close();
+  }
+
+  @Override
+  public void printEventMessage(String message) {
+    printStream.println(message);
   }
 
   /** Метод для вывода сообщения о некорректном ходе на консоль. */

@@ -59,7 +59,7 @@ public class CreatePlayer implements Runnable {
       return new RunGame(
           player,
           new ClientPlayer(socket, in, out, player.getColor().getOpposite()),
-          Boards.getBoardFromString(req.getBoard()));
+          Boards.fromString(req.getBoard()));
     } catch (IOException
         | NoSuchMethodException
         | InvocationTargetException

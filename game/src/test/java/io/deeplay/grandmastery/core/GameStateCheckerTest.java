@@ -66,7 +66,8 @@ class GameStateCheckerTest {
 
   @Test
   void isMateTest() {
-    board.setPiece(Position.fromString("a1"), new Rook(Color.BLACK));
+    Piece testRook = new Rook(Color.BLACK);
+    board.setPiece(Position.fromString("a1"), testRook);
     board.setPiece(Position.fromString("b1"), new Rook(Color.BLACK));
     board.setPiece(Position.fromString("a8"), new King(Color.WHITE));
     board.setPiece(Position.fromString("c1"), new Rook(Color.WHITE));
@@ -74,7 +75,8 @@ class GameStateCheckerTest {
 
     Assertions.assertAll(
         () -> Assertions.assertFalse(GameStateChecker.isMate(board, Color.BLACK)),
-        () -> Assertions.assertTrue(GameStateChecker.isMate(board, Color.WHITE)));
+        () -> Assertions.assertTrue(GameStateChecker.isMate(board, Color.WHITE)),
+        () -> Assertions.assertFalse(board.getPiece(Position.fromString("a1")).isMoved()));
   }
 
   @Test

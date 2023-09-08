@@ -18,7 +18,7 @@ class CreatePlayerTest {
   private CreatePlayer createPlayer;
   private final CreateFarmGameRequest dto =
       new CreateFarmGameRequest(
-          "Randomus", Color.WHITE, ChessType.CLASSIC, Boards.getStringFromBoard(new HashBoard()));
+          "Randomus", Color.WHITE, ChessType.CLASSIC, Boards.getString(new HashBoard()));
 
   @BeforeEach
   void init() throws IOException {

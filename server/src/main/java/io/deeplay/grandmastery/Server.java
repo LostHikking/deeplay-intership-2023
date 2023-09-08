@@ -2,12 +2,15 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.sun.tools.javac.Main;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -51,12 +54,22 @@ public class Server {
     }
   }
 
-  /**
-   * Метод запускает сервер.
-   *
-   * @throws IOException Ошибка ввода/вывода
-   */
-  public static void main(String[] args) throws IOException {
-    Server.run(8080);
+  protected static int getPortFromConfig() throws IOException {
+    try (InputStream config =
+        Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+      Properties properties = new Properties();
+      properties.load(config);
+
+      return Integer.parseInt(properties.getProperty("port"));
+    }
+  }
+
+  /** Метод запускает сервер. */
+  public static void main(String[] args) {
+    try {
+      Server.run(getPortFromConfig());
+    } catch (Exception e) {
+      log.error("Ошибка во время работы сервера", e);
+    }
   }
 }

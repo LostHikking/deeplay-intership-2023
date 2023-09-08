@@ -55,7 +55,7 @@ public class BotUtils {
    */
   public static Board getCopyBoardAfterMove(Move move, Board board) {
     var tempBoard = new HashBoard();
-    Boards.copyBoard(board).accept(tempBoard);
+    Boards.copy(board).accept(tempBoard);
     var piece = tempBoard.getPiece(move.from());
     piece.move(tempBoard, move);
 

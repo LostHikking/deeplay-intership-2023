@@ -101,7 +101,7 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
    * @throws IOException Ошибка ввода/вывода
    */
   public void notifyStartGame(Board board) throws IOException {
-    var startGameResponse = new StartGameResponse(Boards.getStringFromBoard(board));
+    var startGameResponse = new StartGameResponse(Boards.getString(board));
     var json = ConversationService.serialize(startGameResponse);
 
     if (playerOne instanceof ServerPlayer serverPlayer) {
@@ -122,7 +122,7 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
   public void sendResult(GameState gameStatus, List<Board> boardList) throws IOException {
     var boards = new ArrayList<String>();
     for (Board board : boardList) {
-      boards.add(Boards.getStringFromBoard(board));
+      boards.add(Boards.getString(board));
     }
 
     var result = new ResultGame(gameStatus, boards);

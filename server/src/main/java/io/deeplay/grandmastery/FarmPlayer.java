@@ -71,7 +71,7 @@ public class FarmPlayer extends Player {
 
     var status =
         query(
-                new CreateFarmGameRequest(name, color, chessType, Boards.getStringFromBoard(board)),
+                new CreateFarmGameRequest(name, color, chessType, Boards.getString(board)),
                 CreateFarmGameResponse.class)
             .getStatus();
     if (!"OK".equals(status)) {

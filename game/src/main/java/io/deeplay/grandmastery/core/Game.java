@@ -10,15 +10,15 @@ import io.deeplay.grandmastery.utils.Boards;
 import lombok.Getter;
 
 public class Game implements GameListener {
-  private GameState gameState;
+  @Getter private GameState gameState;
 
   private final Board board = new HashBoard();
 
-  private boolean gameOver;
+  @Getter private boolean gameOver;
 
   @Override
   public void startup(Board board) throws GameException {
-    Boards.copyBoard(board).accept(this.board);
+    Boards.copy(board).accept(this.board);
     gameState = GameState.WHITE_MOVE;
     gameOver = false;
   }
@@ -41,6 +41,7 @@ public class Game implements GameListener {
       throw GameErrorCode.IMPOSSIBLE_MOVE.asException();
     }
     gameState = gameState == GameState.WHITE_MOVE ? GameState.BLACK_MOVE : GameState.WHITE_MOVE;
+    board.clearMoves();
   }
 
   @Override
@@ -60,15 +61,7 @@ public class Game implements GameListener {
    */
   public Board getCopyBoard() {
     Board copyBoard = new HashBoard();
-    Boards.copyBoard(board).accept(copyBoard);
+    Boards.copy(board).accept(copyBoard);
     return copyBoard;
-  }
-
-  public GameState getGameState() {
-    return gameState;
-  }
-
-  public boolean isGameOver() {
-    return gameOver;
   }
 }

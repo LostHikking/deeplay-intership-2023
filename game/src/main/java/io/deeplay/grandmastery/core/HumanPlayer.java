@@ -109,14 +109,10 @@ public class HumanPlayer extends Player {
   @Override
   public void startup(Board board) throws GameException {
     super.startup(board);
-    try {
-      if (withUi && !start) {
-        ui.printHelp();
-        ui.showBoard(board, getColor());
-        start = true;
-      }
-    } catch (IOException e) {
-      throw new GameException(GameErrorCode.ERROR_START_GAME, e);
+    if (withUi && !start) {
+      ui.printHelp();
+      ui.showBoard(board, getColor());
+      start = true;
     }
   }
 

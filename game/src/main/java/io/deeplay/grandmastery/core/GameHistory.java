@@ -118,7 +118,7 @@ public class GameHistory implements GameListener {
    */
   public void addBoard(Board board) {
     Board copyBoard = new HashBoard();
-    Boards.copyBoard(board).accept(copyBoard);
+    Boards.copy(board).accept(copyBoard);
     boards.add(copyBoard);
   }
 
@@ -139,9 +139,7 @@ public class GameHistory implements GameListener {
    */
   public int getMaxRepeatPosition(Board checkBoard) {
     return (int)
-        boards.stream()
-            .filter(historyBoard -> Boards.isEqualsBoards(historyBoard, checkBoard))
-            .count();
+        boards.stream().filter(historyBoard -> Boards.equals(historyBoard, checkBoard)).count();
   }
 
   /**

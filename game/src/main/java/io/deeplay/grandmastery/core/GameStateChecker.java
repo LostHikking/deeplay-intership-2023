@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class GameStateChecker {
   /**
-   * Метод проверяет стоит ли на доске шах определённому цвету фигур.
+   * Метод проверяет стоит-ли на доске шах определённому цвету фигур.
    *
    * @param board Доска
    * @param color Цвет
@@ -39,7 +39,7 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске мат определённому цвету фигур.
+   * Метод проверяет-стоит ли на доске мат определённому цвету фигур.
    *
    * @param board Доска
    * @param color Цвет
@@ -56,9 +56,10 @@ public class GameStateChecker {
 
       for (Move move : piece.getAllMoves(board, position)) {
         Board copyBoard = new HashBoard();
-        Boards.copyBoard(board).accept(copyBoard);
+        Boards.copy(board).accept(copyBoard);
+        Piece copyPiece = copyBoard.getPiece(position);
 
-        if (piece.move(copyBoard, move)) {
+        if (copyPiece.move(copyBoard, move)) {
           if (!isCheck(copyBoard, color)) {
             return false;
           }
@@ -69,7 +70,7 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске ничья.
+   * Метод проверяет-стоит ли на доске ничья.
    *
    * @param board Доска
    * @return Стоит ли на доске ничья
@@ -106,9 +107,9 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске пат определённому виду фигур.
+   * Метод проверяет-стоит ли на доске пат определённому виду фигур.
    *
-   * <p>Не юзаем этот метод!!! Юзаем isDraw(...).
+   * <p>Не используем этот метод!!! Используем isDraw(...).
    *
    * @param board Доска
    * @return Стоит ли на доске пат
@@ -122,9 +123,10 @@ public class GameStateChecker {
       if (!allMoves.isEmpty()) {
         for (Move move : allMoves) {
           var copyBoard = new HashBoard();
-          Boards.copyBoard(board).accept(copyBoard);
+          Boards.copy(board).accept(copyBoard);
+          Piece copyPiece = copyBoard.getPiece(position);
 
-          if (piece.move(copyBoard, move)) {
+          if (copyPiece.move(copyBoard, move)) {
             if (!isCheck(copyBoard, color)) {
               return false;
             }
@@ -137,7 +139,7 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске ничья с недостатком материала.
+   * Метод проверяет стоит-ли на доске ничья с недостатком материала.
    *
    * @param white Белые фигуры
    * @param black Чёрные фигуры
@@ -154,7 +156,7 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске ничья с недостатком материала против короля.
+   * Метод проверяет стоит-ли на доске ничья с недостатком материала против короля.
    *
    * @param figureTypeList Список фигур против короля
    * @return Стоит ли на доске ничья
@@ -178,7 +180,7 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске ничья из-за отсутствия взятий или продвижений пешки на
+   * Метод проверяет-стоит ли на доске ничья из-за отсутствия взятий или продвижений пешки на
    * протяжении 75 ходов.
    *
    * @param gameHistory История партии
@@ -189,7 +191,7 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет стоит ли на доске ничья из-за 5-ти кратного повторения позиции.
+   * Метод проверяет-стоит ли на доске ничья из-за пяти кратного повторения позиции.
    *
    * @param gameHistory История партии
    * @return Стоит ли на доске ничья

@@ -12,5 +12,6 @@ tasks {
         manifest {
             attributes["Main-Class"] = "io.deeplay.grandmastery.Client"
         }
+        archiveClassifier.set("")
     }
 }

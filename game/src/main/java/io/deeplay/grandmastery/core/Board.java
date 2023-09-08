@@ -82,11 +82,24 @@ public abstract class Board {
     return hasPiece(new Position(new Column(col), new Row(row)));
   }
 
+  /**
+   * Возвращает позиции всех фигур, определенного цвета на доске.
+   *
+   * @param color цвет.
+   * @return список position.
+   */
   public abstract List<Position> getAllPiecePositionByColor(Color color);
 
+  /**
+   * Возвращает позиции всех фигур на доске.
+   *
+   * @return список position.
+   */
   public abstract List<Position> getAllPiecePosition();
 
   public void clear() {
     lastMove = null;
   }
+
+  public abstract void clearMoves();
 }
