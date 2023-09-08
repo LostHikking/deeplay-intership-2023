@@ -1,8 +1,8 @@
 package io.deeplay.grandmastery.botfarm;
 
-import io.deeplay.grandmastery.botfarm.bots.BotFactory;
-import io.deeplay.grandmastery.botfarm.bots.Bots;
 import io.deeplay.grandmastery.botfarm.utils.FarmUtils;
+import io.deeplay.grandmastery.bots.BotFactory;
+import io.deeplay.grandmastery.bots.Bots;
 import io.deeplay.grandmastery.dto.CreateFarmGameRequest;
 import io.deeplay.grandmastery.dto.CreateFarmGameResponse;
 import io.deeplay.grandmastery.dto.GetListBotsFromFarm;
@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,10 +42,7 @@ public class CreatePlayer implements Runnable {
       if (req instanceof CreateFarmGameRequest createFarmGameRequest) {
         BotFarm.PLAYERS.execute(getGame(createFarmGameRequest));
       } else if (req instanceof GetListBotsFromFarm) {
-        FarmUtils.send(
-            out,
-            ConversationService.serialize(
-                new SendListBots(Arrays.stream(Bots.values()).map(n -> n.name).toList())));
+        FarmUtils.send(out, ConversationService.serialize(new SendListBots(Bots.getBotsList())));
       }
     } catch (IOException e) {
       throw new RuntimeException(e);

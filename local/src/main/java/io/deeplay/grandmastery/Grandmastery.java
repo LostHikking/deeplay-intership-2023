@@ -1,9 +1,10 @@
 package io.deeplay.grandmastery;
 
+import io.deeplay.grandmastery.bots.BotFactory;
+import io.deeplay.grandmastery.bots.Bots;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Player;
-import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
@@ -25,6 +26,10 @@ public class Grandmastery {
     }
   }
 
+  protected static Player createBot(Color color) throws IllegalArgumentException, IOException {
+    return BotFactory.create(ui.selectBot(Bots.getBotsList(), color), color);
+  }
+
   /**
    * Создает экземпляр GameController на основе выбранного режима игры и игроков.
    *
@@ -37,12 +42,12 @@ public class Grandmastery {
     GameMode gameMode = ui.selectMode();
 
     if (gameMode == GameMode.BOT_VS_BOT) {
-      firstPlayer = new Randomus(Color.WHITE);
-      secondPlayer = new Randomus(Color.BLACK);
+      firstPlayer = createBot(Color.WHITE);
+      secondPlayer = createBot(Color.BLACK);
     } else if (gameMode == GameMode.HUMAN_VS_BOT) {
       Color color = ui.selectColor();
       firstPlayer = new HumanPlayer(ui.inputPlayerName(color), color, ui, false);
-      secondPlayer = new Randomus(color.getOpposite());
+      secondPlayer = createBot(color.getOpposite());
 
     } else {
       firstPlayer = new HumanPlayer(ui.inputPlayerName(Color.WHITE), Color.WHITE, ui, false);

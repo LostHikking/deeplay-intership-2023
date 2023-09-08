@@ -49,11 +49,7 @@ class Evaluation {
     double opponentRate =
         evaluationBoard(board, gameHistory, inversColor(botColor), opponentBonuses);
 
-    double result = (ourRate - opponentRate) * (1 + 10 / (ourRate + opponentRate)) / 1000;
-    if (result < MIN_EVAL || result > MAX_EVAL) {
-      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    }
-    return result;
+    return (ourRate - opponentRate) * (1 + 10 / (ourRate + opponentRate)) / 1000;
   }
 
   public static double castlingBonus(Board board, GameHistory gameHistory, Bonuses bonuses) {

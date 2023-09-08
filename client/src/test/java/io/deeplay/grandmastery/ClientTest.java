@@ -40,7 +40,7 @@ public class ClientTest {
   private ListAppender<ILoggingEvent> listAppender;
 
   private void setupLogCheck() {
-    Logger clientLogger = (Logger) LoggerFactory.getLogger(Client.class);
+    Logger clientLogger = (Logger) LoggerFactory.getLogger(ClientController.class);
     listAppender = new ListAppender<>();
     listAppender.start();
     clientLogger.addAppender(listAppender);
@@ -82,7 +82,7 @@ public class ClientTest {
             () -> {
               try {
                 client = new Client(mockUi);
-              } catch (IOException e) {
+              } catch (Exception e) {
                 throw new RuntimeException(e);
               }
             });
@@ -104,7 +104,7 @@ public class ClientTest {
   }
 
   @Test
-  public void reconnectTest() throws IOException {
+  public void reconnectTest() throws Exception {
     runTestServer();
     client = new Client(mockUi);
     client.reconnect();
@@ -147,7 +147,7 @@ public class ClientTest {
   }
 
   @Test
-  public void runGameWithHuman() throws IOException {
+  public void runGameWithHuman() throws Exception {
     runTestServer();
     client = new Client(mockUi);
 
@@ -156,6 +156,7 @@ public class ClientTest {
         new StartGameResponse("rp____PRnp____PNbp____PBqp____PQkp____PKbp____PBnp____PNrp____PR");
 
     when(mockClientController.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
+    when(mockClientController.getUi()).thenReturn(mockUi);
     when(mockClientController.selectColor()).thenReturn(Color.WHITE);
     when(mockClientController.inputPlayerName(Color.WHITE)).thenReturn("Player");
     when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC);

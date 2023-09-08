@@ -7,6 +7,7 @@ import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 /** Интерфейс UI предоставляет методы для взаимодействия с пользовательским интерфейсом. */
@@ -103,6 +104,16 @@ public interface UI {
 
   /** Выводит сообщение пользователю. */
   void printEventMessage(String message);
+
+  /**
+   * Выбор бота.
+   *
+   * @param botsList Список всех ботов.
+   * @param color Цвет выбираемого бота.
+   * @return Выбранный бот.
+   * @throws IOException В случае ошибки ввода/вывода.
+   */
+  String selectBot(List<String> botsList, Color color) throws IOException;
 
   /**
    * Достает название ui из конфига в своем модуле.

@@ -69,6 +69,7 @@ public class LocalGameTest {
   public void createGameControllerBotVsBotTest() throws IOException {
     UI mockUI = mock(UI.class);
     when(mockUI.selectMode()).thenReturn(GameMode.BOT_VS_BOT);
+    when(mockUI.selectBot(any(), any())).thenReturn("Randomus");
 
     Grandmastery.ui = mockUI;
     GameController gameController = Grandmastery.createGameController();
@@ -83,6 +84,7 @@ public class LocalGameTest {
     when(mockUI.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
     when(mockUI.selectColor()).thenReturn(Color.WHITE);
     when(mockUI.inputPlayerName(any())).thenReturn("TestPlayer");
+    when(mockUI.selectBot(any(), any())).thenReturn("Randomus");
 
     Grandmastery.ui = mockUI;
     GameController gameController = Grandmastery.createGameController();
@@ -98,6 +100,7 @@ public class LocalGameTest {
     when(mockUI.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
     when(mockUI.selectColor()).thenReturn(Color.BLACK);
     when(mockUI.inputPlayerName(any())).thenReturn("TestPlayer");
+    when(mockUI.selectBot(any(), any())).thenReturn("Randomus");
 
     Grandmastery.ui = mockUI;
     GameController gameController = Grandmastery.createGameController();

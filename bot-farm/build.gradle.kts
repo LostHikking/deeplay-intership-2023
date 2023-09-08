@@ -3,8 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 dependencies {
     implementation(project(":game"))
     implementation(project(":conversation"))
-    implementation(project(":melniknow-bots"))
-    implementation(project(":ljedmitry-bot"))
+    implementation(project(":bots"))
     implementation("org.reflections:reflections:0.10.2")
 }
 

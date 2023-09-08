@@ -346,6 +346,11 @@ public class Gui implements UI {
     guiContainer.addEventMessage(message);
   }
 
+  @Override
+  public String selectBot(List<String> botsList, Color color) {
+    return null;
+  }
+
   /** Метод для вывода справки. */
   @Override
   public void printHelp() {}
@@ -587,7 +592,6 @@ public class Gui implements UI {
                 if (clickQueue.size() == 1) {
                   makeBoardUnclickable();
                   makePossibleMovesClickable(board, col, row);
-                  // System.out.println("This cell clickable");
                   synchronized (monitor) {
                     // Уведомляем метод inputMove о новом значении в очереди
                     monitor.notify();
