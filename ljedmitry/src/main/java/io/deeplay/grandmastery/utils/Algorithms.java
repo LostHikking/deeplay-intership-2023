@@ -17,8 +17,6 @@ public class Algorithms {
   public static final double MAX_EVAL = 1.0;
   public static final double MIN_EVAL = -1.0;
 
-  //  private static final Map<Integer, Integer> PAWN_PRICE =
-  //      Map.of(1, 1, 2, 100, 3, 110, 4, 150, 5, 200, 6, 300);
   private static final Map<FigureType, Double> PIECE_PRICE =
       Map.of(
           FigureType.PAWN,
@@ -125,25 +123,32 @@ public class Algorithms {
 
   protected static double calculatePiecesPrice(Board board, Color color) {
     return board.getAllPiecePositionByColor(color).stream()
-        .map(pos -> calculatePiecePrice(board.getPiece(pos), pos, color))
+        .map(pos -> calculatePiecePrice(board, pos, color))
         .reduce(0.0, Double::sum);
   }
 
-  protected static double calculatePiecePrice(Piece piece, Position pos, Color color) {
-    return piece.getFigureType() == FigureType.PAWN
-        ? calculatePawnPrice(pos, color)
-        : PIECE_PRICE.get(piece.getFigureType());
+  protected static double calculatePiecePrice(Board board, Position pos, Color color) {
+    return board.getPiece(pos).getFigureType() == FigureType.PAWN
+        ? calculatePawnPrice(board, pos, color)
+        : PIECE_PRICE.get(board.getPiece(pos).getFigureType());
   }
 
-  protected static double calculatePawnPrice(Position pos, Color color) {
+  protected static double calculatePawnPrice(Board board, Position pos, Color color) {
     int row = pos.row().value();
     int col = pos.col().value();
 
     double rowPrice = (double) (color == Color.WHITE ? row : 7 - row) * 0.1 - 0.1;
     double centerBonus =
-        col > 1 && col < 6 && row > 2 && row < 5 ? (4 - (col % 4 + col % 3)) * 0.1 : 0;
+        col > 2 && col < 5 && row > 2 && row < 5 ? (4 - (col % 4 + col % 3)) * 0.1 : 0;
+    double doublePawnPenalty = 0;
+    if (board.hasPiece(col, row + 1) && board.getPiece(col, row + 1).getFigureType() == FigureType.PAWN) {
+      doublePawnPenalty += 0.5;
+    }
+    if (board.hasPiece(col, row - 1) && board.getPiece(col, row - 1).getFigureType() == FigureType.PAWN) {
+      doublePawnPenalty += 0.5;
+    }
 
-    return rowPrice + centerBonus;
+    return rowPrice + centerBonus - doublePawnPenalty;
   }
 
   protected static double pieceSecurity(Board board, Color color) {
@@ -152,7 +157,6 @@ public class Algorithms {
     List<Position> enemies = board.getAllPiecePositionByColor(inversColor(color));
 
     for (Position friendly : friendlies) {
-      Piece fPiece = board.getPiece(friendly);
       for (Position enemy : enemies) {
         Piece ePiece = board.getPiece(enemy);
         FigureType promotionPiece = null;
@@ -165,10 +169,10 @@ public class Algorithms {
         if (ePiece.canMove(board, move)) {
           if (isSecurity(board, friendly, color)) {
             result -=
-                calculatePiecePrice(fPiece, friendly, color)
-                    - calculatePiecePrice(ePiece, enemy, inversColor(color));
+                calculatePiecePrice(board, friendly, color)
+                    - calculatePiecePrice(board, enemy, inversColor(color));
           } else {
-            result -= calculatePiecePrice(fPiece, friendly, color);
+            result -= calculatePiecePrice(board, friendly, color);
           }
         }
       }
