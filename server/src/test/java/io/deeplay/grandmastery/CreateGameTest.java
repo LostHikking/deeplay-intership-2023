@@ -1,9 +1,7 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,44 +18,9 @@ public class CreateGameTest {
   }
 
   @Test
-  void createBotVsBotTest() {
-    var request = new StartGameRequest("Alex", GameMode.BOT_VS_BOT, ChessType.CLASSIC, Color.WHITE);
-    var serverGame = createGame.createServerGame(request);
-
-    Assertions.assertAll(
-        () ->
-            Assertions.assertEquals(
-                AiPlayer.class,
-                serverGame.getServerController().serverDao().playerOne().getClass()),
-        () ->
-            Assertions.assertEquals(
-                AiPlayer.class,
-                serverGame.getServerController().serverDao().playerTwo().getClass()));
-  }
-
-  @Test
-  void createHumanVsBotTest() {
-    var request =
-        new StartGameRequest("Alex", GameMode.HUMAN_VS_BOT, ChessType.CLASSIC, Color.WHITE);
-
-    var serverGame = createGame.createServerGame(request);
-    Assertions.assertAll(
-        () ->
-            Assertions.assertEquals(
-                ServerPlayer.class,
-                serverGame.getServerController().serverDao().playerOne().getClass()),
-        () ->
-            Assertions.assertEquals(
-                AiPlayer.class,
-                serverGame.getServerController().serverDao().playerTwo().getClass()));
-  }
-
-  @Test
   void createHumanVsHumanMatchTest() {
-    var request =
-        new StartGameRequest("Alex", GameMode.HUMAN_VS_HUMAN, ChessType.CLASSIC, Color.BLACK);
-    var request2 =
-        new StartGameRequest("Mike", GameMode.HUMAN_VS_HUMAN, ChessType.CLASSIC, Color.WHITE);
+    var request = new StartGameRequest("Alex", ChessType.CLASSIC, Color.BLACK, null, null);
+    var request2 = new StartGameRequest("Mike", ChessType.CLASSIC, Color.WHITE, null, null);
 
     var serverGame = createGame.createServerGame(request);
     var serverGame2 = createGame.createServerGame(request2);
@@ -76,8 +39,7 @@ public class CreateGameTest {
 
   @Test
   void createHumanVsHumanTest() {
-    var request =
-        new StartGameRequest("Alex", GameMode.HUMAN_VS_HUMAN, ChessType.CLASSIC, Color.WHITE);
+    var request = new StartGameRequest("Alex", ChessType.CLASSIC, Color.WHITE, null, null);
 
     var serverGame = createGame.createServerGame(request);
     Assertions.assertNull(serverGame);

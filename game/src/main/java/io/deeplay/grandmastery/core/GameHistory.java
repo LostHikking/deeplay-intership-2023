@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /** Класс для сохранения истории партии. */
 @Getter
+@NoArgsConstructor
 @EqualsAndHashCode
 public class GameHistory implements GameListener {
   private final List<Move> moves = new ArrayList<>();

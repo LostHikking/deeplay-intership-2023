@@ -5,7 +5,6 @@ import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameErrorCode;
-import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.dto.SendAnswerDraw;
 import io.deeplay.grandmastery.dto.SendMove;
@@ -26,7 +25,6 @@ public class ServerPlayer extends Player {
   private final Socket socket;
   private final BufferedReader in;
   private final BufferedWriter out;
-  private final GameMode gameMode;
   private final ChessType chessType;
 
   /**
@@ -37,7 +35,6 @@ public class ServerPlayer extends Player {
    * @param out Output stream
    * @param name Имя
    * @param color Цвет
-   * @param gameMode Режим игры
    * @param chessType Тип шахмат
    */
   public ServerPlayer(
@@ -46,13 +43,11 @@ public class ServerPlayer extends Player {
       BufferedWriter out,
       String name,
       Color color,
-      GameMode gameMode,
       ChessType chessType) {
     super(name, color);
     this.socket = socket;
     this.in = in;
     this.out = out;
-    this.gameMode = gameMode;
     this.chessType = chessType;
   }
 

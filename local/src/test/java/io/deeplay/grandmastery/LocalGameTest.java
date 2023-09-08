@@ -8,9 +8,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
@@ -35,8 +35,8 @@ public class LocalGameTest {
   public void localGameBotVsBotTest() {
     for (int i = 0; i < COUNT_GAME; i++) {
       try {
-        Player player1 = new AiPlayer(Color.WHITE);
-        Player player2 = new AiPlayer(Color.BLACK);
+        Player player1 = new Randomus(Color.WHITE);
+        Player player2 = new Randomus(Color.BLACK);
         GameController gameController = new GameController(player1, player2);
 
         gameController.beginPlay(ChessType.CLASSIC);

@@ -21,7 +21,8 @@ import lombok.ToString;
 @JsonTypeName
 public class StartGameRequest extends IDto {
   String playerName;
-  GameMode gameMode;
   ChessType chessType;
   Color color;
+  String nameBotOne;
+  String nameBotTwo;
 }

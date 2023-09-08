@@ -1,9 +1,5 @@
 package io.deeplay.grandmastery.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.figures.King;
@@ -23,7 +19,7 @@ public class PlayerTest {
   @BeforeEach
   public void init() {
     board = new HashBoard();
-    player = new AiPlayer(Color.WHITE);
+    player = new Randomus(Color.WHITE);
   }
 
   @Test
@@ -32,8 +28,9 @@ public class PlayerTest {
     player.startup(board);
 
     Assertions.assertAll(
-        () -> assertFalse(player.isGameOver(), "Is game over"),
-        () -> assertTrue(Boards.equals(board, player.getBoard()), "Equals boards"));
+        () -> Assertions.assertFalse(player.isGameOver(), "Is game over"),
+        () -> Assertions.assertTrue(Boards.equals(board, player.getBoard()), "Equals boards"));
+
   }
 
   @Test
@@ -45,8 +42,8 @@ public class PlayerTest {
     player.makeMove(move);
 
     Assertions.assertAll(
-        () -> assertFalse(player.getBoard().hasPiece(move.from()), "New position"),
-        () -> assertTrue(player.getBoard().hasPiece(move.to()), "Old position"));
+        () -> Assertions.assertFalse(player.getBoard().hasPiece(move.from()), "New position"),
+        () -> Assertions.assertTrue(player.getBoard().hasPiece(move.to()), "Old position"));
   }
 
   @Test
@@ -58,9 +55,9 @@ public class PlayerTest {
     player.makeMove(move);
 
     Assertions.assertAll(
-        () -> assertFalse(player.getBoard().hasPiece(move.from()), "Old position"),
+        () -> Assertions.assertFalse(player.getBoard().hasPiece(move.from()), "Old position"),
         () ->
-            assertEquals(
+            Assertions.assertEquals(
                 FigureType.QUEEN,
                 player.getBoard().getPiece(move.to()).getFigureType(),
                 "Revive queen"));
@@ -75,8 +72,8 @@ public class PlayerTest {
     player.makeMove(move);
 
     Assertions.assertAll(
-        () -> assertTrue(player.getBoard().hasPiece(move.to()), "New position"),
-        () -> assertFalse(player.getBoard().hasPiece(move.from()), "Old position"));
+        () -> Assertions.assertTrue(player.getBoard().hasPiece(move.to()), "New position"),
+        () -> Assertions.assertFalse(player.getBoard().hasPiece(move.from()), "Old position"));
   }
 
   @Test
@@ -90,17 +87,18 @@ public class PlayerTest {
 
     Assertions.assertAll(
         () ->
-            assertEquals(
+            Assertions.assertEquals(
                 FigureType.KING, player.getBoard().getPiece(move.to()).getFigureType(), "King"),
         () ->
-            assertEquals(
+            Assertions.assertEquals(
                 FigureType.ROOK,
                 player.getBoard().getPiece(Position.fromString("d1")).getFigureType(),
                 "Rook"),
         () ->
-            assertFalse(player.getBoard().hasPiece(Position.fromString("e1")), "Old king position"),
+            Assertions.assertFalse(
+                player.getBoard().hasPiece(Position.fromString("e1")), "Old king position"),
         () ->
-            assertFalse(
+            Assertions.assertFalse(
                 player.getBoard().hasPiece(Position.fromString("a1")), "Old rook position"));
   }
 }

@@ -3,14 +3,13 @@ package io.deeplay.grandmastery.minimaximus;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.GameStateChecker;
-import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
+import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.exceptions.GameException;
-import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.BotUtils;
 import java.util.List;
 import java.util.Map;
@@ -19,20 +18,90 @@ import java.util.Map;
 public class Minimaximus extends Player {
   public record MoveAndEst(Move move, Integer est) {}
 
+  private static final Integer[][] king = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 15, 0, 0, 0, 0, 10, 0}
+  };
+  private static final Integer[][] queen = {
+    {-20, -10, -10, -5, -5, -10, -10, -20},
+    {-10, 0, 0, 0, 0, 0, 0, -10},
+    {-10, 0, 5, 5, 5, 5, 0, -10},
+    {-5, 0, 5, 5, 5, 5, 0, -5},
+    {0, 0, 5, 5, 5, 5, 0, -5},
+    {-10, 5, 5, 5, 5, 5, 0, -10},
+    {-10, 0, 5, 0, 0, 0, 0, -10},
+    {-20, -10, -10, -5, -5, -10, -10, -20}
+  };
+  private static final Integer[][] rook = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {5, 10, 10, 10, 10, 10, 10, 5},
+    {-5, 0, 0, 0, 0, 0, 0, -5},
+    {-5, 0, 0, 0, 0, 0, 0, -5},
+    {-5, 0, 0, 0, 0, 0, 0, -5},
+    {-5, 0, 0, 0, 0, 0, 0, -5},
+    {-5, 0, 0, 0, 0, 0, 0, -5},
+    {0, 0, 0, 5, 5, 0, 0, 0}
+  };
+  private static final Integer[][] knight = {
+    {-50, -40, -30, -30, -30, -30, -40, -50},
+    {-40, -20, 0, 0, 0, 0, -20, -40},
+    {-30, 0, 10, 15, 15, 10, 0, -30},
+    {-30, 5, 15, 20, 20, 15, 5, -30},
+    {-30, 0, 15, 20, 20, 15, 0, -30},
+    {-30, 5, 10, 15, 15, 10, 5, -30},
+    {-40, -20, 0, 5, 5, 0, -20, -40},
+    {-50, -40, -30, -30, -30, -30, -40, -50}
+  };
+  private static final Integer[][] bishop = {
+    {-20, -10, -10, -10, -10, -10, -10, -20},
+    {-10, 0, 0, 0, 0, 0, 0, -10},
+    {-10, 0, 5, 10, 10, 5, 0, -10},
+    {-10, 5, 5, 10, 10, 5, 5, -10},
+    {-10, 0, 10, 10, 10, 10, 0, -10},
+    {-10, 10, 10, 10, 10, 10, 10, -10},
+    {-10, 5, 0, 0, 0, 0, 5, -10},
+    {-20, -10, -10, -10, -10, -10, -10, -20}
+  };
+  private static final Integer[][] pawn = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {50, 50, 50, 50, 50, 50, 50, 50},
+    {10, 10, 20, 30, 30, 20, 10, 10},
+    {5, 5, 10, 25, 25, 10, 5, 5},
+    {0, 0, 0, 20, 20, 0, 0, 0},
+    {5, -5, -10, 0, 0, -10, -5, 5},
+    {5, 10, 10, -20, -20, 10, 10, 5},
+    {0, 0, 0, 0, 0, 0, 0, 0}
+  };
+
+  private static final Map<FigureType, Integer[][]> PRICE_SQUARE_MAP =
+      Map.of(
+          FigureType.KING, king,
+          FigureType.QUEEN, queen,
+          FigureType.ROOK, rook,
+          FigureType.BISHOP, bishop,
+          FigureType.KNIGHT, knight,
+          FigureType.PAWN, pawn);
+
   private static final Map<FigureType, Integer> PRICE_MAP =
       Map.of(
           FigureType.PAWN,
-          10,
+          100,
           FigureType.BISHOP,
-          30,
+          300,
           FigureType.KNIGHT,
-          30,
+          300,
           FigureType.ROOK,
-          50,
+          500,
           FigureType.QUEEN,
-          90,
+          900,
           FigureType.KING,
-          1000);
+          10000);
 
   private final int deep;
 
@@ -97,17 +166,13 @@ public class Minimaximus extends Player {
       int beta,
       GameHistory gameHistory,
       List<Move> possibleMove) {
-    var copyBoard = new HashBoard();
-    Boards.copy(board).accept(copyBoard);
 
-    if (deep == 0
-        || GameStateChecker.isMate(copyBoard, currentColor)
-        || GameStateChecker.isMate(copyBoard, BotUtils.getOtherColor(currentColor))
-        || GameStateChecker.isDraw(copyBoard, gameHistory)) {
+    var isDraw = GameStateChecker.isDraw(board, gameHistory);
+    var isMate = GameStateChecker.isMate(board, currentColor);
+
+    if (deep == 0 || isMate || isDraw) {
       return new MoveAndEst(
-          lastMove,
-          getEstimationForBoard(
-              copyBoard, mainColor, gameHistory, BotUtils.getOtherColor(currentColor)));
+          lastMove, getEstimationForBoard(board, mainColor, isDraw, isMate, currentColor));
     }
 
     var isMax = currentColor == mainColor;
@@ -129,13 +194,13 @@ public class Minimaximus extends Player {
           startMiniMax(
               deep - 1,
               tempBoard,
-              BotUtils.getOtherColor(currentColor),
+              currentColor.getOpposite(),
               move,
               mainColor,
               alpha,
               beta,
               tempGameHistory,
-              BotUtils.getPossibleMoves(tempBoard, BotUtils.getOtherColor(currentColor)));
+              BotUtils.getPossibleMoves(tempBoard, currentColor.getOpposite()));
 
       if (isMax) {
         alpha = Math.max(alpha, recursiveValue.est);
@@ -163,44 +228,25 @@ public class Minimaximus extends Player {
    *
    * @param board Доска
    * @param mainColor Цвет
-   * @param gameHistory история партии
-   * @param currentColor цвет того, кто походил
+   * @param isDraw история партии
    * @return Разница оценки позиций
    */
   public static int getEstimationForBoard(
-      Board board, Color mainColor, GameHistory gameHistory, Color currentColor) {
-    return getEstimationForColor(board, mainColor, gameHistory, currentColor)
-        - getEstimationForColor(
-            board, BotUtils.getOtherColor(mainColor), gameHistory, currentColor);
-  }
-
-  /**
-   * Функция возвращает оценку позиции на доске для определённого цвета.
-   *
-   * @param board Доска
-   * @param mainColor цвет того, для кого сделать оценку
-   * @param gameHistory история партии
-   * @param currentColor цвет того, кто походил
-   * @return Оценка позиции
-   */
-  public static int getEstimationForColor(
-      Board board, Color mainColor, GameHistory gameHistory, Color currentColor) {
-
-    if (mainColor == currentColor) {
-      if (GameStateChecker.isMate(board, BotUtils.getOtherColor(mainColor))) {
-        return getSimpleEstimationForColor(board, mainColor) + 2000;
-      }
-    } else {
-      if (GameStateChecker.isMate(board, mainColor)) {
-        return getSimpleEstimationForColor(board, mainColor) - 2000;
+      Board board, Color mainColor, boolean isDraw, boolean isMate, Color current) {
+    if (isMate) {
+      if (mainColor == current) {
+        return -20000;
+      } else {
+        return 20000;
       }
     }
 
-    if (GameStateChecker.isDraw(board, gameHistory)) {
-      return getSimpleEstimationForColor(board, BotUtils.getOtherColor(mainColor));
+    if (isDraw) {
+      return getSimpleEstimationForColor(board, mainColor.getOpposite())
+          - getSimpleEstimationForColor(board, mainColor);
     }
-
-    return getSimpleEstimationForColor(board, mainColor);
+    return getSimpleEstimationForColor(board, mainColor)
+        - getSimpleEstimationForColor(board, mainColor.getOpposite());
   }
 
   /**
@@ -212,7 +258,21 @@ public class Minimaximus extends Player {
    */
   public static int getSimpleEstimationForColor(Board board, Color color) {
     return board.getAllPiecePositionByColor(color).stream()
-        .map(pos -> PRICE_MAP.get(board.getPiece(pos).getFigureType()))
+        .map(
+            pos -> {
+              var pieceType = board.getPiece(pos).getFigureType();
+              return PRICE_MAP.get(pieceType) + getPriceFromSquareTable(color, pos, pieceType);
+            })
         .reduce(0, Integer::sum);
+  }
+
+  private static int getPriceFromSquareTable(Color color, Position pos, FigureType pieceType) {
+    var arr = PRICE_SQUARE_MAP.get(pieceType);
+
+    if (color == Color.WHITE) {
+      return arr[7 - pos.row().value()][pos.col().value()];
+    } else {
+      return arr[pos.row().value()][pos.col().value()];
+    }
   }
 }

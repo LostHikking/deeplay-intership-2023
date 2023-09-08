@@ -7,19 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class BotUtilsTest {
-
-  @Test
-  void getOtherColorFromWhite() {
-    var color = Color.WHITE;
-    Assertions.assertEquals(Color.BLACK, BotUtils.getOtherColor(color));
-  }
-
-  @Test
-  void getOtherColorFromBlack() {
-    var color = Color.BLACK;
-    Assertions.assertEquals(Color.WHITE, BotUtils.getOtherColor(color));
-  }
-
   @Test
   void getPossibleMovesFromStartPositionForWhite() {
     var board = new HashBoard();
