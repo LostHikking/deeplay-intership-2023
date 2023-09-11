@@ -1,15 +1,19 @@
 package io.deeplay.grandmastery.botfarm;
 
 import io.deeplay.grandmastery.botfarm.bots.BotFactory;
+import io.deeplay.grandmastery.botfarm.bots.Bots;
 import io.deeplay.grandmastery.botfarm.utils.FarmUtils;
 import io.deeplay.grandmastery.dto.CreateFarmGameRequest;
 import io.deeplay.grandmastery.dto.CreateFarmGameResponse;
+import io.deeplay.grandmastery.dto.GetListBotsFromFarm;
+import io.deeplay.grandmastery.dto.SendListBots;
 import io.deeplay.grandmastery.service.ConversationService;
 import io.deeplay.grandmastery.utils.Boards;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +38,19 @@ public class CreatePlayer implements Runnable {
 
   @Override
   public void run() {
-    BotFarm.PLAYERS.execute(getGame());
+    try {
+      var req = ConversationService.deserialize(in.readLine());
+      if (req instanceof CreateFarmGameRequest createFarmGameRequest) {
+        BotFarm.PLAYERS.execute(getGame(createFarmGameRequest));
+      } else if (req instanceof GetListBotsFromFarm) {
+        FarmUtils.send(
+            out,
+            ConversationService.serialize(
+                new SendListBots(Arrays.stream(Bots.values()).map(n -> n.name).toList())));
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -43,9 +59,8 @@ public class CreatePlayer implements Runnable {
    * @return Игра
    * @throws IllegalStateException Ошибка при создании игры
    */
-  public RunGame getGame() {
+  public RunGame getGame(CreateFarmGameRequest req) {
     try {
-      var req = ConversationService.deserialize(in.readLine(), CreateFarmGameRequest.class);
       var player = BotFactory.create(req.getName(), req.getColor());
 
       log.info(player.getName());
@@ -53,10 +68,7 @@ public class CreatePlayer implements Runnable {
 
       var json = ConversationService.serialize(new CreateFarmGameResponse("OK"));
       FarmUtils.send(out, json);
-      return new RunGame(
-          player,
-          new ClientPlayer(socket, in, out, player.getColor().getOpposite()),
-          Boards.fromString(req.getBoard()));
+      return new RunGame(player, socket, in, out, Boards.fromString(req.getBoard()));
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }

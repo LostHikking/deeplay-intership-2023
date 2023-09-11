@@ -9,6 +9,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.dto.ResultGame;
+import io.deeplay.grandmastery.dto.SendBoard;
 import io.deeplay.grandmastery.dto.StartGameResponse;
 import io.deeplay.grandmastery.dto.WrongMove;
 import io.deeplay.grandmastery.service.ConversationService;
@@ -84,13 +85,22 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
    * @param lastMove Ход.
    * @throws IOException Ошибка ввода/вывода
    */
-  public void notifySuccessMove(Color color, Move lastMove) throws IOException {
+  public void notifySuccessMove(Color color, Move lastMove, Board board) throws IOException {
     var json = ConversationService.serialize(new AcceptMove(lastMove));
 
     if (playerOne.getColor() != color && playerOne instanceof ServerPlayer serverPlayer) {
       ServerDao.send(serverPlayer.getOut(), json);
     } else if (playerTwo.getColor() != color && playerTwo instanceof ServerPlayer serverPlayer) {
       ServerDao.send(serverPlayer.getOut(), json);
+    }
+
+    if (socket != null) {
+      try {
+        var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
+        ServerDao.send(out, ConversationService.serialize(new SendBoard(Boards.getString(board))));
+      } catch (IOException e) {
+        log.error("Не удалось отправить промежуточный результат игры клиенту");
+      }
     }
   }
 

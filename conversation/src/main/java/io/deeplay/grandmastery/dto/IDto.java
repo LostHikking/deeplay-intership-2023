@@ -17,8 +17,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   @JsonSubTypes.Type(SendAnswerDraw.class),
   @JsonSubTypes.Type(CreateFarmGameRequest.class),
   @JsonSubTypes.Type(CreateFarmGameResponse.class),
-  @JsonSubTypes.Type(CreateMoveFarmRequest.class),
-  @JsonSubTypes.Type(CreateMoveFarmResponse.class)
+  @JsonSubTypes.Type(GetListBotsFromFarm.class),
+  @JsonSubTypes.Type(SendListBots.class),
+  @JsonSubTypes.Type(SendBoard.class)
 })
 public abstract class IDto {
   public IDto() {}

@@ -5,11 +5,6 @@ import org.junit.jupiter.api.Test;
 
 class BotFarmTest {
   @Test
-  void buildTest() {
-    Assertions.assertDoesNotThrow(BotFarm::build);
-  }
-
-  @Test
   void runTest() {
     Assertions.assertDoesNotThrow(
         () -> {

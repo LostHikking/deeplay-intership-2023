@@ -2,13 +2,11 @@ package io.deeplay.grandmastery.botfarm;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import io.deeplay.grandmastery.botfarm.build.ITask;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
-import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,10 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 public class BotFarm {
   public static final ExecutorService CREATE_PLAYER = Executors.newSingleThreadExecutor();
   public static final ExecutorService PLAYERS = Executors.newFixedThreadPool(8);
-
-  public BotFarm() {
-    build();
-  }
 
   /**
    * Метод запускает сервер на указанном порту.
@@ -46,13 +40,6 @@ public class BotFarm {
       throw new IllegalStateException(e);
     } finally {
       CREATE_PLAYER.shutdownNow();
-    }
-  }
-
-  /** Функция запускает задачи. */
-  public static void build() {
-    for (var implClass : ServiceLoader.load(ITask.class)) {
-      implClass.init();
     }
   }
 

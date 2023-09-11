@@ -7,8 +7,8 @@ import io.deeplay.grandmastery.minimaximus.Minimaximus;
 import java.util.function.Function;
 
 public enum Bots {
-  RANDOMUS("Randomus", (Randomus::new)),
-  MINIMAXIMUS("Minimaximus", (color -> new Minimaximus(color, 3)));
+  RANDOMUS("Randomus", Randomus::new),
+  MINIMAXIMUS("Minimaximus", color -> new Minimaximus(color, 3));
 
   public final String name;
   public final Function<Color, Player> constructor;
