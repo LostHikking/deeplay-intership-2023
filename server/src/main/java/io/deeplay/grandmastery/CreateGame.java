@@ -80,8 +80,9 @@ public class CreateGame implements Runnable {
    * @param request Запрос о начале игры.
    * @return Игру.
    * @throws IllegalArgumentException неизвестный GameMode.
+   * @throws IOException ошибка при чтении конфиг файла, для подключения к бот-ферме.
    */
-  public ServerGame createServerGame(StartGameRequest request) {
+  public ServerGame createServerGame(StartGameRequest request) throws IOException {
     if (request.getNameBotOne() != null && request.getNameBotTwo() != null) {
       var firstPlayer =
           new FarmPlayer(request.getNameBotOne(), Color.WHITE, request.getChessType());
@@ -95,7 +96,7 @@ public class CreateGame implements Runnable {
           new ServerPlayer(
               socket, in, out, request.getPlayerName(), request.getColor(), request.getChessType());
 
-      var otherColor = request.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE;
+      var otherColor = request.getColor().getOpposite();
       var player2 = new FarmPlayer(request.getNameBotOne(), otherColor, request.getChessType());
 
       log.info("Создали игру HUMAN_VS_BOT");

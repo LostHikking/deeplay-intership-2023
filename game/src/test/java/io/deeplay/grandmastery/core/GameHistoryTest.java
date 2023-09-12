@@ -1,7 +1,10 @@
 package io.deeplay.grandmastery.core;
 
+import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.figures.Pawn;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.List;
@@ -153,5 +156,30 @@ class GameHistoryTest {
     gameHistory.addBoard(board);
 
     Assertions.assertEquals(gameHistory, gameHistory.getCopy());
+  }
+
+  @Test
+  void rollBackTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.fromString("e2");
+    board.setPiece(position, pawn);
+
+    gameHistory = new GameHistory();
+    gameHistory.startup(board);
+
+    Move move = new Move(position, Position.fromString("e4"), null);
+    pawn.move(board, move);
+
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(move);
+    gameHistory.rollback();
+
+    Assertions.assertEquals(pawn, gameHistory.getCurBoard().getPiece(position));
+  }
+
+  @Test
+  void emptyRollBackTest() {
+    gameHistory = new GameHistory();
+    Assertions.assertDoesNotThrow(gameHistory::rollback);
   }
 }

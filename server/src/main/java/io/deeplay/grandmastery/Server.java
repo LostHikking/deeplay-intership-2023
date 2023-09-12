@@ -54,6 +54,12 @@ public class Server {
     }
   }
 
+  /**
+   * Получение порта из конфига.
+   *
+   * @return порт.
+   * @throws IOException в случае ошибки чтение конфиг файла.
+   */
   protected static int getPortFromConfig() throws IOException {
     try (InputStream config =
         Main.class.getClassLoader().getResourceAsStream("config.properties")) {

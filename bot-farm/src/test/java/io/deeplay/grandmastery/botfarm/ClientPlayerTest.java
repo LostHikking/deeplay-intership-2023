@@ -1,6 +1,5 @@
 package io.deeplay.grandmastery.botfarm;
 
-import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
@@ -27,7 +26,6 @@ class ClientPlayerTest {
     clientPlayer = new ClientPlayer(Mockito.mock(), in, out, Color.WHITE);
     clientPlayer.setIn(in);
     clientPlayer.setOut(out);
-    clientPlayer.setGameHistory(new GameHistory());
   }
 
   @Test

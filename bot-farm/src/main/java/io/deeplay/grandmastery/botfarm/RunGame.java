@@ -2,7 +2,6 @@ package io.deeplay.grandmastery.botfarm;
 
 import io.deeplay.grandmastery.botfarm.utils.FarmUtils;
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.GameErrorCode;
@@ -21,39 +20,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RunGame implements Runnable {
-  private final GameHistory gameHistory = new GameHistory();
-
-  @Getter private final Player player;
-  @Getter private final BufferedReader in;
-  @Getter private final BufferedWriter out;
-  @Getter private final Board board;
-  @Getter private final Socket socket;
-
-  /**
-   * Конструктор.
-   *
-   * @param player Игрок
-   * @param socket Сокет
-   * @param in BufferedReader
-   * @param out BufferedWriter
-   * @param board Доска
-   */
-  public RunGame(Player player, Socket socket, BufferedReader in, BufferedWriter out, Board board) {
-    this.player = player;
-    this.in = in;
-    this.out = out;
-    this.board = board;
-    this.socket = socket;
-  }
-
+public record RunGame(
+    Player player, Socket socket, BufferedReader in, BufferedWriter out, Board board)
+    implements Runnable {
   @Override
   public void run() {
-    gameHistory.startup(board);
     player.startup(board);
 
     try {
@@ -66,11 +40,9 @@ public class RunGame implements Runnable {
         if (serverDto instanceof WaitMove) {
           makeMove();
         } else if (serverDto instanceof WrongMove) {
-          gameHistory.getBoards().remove(gameHistory.getBoards().size() - 1);
-          player.startup(gameHistory.getCurBoard());
+          player.rollback();
         } else if (serverDto instanceof AcceptMove acceptMove) {
           player.makeMove(acceptMove.getMove());
-          gameHistory.addBoard(player.getBoard());
         } else if (serverDto instanceof WaitAnswerDraw) {
           var json = ConversationService.serialize(new SendAnswerDraw(player.answerDraw()));
           FarmUtils.send(out, json);
@@ -95,8 +67,6 @@ public class RunGame implements Runnable {
         if (move != null) {
           if (move.moveType() == MoveType.DEFAULT) {
             player.makeMove(move);
-            gameHistory.addBoard(player.getBoard());
-            gameHistory.makeMove(move);
           }
           break;
         }
@@ -108,7 +78,7 @@ public class RunGame implements Runnable {
       }
     }
 
-    var dto = new SendMove(gameHistory.getLastMove());
+    var dto = new SendMove(move);
     FarmUtils.send(out, ConversationService.serialize(dto));
   }
 }

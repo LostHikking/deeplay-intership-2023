@@ -31,8 +31,7 @@ class BishopTest {
     board.setPiece(p1, new Bishop(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -43,8 +42,7 @@ class BishopTest {
     board.setPiece(p1, new Bishop(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -55,8 +53,7 @@ class BishopTest {
     board.setPiece(p1, new Bishop(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -65,8 +62,7 @@ class BishopTest {
     Position p2 = new Position(new Column(3), new Row(3));
     board.setPiece(p1, new Bishop(Color.WHITE));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP)));
   }
 
   @Test
@@ -127,6 +123,6 @@ class BishopTest {
 
     hashBoard.setPiece(Position.fromString("e6"), bishop);
     Assertions.assertFalse(
-        bishop.canMove(hashBoard, LongAlgebraicNotation.getMoveFromString("e6h8"), true));
+        bishop.canMove(hashBoard, LongAlgebraicNotation.getMoveFromString("e6h8")));
   }
 }

@@ -2,11 +2,15 @@ package io.deeplay.grandmastery.botfarm;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.sun.tools.javac.Main;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +28,8 @@ public class BotFarm {
    *
    * @throws IllegalStateException Ошибка на сервере
    */
-  public void run() {
-    try (var serverSocket = new ServerSocket(2023)) {
+  public static void run(int port) {
+    try (var serverSocket = new ServerSocket(port)) {
       log.info("Server run");
       while (!serverSocket.isClosed()) {
         var socket = serverSocket.accept();
@@ -43,7 +47,22 @@ public class BotFarm {
     }
   }
 
+  protected static int getPortFromConfig() throws IOException {
+    try (InputStream config =
+        Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+      Properties properties = new Properties();
+      properties.load(config);
+
+      return Integer.parseInt(properties.getProperty("port"));
+    }
+  }
+
+  /** Метод запускает бот ферму. */
   public static void main(String[] args) {
-    new BotFarm().run();
+    try {
+      BotFarm.run(getPortFromConfig());
+    } catch (Exception e) {
+      log.error("Ошибка во время работы бот фермы", e);
+    }
   }
 }

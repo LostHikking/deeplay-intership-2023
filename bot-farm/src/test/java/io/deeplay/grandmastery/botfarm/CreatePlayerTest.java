@@ -36,8 +36,8 @@ class CreatePlayerTest {
 
     Assertions.assertAll(
         () -> Assertions.assertNotNull(game),
-        () -> Assertions.assertEquals("Randomus", game.getPlayer().getName()),
-        () -> Assertions.assertEquals(Color.WHITE, game.getPlayer().getColor()));
+        () -> Assertions.assertEquals("Randomus", game.player().getName()),
+        () -> Assertions.assertEquals(Color.WHITE, game.player().getColor()));
   }
 
   @Test

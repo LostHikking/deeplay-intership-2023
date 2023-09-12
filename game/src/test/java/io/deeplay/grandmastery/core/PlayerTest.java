@@ -4,6 +4,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Pawn;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.figures.Rook;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
@@ -30,7 +31,6 @@ public class PlayerTest {
     Assertions.assertAll(
         () -> Assertions.assertFalse(player.isGameOver(), "Is game over"),
         () -> Assertions.assertTrue(Boards.equals(board, player.getBoard()), "Equals boards"));
-
   }
 
   @Test
@@ -100,5 +100,18 @@ public class PlayerTest {
         () ->
             Assertions.assertFalse(
                 player.getBoard().hasPiece(Position.fromString("a1")), "Old rook position"));
+  }
+
+  @Test
+  public void rollbackTest() {
+    Piece pawn = new Pawn(Color.WHITE);
+    Position position = Position.fromString("e2");
+    board.setPiece(position, pawn);
+
+    player.startup(board);
+    player.makeMove(new Move(position, Position.fromString("e4"), null));
+    player.rollback();
+
+    Assertions.assertEquals(pawn, player.getBoard().getPiece(position));
   }
 }

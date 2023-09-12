@@ -1,6 +1,5 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
@@ -32,7 +31,6 @@ class FarmPlayerTest {
     farmPlayer = new FarmPlayer("farm", Color.WHITE, ChessType.CLASSIC);
     farmPlayer.setIn(in);
     farmPlayer.setOut(out);
-    farmPlayer.setGameHistory(new GameHistory());
   }
 
   @Test

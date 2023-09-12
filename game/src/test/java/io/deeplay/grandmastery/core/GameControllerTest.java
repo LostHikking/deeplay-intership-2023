@@ -15,6 +15,8 @@ import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
+import io.deeplay.grandmastery.figures.King;
+import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.utils.Boards;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -64,6 +66,26 @@ public class GameControllerTest {
         () -> assertEquals("Black", gameController.getBlack().getName()),
         () -> assertEquals(Color.WHITE, gameController.getWhite().getColor()),
         () -> assertEquals(Color.BLACK, gameController.getBlack().getColor()));
+  }
+
+  @Test
+  public void beginPlayCustomBoardTest() {
+    Board board = new HashBoard();
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e2"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("e8"), new King(Color.BLACK));
+    gameController.beginPlay(board);
+
+    assertTrue(Boards.equals(board, gameController.getBoard()));
+  }
+
+  @Test
+  public void errorBeginPlayCustomBoardTest() {
+    Board board = new HashBoard();
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e2"), new Pawn(Color.WHITE));
+
+    assertThrows(GameException.class, () -> gameController.beginPlay(board));
   }
 
   @Test

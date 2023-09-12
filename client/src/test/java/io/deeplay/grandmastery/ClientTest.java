@@ -27,6 +27,7 @@ import io.deeplay.grandmastery.ui.ConsoleUi;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
@@ -54,8 +55,9 @@ public class ClientTest {
    *
    * @throws IOException ошибка при закрытии.
    */
+  @AfterEach
   public void closeTestServer() throws IOException {
-    if (!server.isClosed()) {
+    if (server != null && !server.isClosed()) {
       server.close();
     }
   }
@@ -70,7 +72,6 @@ public class ClientTest {
     Assertions.assertAll(
         () -> assertEquals("Соединение с сервером установлено.", logs.get(0).getMessage()),
         () -> assertFalse(client.reconnect));
-    closeTestServer();
   }
 
   @Test
@@ -100,7 +101,6 @@ public class ClientTest {
                 "Сервер недоступен. Попробуем снова через некоторое время...",
                 logs.get(0).getMessage()),
         () -> assertEquals("Соединение с сервером установлено.", logs.get(1).getMessage()));
-    closeTestServer();
   }
 
   @Test
@@ -110,10 +110,7 @@ public class ClientTest {
     client.reconnect();
 
     Assertions.assertAll(
-        () -> assertTrue(client.reconnect),
-        () -> assertFalse(client.clientController.isClosed()),
-        () -> assertTrue(client.gameHistory.isEmpty()));
-    closeTestServer();
+        () -> assertTrue(client.reconnect), () -> assertFalse(client.clientController.isClosed()));
   }
 
   @Test
@@ -130,7 +127,6 @@ public class ClientTest {
     client.clientController = mockClientController;
     Assertions.assertAll(
         () -> assertDoesNotThrow(client::run), () -> assertFalse(client.reconnect));
-    closeTestServer();
   }
 
   @Test
@@ -148,7 +144,6 @@ public class ClientTest {
     Assertions.assertAll(
         () -> assertThrows(IllegalStateException.class, client::run),
         () -> verify(mockClientController, times(1)).close());
-    closeTestServer();
   }
 
   @Test
@@ -180,9 +175,8 @@ public class ClientTest {
         () -> assertDoesNotThrow(client::run),
         () -> assertFalse(client.reconnect),
         () -> assertTrue(client.player.isGameOver(), "Player game over"),
-        () -> assertTrue(client.gameHistory.isGameOver(), "History game over"),
+        () -> assertTrue(client.player.getGameHistory().isGameOver(), "History game over"),
         () -> verify(mockClientController, times(1)).close());
-    closeTestServer();
   }
 
   @Test

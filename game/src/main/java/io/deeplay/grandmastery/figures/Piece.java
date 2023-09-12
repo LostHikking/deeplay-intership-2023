@@ -13,12 +13,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public abstract class Piece {
-  private final Color color;
-  private boolean isMoved;
-  private FigureType figureType;
+  protected final Color color;
+  protected FigureType figureType;
   protected List<Move> moves;
+  @Setter protected boolean isMoved;
 
   /**
    * Конструктор для создания игровой фигуры определенного цвета.
@@ -44,8 +43,9 @@ public abstract class Piece {
       Piece piece = board.removePiece(move.from());
       board.removePiece(move.to());
       board.setPiece(move.to(), piece);
+      board.clearMoves();
 
-      this.isMoved = true;
+      isMoved = true;
       return true;
     }
 
@@ -81,9 +81,11 @@ public abstract class Piece {
    * @param board доска
    * @param move ход
    * @param withKingCheck флаг, который включает или отключает проверку взятия короля
+   * @param withColorCheck флаг, для проверки хода на фигуру того же цвета
    * @return true, если фигура может выполнить указанный ход, иначе false
    */
-  public abstract boolean canMove(Board board, Move move, boolean withKingCheck);
+  public abstract boolean canMove(
+      Board board, Move move, boolean withKingCheck, boolean withColorCheck);
 
   /**
    * Проверяет, может ли фигура выполнить ход на доске.
@@ -96,7 +98,7 @@ public abstract class Piece {
     if (moves != null && moves.contains(move)) {
       return true;
     }
-    return canMove(board, move, true);
+    return canMove(board, move, true, true);
   }
 
   /**

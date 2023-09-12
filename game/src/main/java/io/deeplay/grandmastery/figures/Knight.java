@@ -18,17 +18,17 @@ public class Knight extends Piece {
    */
   public Knight(Color color) {
     super(color);
-    this.setFigureType(FigureType.KNIGHT);
+    figureType = FigureType.KNIGHT;
   }
 
   @Override
-  public boolean canMove(Board board, Move move, boolean withKingCheck) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck, boolean withColorCheck) {
     var toCol = move.to().col().value();
     var toRow = move.to().row().value();
     var fromCol = move.from().col().value();
     var fromRow = move.from().row().value();
 
-    return Figures.basicValidMove(move, board, withKingCheck)
+    return Figures.basicValidMove(move, board, withKingCheck, withColorCheck)
         && ((Math.abs(fromCol - toCol) == 1 && Math.abs(fromRow - toRow) == 2)
             || (Math.abs(fromCol - toCol) == 2 && Math.abs(fromRow - toRow) == 1));
   }

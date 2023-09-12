@@ -3,6 +3,7 @@ package io.deeplay.grandmastery;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.dto.StartGameRequest;
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ public class CreateGameTest {
   }
 
   @Test
-  void createHumanVsHumanMatchTest() {
+  void createHumanVsHumanMatchTest() throws IOException {
     var request = new StartGameRequest("Alex", ChessType.CLASSIC, Color.BLACK, null, null);
     var request2 = new StartGameRequest("Mike", ChessType.CLASSIC, Color.WHITE, null, null);
 
@@ -38,7 +39,7 @@ public class CreateGameTest {
   }
 
   @Test
-  void createHumanVsHumanTest() {
+  void createHumanVsHumanTest() throws IOException {
     var request = new StartGameRequest("Alex", ChessType.CLASSIC, Color.WHITE, null, null);
 
     var serverGame = createGame.createServerGame(request);
