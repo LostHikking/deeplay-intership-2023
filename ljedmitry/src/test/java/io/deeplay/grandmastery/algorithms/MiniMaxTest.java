@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 
 public class MiniMaxTest {
-  private static final String ALGORITHM_NAME = "minmax";
+  private static final String ALGORITHM_NAME = "minimax";
   private static final int DEEP = 2;
 
   @Test
