@@ -21,13 +21,13 @@ public class Pawn extends Piece {
    */
   public Pawn(Color color) {
     super(color);
-    this.setFigureType(FigureType.PAWN);
+    figureType = FigureType.PAWN;
     captureEnPassant = false;
   }
 
   @Override
-  public boolean canMove(Board board, Move move, boolean withKingCheck) {
-    if (!Figures.basicValidMove(move, board, withKingCheck)) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck, boolean withColorCheck) {
+    if (!Figures.basicValidMove(move, board, withKingCheck, withColorCheck)) {
       return false;
     }
 

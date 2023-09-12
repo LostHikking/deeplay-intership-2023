@@ -38,6 +38,6 @@ public class ServerTest {
 
   @Test
   public void getPortFromConfigTest() throws IOException {
-    Assertions.assertEquals(8080,  Server.getPortFromConfig());
+    Assertions.assertEquals(8080, Server.getPortFromConfig());
   }
 }

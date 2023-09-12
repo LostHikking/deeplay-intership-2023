@@ -33,18 +33,26 @@ public class Figures {
    * @param move Ход.
    * @return Валиден ли ход
    */
-  public static boolean basicValidMove(Move move, Board board, boolean withKingCheck) {
+  public static boolean basicValidMove(
+      Move move, Board board, boolean withKingCheck, boolean withColorCheck) {
     var figureFrom = board.getPiece(move.from());
     var figureTo = board.getPiece(move.to());
+
+    if (figureFrom == null) {
+      return false;
+    }
 
     if (withKingCheck && figureTo != null && figureTo.getFigureType() == FigureType.KING) {
       return false;
     }
 
+    if (withColorCheck && (figureTo != null && figureTo.getColor() == figureFrom.getColor())) {
+      return false;
+    }
+
     return isValidPosition(move.from())
         && isValidPosition(move.to())
-        && figureFrom != null
-        && (figureTo == null || (figureTo.getColor() != figureFrom.getColor()));
+        && !figureFrom.equals(figureTo);
   }
 
   /**

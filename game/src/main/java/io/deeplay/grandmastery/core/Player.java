@@ -5,16 +5,14 @@ import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.listeners.GameListener;
 import lombok.Getter;
-import lombok.Setter;
 
 /** Абстрактный класс, представляющий игрока. */
 public abstract class Player implements GameListener, PlayerInfo {
   protected final Game game;
   protected final String name;
   protected final Color color;
-  @Setter protected GameHistory gameHistory;
-
   protected Move lastMove;
+  @Getter protected final GameHistory gameHistory;
   @Getter protected boolean gameOver;
 
   /**
@@ -27,6 +25,7 @@ public abstract class Player implements GameListener, PlayerInfo {
     this.name = name;
     this.color = color;
     this.game = new Game();
+    this.gameHistory = new GameHistory();
   }
 
   /**
@@ -73,18 +72,30 @@ public abstract class Player implements GameListener, PlayerInfo {
   @Override
   public void startup(Board board) throws GameException {
     game.startup(board);
+    gameHistory.clear();
+    gameHistory.startup(board);
     gameOver = false;
   }
 
   @Override
   public void makeMove(Move move) throws GameException {
     game.makeMove(move);
+    gameHistory.addBoard(game.getCopyBoard());
+    gameHistory.makeMove(move);
   }
 
   @Override
   public void gameOver(GameState gameState) {
     gameOver = true;
     game.gameOver(gameState);
+    gameHistory.gameOver(gameState);
+  }
+
+  /** * Метод откатывает состояние игры на один ход. */
+  public void rollback() {
+    gameHistory.rollback();
+    game.startup(gameHistory.getCurBoard());
+    game.setGameState(color == Color.WHITE ? GameState.WHITE_MOVE : GameState.BLACK_MOVE);
   }
 
   public Board getBoard() {

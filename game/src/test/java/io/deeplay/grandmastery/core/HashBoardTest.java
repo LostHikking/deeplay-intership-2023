@@ -93,6 +93,22 @@ public class HashBoardTest {
   }
 
   @Test
+  public void getWhiteKingPosition() {
+    Position kingPos = Position.fromString("e1");
+    board.setPiece(kingPos, new King(Color.WHITE));
+
+    assertEquals(kingPos, board.getKingPositionByColor(Color.WHITE));
+  }
+
+  @Test
+  public void getBlackKingPosition() {
+    Position kingPos = Position.fromString("e8");
+    board.setPiece(kingPos, new King(Color.BLACK));
+
+    assertEquals(kingPos, board.getKingPositionByColor(Color.BLACK));
+  }
+
+  @Test
   public void getAllWhitePiecePositionTest() {
     Set<Position> positions = new HashSet<>();
     positions.add(new Position(new Column(1), new Row(4)));

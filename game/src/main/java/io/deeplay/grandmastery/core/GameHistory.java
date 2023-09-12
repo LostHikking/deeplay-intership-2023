@@ -110,6 +110,17 @@ public class GameHistory implements GameListener {
     return boards.size() > 1 ? boards.get(boards.size() - 2) : null;
   }
 
+  /** * Метод откатывает историю на один ход. */
+  public void rollback() {
+    if (!boards.isEmpty()) {
+      boards.remove(getCurBoard());
+    }
+
+    if (!moves.isEmpty()) {
+      moves.remove(getLastMove());
+    }
+  }
+
   /**
    * Метод копирует и добавляет новую борду в историю. По идее добавление должно происходить перед
    * каждым makeMove в GameHistory

@@ -2,6 +2,7 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.sun.tools.javac.Main;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
@@ -20,9 +21,11 @@ import io.deeplay.grandmastery.utils.Boards;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.Properties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Slf4j
 public class FarmPlayer extends Player {
-  private static final String HOST = "localhost";
-  private static final int PORT = 2023;
+  private final String host;
+  private final int port;
 
   private Socket socket;
   private BufferedReader in;
@@ -46,10 +49,21 @@ public class FarmPlayer extends Player {
    * @param color Цвет
    * @param chessType Тип шахмат
    * @throws IllegalStateException Ошибка создания FarmPlayer
+   * @throws IOException ошибка при чтении конфиг файла, для подключения к бот-ферме.
    */
-  public FarmPlayer(String name, Color color, ChessType chessType) {
+  public FarmPlayer(String name, Color color, ChessType chessType) throws IOException {
     super(name, color);
     this.chessType = chessType;
+
+    try (InputStream config =
+        Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+      Properties properties = new Properties();
+      properties.load(config);
+
+      host = properties.getProperty("bot_farm_host");
+      port = Integer.parseInt(properties.getProperty("bot_farm_port"));
+    }
+
     log.info("Создали FarmPlayer - " + name);
   }
 
@@ -62,7 +76,7 @@ public class FarmPlayer extends Player {
    */
   public void init(Board board) throws QueryException {
     try {
-      socket = new Socket(HOST, PORT);
+      socket = new Socket(host, port);
       in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
       out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
     } catch (IOException e) {

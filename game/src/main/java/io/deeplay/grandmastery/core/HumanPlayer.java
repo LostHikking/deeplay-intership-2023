@@ -127,7 +127,7 @@ public class HumanPlayer extends Player {
           ui.showMove(move, color);
           ui.showBoard(board, getColor());
         } else {
-          ui.showMove(move, color == Color.WHITE ? Color.BLACK : Color.WHITE);
+          ui.showMove(move, color.getOpposite());
           ui.showBoard(board, getColor());
         }
       }

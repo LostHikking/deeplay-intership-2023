@@ -74,6 +74,11 @@ public class HashBoard extends Board {
   }
 
   @Override
+  public Position getKingPositionByColor(Color color) {
+    return color == Color.WHITE ? whiteKing : blackKing;
+  }
+
+  @Override
   public boolean hasPiece(Position position) {
     return pieces.containsKey(position);
   }

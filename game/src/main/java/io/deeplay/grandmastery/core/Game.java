@@ -41,7 +41,6 @@ public class Game implements GameListener {
       throw GameErrorCode.IMPOSSIBLE_MOVE.asException();
     }
     gameState = gameState == GameState.WHITE_MOVE ? GameState.BLACK_MOVE : GameState.WHITE_MOVE;
-    board.clearMoves();
   }
 
   @Override

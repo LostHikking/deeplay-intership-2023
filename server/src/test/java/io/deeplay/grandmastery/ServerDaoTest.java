@@ -7,7 +7,6 @@ import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.dto.SendAnswerDraw;
 import io.deeplay.grandmastery.dto.SendMove;

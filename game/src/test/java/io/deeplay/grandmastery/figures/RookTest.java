@@ -53,16 +53,14 @@ class RookTest {
   @CsvSource(
       value = {"f5f6", "f5f4", "f5f3", "f5a5", "f5b5", "f5c5", "f5d5", "f5e5", "f5g5", "f5h5"})
   void canMoveCorrectTest(String moveStr) {
-    Assertions.assertTrue(
-        piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr), true));
+    Assertions.assertTrue(piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr)));
   }
 
   @ParameterizedTest
   @CsvSource(
       value = {"f5f5", "f5f7", "f5f2", "f5f1", "f5f8", "f5c6", "f5a1", "f5h8", "f5g4", "f5h1"})
   void canMoveWrongTest(String moveStr) {
-    Assertions.assertFalse(
-        piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr), true));
+    Assertions.assertFalse(piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr)));
   }
 
   @Test

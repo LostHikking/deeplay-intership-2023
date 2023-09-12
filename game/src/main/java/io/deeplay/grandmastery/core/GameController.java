@@ -51,8 +51,6 @@ public class GameController {
 
     this.game = new Game();
     this.gameHistory = new GameHistory();
-    firstPlayer.setGameHistory(gameHistory);
-    secondPlayer.setGameHistory(gameHistory);
 
     this.gameListener = game;
     this.historyAndPlayers.add(gameHistory);
@@ -105,9 +103,16 @@ public class GameController {
   /**
    * Запускает игру по доске.
    *
-   * @param board Доска
+   * @param customBoard Доска
+   * @throws GameException если возникла ошибка во время игры
    */
-  public void beginPlay(Board board) {
+  public void beginPlay(Board customBoard) throws GameException {
+    Board board = new HashBoard();
+    Boards.copy(customBoard).accept(board);
+
+    if (board.getWhiteKingPosition() == null || board.getBlackKingPosition() == null) {
+      throw GameErrorCode.ERROR_START_GAME.asException();
+    }
     notifyGameStartup(board);
     gameStatus = GameState.WHITE_MOVE;
   }

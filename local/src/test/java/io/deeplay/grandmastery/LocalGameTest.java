@@ -38,8 +38,7 @@ public class LocalGameTest {
         Player player1 = new Randomus(Color.WHITE);
         Player player2 = new Randomus(Color.BLACK);
         GameController gameController = new GameController(player1, player2);
-
-        gameController.beginPlay(ChessType.CLASSIC);
+        gameController.beginPlay(i < COUNT_GAME / 2 ? ChessType.CLASSIC : ChessType.FISHERS);
 
         CompletableFuture<Void> future =
             CompletableFuture.runAsync(

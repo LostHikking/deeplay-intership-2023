@@ -468,4 +468,23 @@ public class KingTest {
 
     assertEquals(expectMoves, king.getAllMoves(board, position));
   }
+
+  @Test
+  public void getAllCastlingForFishersGameTest() {
+    Piece king = new King(Color.WHITE);
+    Position position = Position.fromString("c1");
+    board.setPiece(position, king);
+    board.setPiece(Position.fromString("b1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("b2"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("c2"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("d2"), new Pawn(Color.WHITE));
+
+    List<Move> expectMoves = new ArrayList<>();
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("c1d1"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("c1c1"));
+    expectMoves.add(LongAlgebraicNotation.getMoveFromString("c1g1"));
+
+    assertEquals(expectMoves, king.getAllMoves(board, position));
+  }
 }

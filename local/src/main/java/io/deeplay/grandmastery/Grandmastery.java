@@ -42,12 +42,8 @@ public class Grandmastery {
     } else if (gameMode == GameMode.HUMAN_VS_BOT) {
       Color color = ui.selectColor();
       firstPlayer = new HumanPlayer(ui.inputPlayerName(color), color, ui, false);
+      secondPlayer = new Randomus(color.getOpposite());
 
-      if (color == Color.WHITE) {
-        secondPlayer = new Randomus(Color.BLACK);
-      } else {
-        secondPlayer = new Randomus(Color.WHITE);
-      }
     } else {
       firstPlayer = new HumanPlayer(ui.inputPlayerName(Color.WHITE), Color.WHITE, ui, false);
       secondPlayer = new HumanPlayer(ui.inputPlayerName(Color.BLACK), Color.BLACK, ui, false);

@@ -8,22 +8,14 @@ import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.utils.Figures;
-import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class King extends Piece {
   private Position rookFromCastling;
-
   private Position rookToCastling;
-
   private final Position targetLeftCastling;
-
   private final Position targetRightCastling;
 
   /**
@@ -33,7 +25,7 @@ public class King extends Piece {
    */
   public King(Color color) {
     super(color);
-    this.setFigureType(FigureType.KING);
+    figureType = FigureType.KING;
     rookToCastling = null;
     rookFromCastling = null;
     if (color == Color.WHITE) {
@@ -46,7 +38,7 @@ public class King extends Piece {
   }
 
   @Override
-  public boolean canMove(Board board, Move move, boolean withKingCheck) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck, boolean withColorCheck) {
     final int deltaRow = deltaRow(move);
     final int deltaCol = deltaCol(move);
     final int row = move.to().row().value();
@@ -57,7 +49,7 @@ public class King extends Piece {
       }
     }
 
-    if (!Figures.basicValidMove(move, board, withKingCheck)) {
+    if (!Figures.basicValidMove(move, board, withKingCheck, withColorCheck)) {
       return false;
     }
 
@@ -138,9 +130,7 @@ public class King extends Piece {
       return false;
     }
 
-    List<Position> positions =
-        board.getAllPiecePositionByColor(
-            this.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE);
+    List<Position> positions = board.getAllPiecePositionByColor(color.getOpposite());
 
     for (int i = Math.min(fromCol, toCol); i < Math.max(fromCol, toCol); i++) {
       for (Position position : positions) {
@@ -195,11 +185,11 @@ public class King extends Piece {
 
     if (!this.isMoved()) {
       if (this.getColor() == Color.WHITE) {
-        realMoves.add(LongAlgebraicNotation.getMoveFromString("e1c1"));
-        realMoves.add(LongAlgebraicNotation.getMoveFromString("e1g1"));
+        realMoves.add(new Move(position, Position.fromString("c1"), null));
+        realMoves.add(new Move(position, Position.fromString("g1"), null));
       } else {
-        realMoves.add(LongAlgebraicNotation.getMoveFromString("e8c8"));
-        realMoves.add(LongAlgebraicNotation.getMoveFromString("e8g8"));
+        realMoves.add(new Move(position, Position.fromString("c8"), null));
+        realMoves.add(new Move(position, Position.fromString("g8"), null));
       }
     }
 

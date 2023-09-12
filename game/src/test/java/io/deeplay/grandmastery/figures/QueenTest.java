@@ -31,8 +31,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -43,8 +42,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -55,8 +53,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -65,8 +62,7 @@ class QueenTest {
     Position p3 = new Position(new Column(3), new Row(3));
     board.setPiece(p1, new Queen(Color.WHITE));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -77,8 +73,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -89,8 +84,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -101,8 +95,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -111,8 +104,7 @@ class QueenTest {
     Position p2 = new Position(new Column(3), new Row(0));
     board.setPiece(p1, new Queen(Color.WHITE));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p2, FigureType.BISHOP)));
   }
 
   @Test
@@ -123,8 +115,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -135,8 +126,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.WHITE));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -147,8 +137,7 @@ class QueenTest {
     board.setPiece(p1, new Queen(Color.WHITE));
     board.setPiece(p2, new Bishop(Color.BLACK));
 
-    Assertions.assertFalse(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertFalse(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -157,8 +146,7 @@ class QueenTest {
     Position p3 = new Position(new Column(0), new Row(3));
     board.setPiece(p1, new Queen(Color.WHITE));
 
-    Assertions.assertTrue(
-        board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP), true));
+    Assertions.assertTrue(board.getPiece(p1).canMove(board, new Move(p1, p3, FigureType.BISHOP)));
   }
 
   @Test
@@ -246,7 +234,7 @@ class QueenTest {
 
     hashBoard.setPiece(Position.fromString("e6"), queen);
     Assertions.assertFalse(
-        queen.canMove(hashBoard, LongAlgebraicNotation.getMoveFromString("e6h8"), true));
+        queen.canMove(hashBoard, LongAlgebraicNotation.getMoveFromString("e6h8")));
   }
 
   @Test

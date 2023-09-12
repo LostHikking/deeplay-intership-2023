@@ -4,7 +4,6 @@ import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.dto.SendAnswerDraw;
 import io.deeplay.grandmastery.dto.SendMove;
 import io.deeplay.grandmastery.exceptions.GameException;
@@ -24,12 +23,7 @@ public class ServerPlayerTest {
 
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            in,
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), in, Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
 
     Assertions.assertDoesNotThrow(serverPlayer::createMove);
   }
@@ -41,12 +35,7 @@ public class ServerPlayerTest {
 
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            in,
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), in, Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
 
     Assertions.assertThrows(GameException.class, serverPlayer::createMove);
   }
@@ -58,12 +47,7 @@ public class ServerPlayerTest {
 
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            in,
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), in, Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
 
     Assertions.assertTrue(serverPlayer.answerDraw());
   }

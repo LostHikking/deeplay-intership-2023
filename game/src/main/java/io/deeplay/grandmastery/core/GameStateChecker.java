@@ -16,11 +16,9 @@ public class GameStateChecker {
    * @return Стоит ли на доске шах
    */
   public static boolean isCheck(Board board, Color color) {
-    var kingPoz =
-        color == Color.WHITE ? board.getWhiteKingPosition() : board.getBlackKingPosition();
+    Position kingPoz = board.getKingPositionByColor(color);
 
-    List<Position> piecePosition =
-        board.getAllPiecePositionByColor(color == Color.WHITE ? Color.BLACK : Color.WHITE);
+    List<Position> piecePosition = board.getAllPiecePositionByColor(color.getOpposite());
     for (Position position : piecePosition) {
       Piece piece = board.getPiece(position);
       FigureType promotionPiece = null;
@@ -31,7 +29,7 @@ public class GameStateChecker {
 
       Move move = new Move(position, kingPoz, promotionPiece);
 
-      if (piece.canMove(board, move, false)) {
+      if (piece.canMove(board, move, false, true)) {
         return true;
       }
     }
@@ -83,7 +81,7 @@ public class GameStateChecker {
     }
 
     var lastMovedPiece = board.getPiece(lastMove.to());
-    var otherColor = lastMovedPiece.getColor() == Color.WHITE ? Color.BLACK : Color.WHITE;
+    var otherColor = lastMovedPiece.getColor().getOpposite();
 
     if (isStaleMate(board, otherColor)) {
       return true;

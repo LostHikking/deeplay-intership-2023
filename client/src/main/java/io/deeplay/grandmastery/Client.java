@@ -4,7 +4,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.sun.tools.javac.Main;
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
@@ -54,7 +53,6 @@ public class Client {
   protected final String host;
   protected final int port;
   protected final UI ui;
-  protected final GameHistory gameHistory = new GameHistory();
   protected ClientController clientController;
   protected Player player;
   protected boolean reconnect;
@@ -123,7 +121,6 @@ public class Client {
    */
   protected void reconnect() throws IOException {
     clientController.close();
-    gameHistory.clear();
     reconnect = true;
     connect();
   }
@@ -170,7 +167,6 @@ public class Client {
 
           if (response instanceof StartGameResponse responseDto) {
             Board board = Boards.fromString(responseDto.getBoard());
-            gameHistory.startup(board);
             player.startup(board);
 
             startGame();
@@ -243,11 +239,9 @@ public class Client {
           throw GameErrorCode.GAME_ALREADY_OVER.asException();
         }
       } else if (serverDto instanceof WrongMove) {
-        gameHistory.getBoards().remove(gameHistory.getBoards().size() - 1);
-        player.startup(gameHistory.getCurBoard());
+        player.rollback();
       } else if (serverDto instanceof AcceptMove acceptMove) {
         player.makeMove(acceptMove.getMove());
-        gameHistory.addBoard(player.getBoard());
       } else if (serverDto instanceof WaitAnswerDraw) {
         String json = ConversationService.serialize(new SendAnswerDraw(player.answerDraw()));
         clientController.send(json);
@@ -256,7 +250,6 @@ public class Client {
 
     MAKE_MOVE.shutdown();
     player.gameOver(((ResultGame) serverDto).getGameState());
-    gameHistory.gameOver(((ResultGame) serverDto).getGameState());
     reconnect = false;
   }
 
@@ -268,8 +261,6 @@ public class Client {
         if (move != null) {
           if (move.moveType() == MoveType.DEFAULT) {
             player.makeMove(move);
-            gameHistory.addBoard(player.getBoard());
-            gameHistory.makeMove(move);
           }
           break;
         }

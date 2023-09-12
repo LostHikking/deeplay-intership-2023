@@ -161,6 +161,7 @@ public class PawnTest {
     Assertions.assertAll(
         "Check " + color + " pawn",
         () -> assertTrue(pawn.move(board, move)),
+        () -> assertNull(pawn.moves),
         () -> assertSame(pawn, board.getPiece(move.to()), "Pawn in place of another piece"));
   }
 

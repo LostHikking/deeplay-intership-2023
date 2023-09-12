@@ -76,6 +76,8 @@ public abstract class Board {
    */
   public abstract Position getWhiteKingPosition();
 
+  public abstract Position getKingPositionByColor(Color color);
+
   public abstract boolean hasPiece(Position position);
 
   public boolean hasPiece(int col, int row) {

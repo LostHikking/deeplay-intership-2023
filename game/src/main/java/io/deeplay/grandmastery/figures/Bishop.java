@@ -18,17 +18,17 @@ public class Bishop extends Piece {
    */
   public Bishop(Color color) {
     super(color);
-    this.setFigureType(FigureType.BISHOP);
+    figureType = FigureType.BISHOP;
   }
 
   @Override
-  public boolean canMove(Board board, Move move, boolean withKingCheck) {
+  public boolean canMove(Board board, Move move, boolean withKingCheck, boolean withColorCheck) {
     var toCol = move.to().col().value();
     var toRow = move.to().row().value();
     var fromRow = move.from().row().value();
     var fromCol = move.from().col().value();
 
-    if (!Figures.basicValidMove(move, board, withKingCheck)) {
+    if (!Figures.basicValidMove(move, board, withKingCheck, withColorCheck)) {
       return false;
     }
     if (abs(toCol - fromCol) == abs(toRow - fromRow)) {

@@ -51,15 +51,13 @@ class KnightTest {
   @ParameterizedTest
   @CsvSource(value = {"e5d7", "e5g6", "e5c6", "e5c4", "e5g4", "e5f3"})
   void canMoveCorrectTest(String moveStr) {
-    Assertions.assertTrue(
-        piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr), true));
+    Assertions.assertTrue(piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr)));
   }
 
   @ParameterizedTest
   @CsvSource(value = {"e5d3", "e5f7", "e5a1", "e5h8", "e5d5", "e5c7"})
   void canMoveWrongTest(String moveStr) {
-    Assertions.assertFalse(
-        piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr), true));
+    Assertions.assertFalse(piece.canMove(board, LongAlgebraicNotation.getMoveFromString(moveStr)));
   }
 
   @Test
