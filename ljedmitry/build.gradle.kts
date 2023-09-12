@@ -8,7 +8,7 @@ dependencies {
 tasks {
     val shadowJar by getting(ShadowJar::class) {
         manifest {
-            attributes["Main-Class"] = "io.deeplay.grandmastery.AiBotsGame"
+            attributes["Main-Class"] = "io.deeplay.grandmastery.HumanVsLjeDmitry"
         }
         archiveBaseName.set("local-game")
     }

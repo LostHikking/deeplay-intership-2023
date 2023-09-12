@@ -1,5 +1,13 @@
 package io.deeplay.grandmastery.algorithms;
 
+import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
+import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
+import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
+import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
+import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
+
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
@@ -10,20 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
-import static io.deeplay.grandmastery.utils.Algorithms.evaluationFunc;
-import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
-import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
-import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
-
 public class NegaMax implements Algorithm {
   private final Color botColor;
   private final int deep;
   private final Map<Board, TEntry> transpositionTable;
   private final Map<Move, Double> moveThree;
+  private final Bonuses bonuses;
 
   private static class TEntry {
     protected int depth;
@@ -42,6 +42,7 @@ public class NegaMax implements Algorithm {
     this.deep = deep;
     this.transpositionTable = new HashMap<>();
     this.moveThree = new HashMap<>();
+    this.bonuses = new Bonuses();
   }
 
   @Override
@@ -73,7 +74,9 @@ public class NegaMax implements Algorithm {
 
     if (deep == 0 || isGameOver(board, gameHistory)) {
       int signEval = color == botColor ? 1 : -1;
-      moveThree.put(board.getLastMove(), evaluationFunc(board, gameHistory, botColor) * signEval);
+      moveThree.put(
+          board.getLastMove(),
+          Evaluation.evaluationFunc(board, gameHistory, botColor, bonuses, deep) * signEval);
       return board.getLastMove();
     }
 

@@ -1,5 +1,13 @@
 package io.deeplay.grandmastery.algorithms;
 
+import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
+import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
+import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
+import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
+import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
+
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
@@ -9,26 +17,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.deeplay.grandmastery.utils.Algorithms.*;
-
 public class MiniMax implements Algorithm {
   private final Color botColor;
   private final int deep;
   private final boolean isMax;
   private final Map<Move, Double> moveThree;
+  private final Bonuses bonuses;
+
+  private int moveCount;
 
   public MiniMax(PlayerInfo playerInfo, int deep) {
     this.botColor = playerInfo.getColor();
     this.isMax = true;
     this.deep = deep;
+    this.bonuses = new Bonuses();
     this.moveThree = new HashMap<>();
+    this.moveCount = 0;
   }
 
   @Override
   public Move findBestMove(Board board, GameHistory gameHistory) {
     moveThree.clear();
-    return minmax(
-        board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax);
+    moveCount++;
+    return minmax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax);
   }
 
   private Move minmax(
@@ -40,7 +51,9 @@ public class MiniMax implements Algorithm {
       double beta,
       boolean isMax) {
     if (deep == 0 || isGameOver(board, gameHistory)) {
-      moveThree.put(board.getLastMove(), evaluationFunc(board, gameHistory, botColor));
+      moveThree.put(
+          board.getLastMove(),
+          Evaluation.evaluationFunc(board, gameHistory, botColor, bonuses, deep));
       return board.getLastMove();
     }
 
