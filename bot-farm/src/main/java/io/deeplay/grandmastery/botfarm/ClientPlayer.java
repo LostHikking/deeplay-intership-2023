@@ -3,7 +3,7 @@ package io.deeplay.grandmastery.botfarm;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.dto.CreateMoveFarmRequest;
+import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.service.ConversationService;
 import java.io.BufferedReader;
@@ -43,7 +43,7 @@ public class ClientPlayer extends Player {
       var data = in.readLine();
       log.info("Получили данные - " + data);
 
-      return ConversationService.deserialize(data, CreateMoveFarmRequest.class).getLastMove();
+      return ConversationService.deserialize(data, AcceptMove.class).getMove();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

@@ -7,11 +7,12 @@ import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.dto.CreateFarmGameRequest;
 import io.deeplay.grandmastery.dto.CreateFarmGameResponse;
-import io.deeplay.grandmastery.dto.CreateMoveFarmRequest;
-import io.deeplay.grandmastery.dto.CreateMoveFarmResponse;
 import io.deeplay.grandmastery.dto.IDto;
+import io.deeplay.grandmastery.dto.SendMove;
+import io.deeplay.grandmastery.dto.WaitMove;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
@@ -83,14 +84,21 @@ public class FarmPlayer extends Player {
   public Move createMove() throws GameException {
     try {
       if (gameHistory.isEmpty()) {
+        var json = ConversationService.serialize(new WaitMove());
+        send(json);
+
         var response = in.readLine();
         log.info("Получили данные - " + response);
-        return ConversationService.deserialize(response, CreateMoveFarmResponse.class).getMove();
+        return ConversationService.deserialize(response, SendMove.class).getMove();
       }
 
-      var dto = new CreateMoveFarmRequest(this.gameHistory.getLastMove());
+      var dto = new AcceptMove(this.gameHistory.getLastMove());
+      var json = ConversationService.serialize(dto);
+      send(json);
 
-      return query(dto, CreateMoveFarmResponse.class).getMove();
+      var dto2 = new WaitMove();
+
+      return query(dto2, SendMove.class).getMove();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

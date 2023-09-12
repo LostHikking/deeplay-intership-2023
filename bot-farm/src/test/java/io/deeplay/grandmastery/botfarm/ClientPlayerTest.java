@@ -4,7 +4,7 @@ import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.dto.CreateMoveFarmRequest;
+import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.service.ConversationService;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,8 +21,7 @@ class ClientPlayerTest {
   @BeforeEach
   void init() throws IOException {
     var in = Mockito.mock(BufferedReader.class);
-    Mockito.when(in.readLine())
-        .thenReturn(ConversationService.serialize(new CreateMoveFarmRequest(move)));
+    Mockito.when(in.readLine()).thenReturn(ConversationService.serialize(new AcceptMove(move)));
 
     var out = Mockito.mock(BufferedWriter.class);
     clientPlayer = new ClientPlayer(Mockito.mock(), in, out, Color.WHITE);

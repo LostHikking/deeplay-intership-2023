@@ -5,7 +5,7 @@ import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.dto.CreateMoveFarmResponse;
+import io.deeplay.grandmastery.dto.SendMove;
 import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
 import java.io.BufferedReader;
@@ -25,7 +25,7 @@ class FarmPlayerTest {
     Mockito.when(in.readLine())
         .thenReturn(
             ConversationService.serialize(
-                new CreateMoveFarmResponse(
+                new SendMove(
                     new Move(Position.fromString("e2"), Position.fromString("e4"), null))));
 
     var out = Mockito.mock(BufferedWriter.class);
@@ -47,11 +47,9 @@ class FarmPlayerTest {
 
   @Test
   void queryTest() throws QueryException {
-    var dto = farmPlayer.query(new CreateMoveFarmResponse(), CreateMoveFarmResponse.class);
+    var dto = farmPlayer.query(new SendMove(), SendMove.class);
     Assertions.assertEquals(
-        new CreateMoveFarmResponse(
-            new Move(Position.fromString("e2"), Position.fromString("e4"), null)),
-        dto);
+        new SendMove(new Move(Position.fromString("e2"), Position.fromString("e4"), null)), dto);
   }
 
   @Test

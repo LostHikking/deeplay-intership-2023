@@ -6,9 +6,9 @@ import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.dto.CreateFarmGameRequest;
 import io.deeplay.grandmastery.dto.CreateFarmGameResponse;
-import io.deeplay.grandmastery.dto.CreateMoveFarmRequest;
-import io.deeplay.grandmastery.dto.CreateMoveFarmResponse;
+import io.deeplay.grandmastery.dto.GetListBotsFromFarm;
 import io.deeplay.grandmastery.dto.ResultGame;
+import io.deeplay.grandmastery.dto.SendListBots;
 import io.deeplay.grandmastery.dto.SendMove;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.dto.StartGameResponse;
@@ -31,8 +31,8 @@ class ConversationServiceTest {
     var wrongMove = new WrongMove();
     var createFarmGameRequest = new CreateFarmGameRequest();
     var createFarmGameResponse = new CreateFarmGameResponse();
-    var createMoveFarmRequest = new CreateMoveFarmRequest();
-    var createMoveFarmResponse = new CreateMoveFarmResponse();
+    var getListBotsFromFarm = new GetListBotsFromFarm();
+    var sendListBots = new SendListBots();
 
     var startGameRequestJson = ConversationService.serialize(startGameRequest);
     var startGameResponseJson = ConversationService.serialize(startGameResponse);
@@ -43,8 +43,8 @@ class ConversationServiceTest {
     var wrongMoveJson = ConversationService.serialize(wrongMove);
     var createFarmGameRequestJson = ConversationService.serialize(createFarmGameRequest);
     var createFarmGameResponseJson = ConversationService.serialize(createFarmGameResponse);
-    var createMoveFarmRequestJson = ConversationService.serialize(createMoveFarmRequest);
-    var createMoveFarmResponseJson = ConversationService.serialize(createMoveFarmResponse);
+    var getListBotsFromFarmJson = ConversationService.serialize(getListBotsFromFarm);
+    var sendListBotsJson = ConversationService.serialize(sendListBots);
 
     Assertions.assertAll(
         () ->
@@ -61,18 +61,17 @@ class ConversationServiceTest {
         () -> Assertions.assertEquals(wrongMove, ConversationService.deserialize(wrongMoveJson)),
         () ->
             Assertions.assertEquals(
+                getListBotsFromFarm, ConversationService.deserialize(getListBotsFromFarmJson)),
+        () ->
+            Assertions.assertEquals(
+                sendListBots, ConversationService.deserialize(sendListBotsJson)),
+        () ->
+            Assertions.assertEquals(
                 createFarmGameRequest, ConversationService.deserialize(createFarmGameRequestJson)),
         () ->
             Assertions.assertEquals(
                 createFarmGameResponse,
-                ConversationService.deserialize(createFarmGameResponseJson)),
-        () ->
-            Assertions.assertEquals(
-                createMoveFarmRequest, ConversationService.deserialize(createMoveFarmRequestJson)),
-        () ->
-            Assertions.assertEquals(
-                createMoveFarmResponse,
-                ConversationService.deserialize(createMoveFarmResponseJson)));
+                ConversationService.deserialize(createFarmGameResponseJson)));
   }
 
   @Test

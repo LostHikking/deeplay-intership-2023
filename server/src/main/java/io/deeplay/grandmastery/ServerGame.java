@@ -6,10 +6,8 @@ import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
-import io.deeplay.grandmastery.dto.CreateMoveFarmRequest;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.exceptions.QueryException;
-import io.deeplay.grandmastery.service.ConversationService;
 import java.io.IOException;
 import java.net.Socket;
 import lombok.Getter;
@@ -56,27 +54,14 @@ public class ServerGame implements Runnable {
           PlayerInfo currentPlayer = gameController.getCurrentPlayer();
           gameController.nextMove();
           if (gameController.isGameOver()) {
-            if (serverController.serverDao().playerOne() instanceof FarmPlayer player
-                && serverController.serverDao().playerOne().getColor()
-                    != currentPlayer.getColor()) {
-              log.info("SEND FOR " + currentPlayer.getColor().getOpposite());
-              var dto = new CreateMoveFarmRequest(gameController.getGameHistory().getLastMove());
-              player.send(ConversationService.serialize(dto));
+            if (!gameController.isSurrender() && !gameController.isDrawWithOffer()) {
+              serverController
+                  .serverDao()
+                  .notifySuccessMove(
+                      currentPlayer.getColor(),
+                      gameController.getGameHistory().getLastMove(),
+                      gameController.getBoard());
             }
-
-            if (serverController.serverDao().playerTwo() instanceof FarmPlayer player
-                && serverController.serverDao().playerTwo().getColor()
-                    != currentPlayer.getColor()) {
-              log.info("SEND FOR " + currentPlayer.getColor().getOpposite());
-              var dto = new CreateMoveFarmRequest(gameController.getGameHistory().getLastMove());
-              player.send(ConversationService.serialize(dto));
-            }
-
-            serverController
-                .serverDao()
-                .notifySuccessMove(
-                    gameController.getCurrentPlayer().getColor(),
-                    gameController.getGameHistory().getLastMove());
 
             break;
           }
@@ -84,7 +69,7 @@ public class ServerGame implements Runnable {
           if (currentPlayer != gameController.getCurrentPlayer()) {
             var color = gameController.getOpponentPlayer().getColor();
             serverController.notifySuccessMove(
-                color, gameController.getGameHistory().getLastMove());
+                color, gameController.getGameHistory().getLastMove(), gameController.getBoard());
 
             log.info("Сделан ход цветом - " + color);
           }

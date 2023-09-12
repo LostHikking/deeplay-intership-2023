@@ -33,6 +33,9 @@ public class GameController {
 
   @Getter private Move move;
 
+  @Getter private boolean isSurrender = false;
+  @Getter private boolean isDrawWithOffer = false;
+
   /** Дефолтный конструктор класса {@code GameController}. */
   public GameController(Player firstPlayer, Player secondPlayer) {
     this.move = null;
@@ -154,6 +157,7 @@ public class GameController {
 
     if (move.moveType() == MoveType.SURRENDER) {
       gameStatus = gameStatus == GameState.WHITE_MOVE ? GameState.BLACK_WIN : GameState.WHITE_WIN;
+      isSurrender = true;
       notifyGameOver();
       return true;
     }
@@ -162,6 +166,7 @@ public class GameController {
       Player opponent = (Player) getOpponentPlayer();
       if (opponent.answerDraw()) {
         gameStatus = GameState.DRAW;
+        isDrawWithOffer = true;
         notifyGameOver();
       }
       return true;

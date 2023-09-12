@@ -1,12 +1,19 @@
 package io.deeplay.grandmastery;
 
 import static io.deeplay.grandmastery.Server.GAMES;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.dto.GetListBotsFromFarm;
+import io.deeplay.grandmastery.dto.IDto;
+import io.deeplay.grandmastery.dto.SendListBots;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.service.ConversationService;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CreateGame implements Runnable {
+  private static final String FARM_HOST = "localhost";
+  private static final int FARM_PORT = 2023;
+
   private static final Object MUTEX = new Object();
   public static final List<ServerPlayer> players = new ArrayList<>();
 
@@ -37,10 +47,24 @@ public class CreateGame implements Runnable {
   @Override
   public void run() {
     try {
-      var startJson = ServerDao.getJsonFromClient(in);
-      var requestDto = ConversationService.deserialize(startJson, StartGameRequest.class);
+      IDto requestDto;
 
-      var serverGame = createServerGame(requestDto);
+      do {
+        requestDto = ConversationService.deserialize(ServerDao.getJsonFromClient(in));
+        if (requestDto instanceof GetListBotsFromFarm) {
+          try (var socket = new Socket(FARM_HOST, FARM_PORT)) {
+            var in = new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
+            var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
+
+            ServerDao.send(
+                this.out,
+                ConversationService.serialize(
+                    getListBotsFromFarm(new GetListBotsFromFarm(), in, out)));
+          }
+        }
+      } while (!(requestDto instanceof StartGameRequest));
+
+      var serverGame = createServerGame((StartGameRequest) requestDto);
       if (serverGame != null) {
         GAMES.execute(serverGame);
       }
@@ -123,5 +147,28 @@ public class CreateGame implements Runnable {
 
   public void clearPlayers() {
     players.clear();
+  }
+
+  /**
+   * Метод возвращает список доступных ботов на ферме.
+   *
+   * @param getListBotsFromFarm request
+   * @param in BufferedReader
+   * @param out BufferedWriter
+   * @return SendListBots dto
+   */
+  public SendListBots getListBotsFromFarm(
+      GetListBotsFromFarm getListBotsFromFarm, BufferedReader in, BufferedWriter out) {
+    try {
+      out.write(ConversationService.serialize(getListBotsFromFarm));
+      out.newLine();
+      out.flush();
+
+      return ConversationService.deserialize(in.readLine(), SendListBots.class);
+    } catch (IOException e) {
+      log.error("Не удалось получить список ботов");
+    }
+
+    return null;
   }
 }

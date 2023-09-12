@@ -18,6 +18,7 @@ import io.deeplay.grandmastery.dto.AcceptMove;
 import io.deeplay.grandmastery.dto.IDto;
 import io.deeplay.grandmastery.dto.ResultGame;
 import io.deeplay.grandmastery.dto.SendAnswerDraw;
+import io.deeplay.grandmastery.dto.SendBoard;
 import io.deeplay.grandmastery.dto.SendMove;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.dto.StartGameResponse;
@@ -148,6 +149,10 @@ public class Client {
   public void run() throws IOException, IllegalStateException {
     do {
       try {
+        //        var bots =
+        //            ((SendListBots) clientController.clientDao().query(new GetListBotsFromFarm()))
+        //                .getBots();
+        //        System.out.println(bots); // EXAMPLE
         GameMode gameMode = clientController.selectMode();
         if (gameMode == GameMode.BOT_VS_BOT) {
           botVsBot(clientController.selectChessType());
@@ -159,7 +164,7 @@ public class Client {
           player = new HumanPlayer(name, color, ui);
           StartGameRequest request =
               gameMode == GameMode.HUMAN_VS_BOT
-                  ? new StartGameRequest(name, chessType, color, "Minimaximus", null)
+                  ? new StartGameRequest(name, chessType, color, "Randomus", null)
                   : new StartGameRequest(name, chessType, color, null, null);
           IDto response = clientController.query(request);
 
@@ -200,6 +205,11 @@ public class Client {
     StartGameRequest request =
         new StartGameRequest("AI", chessType, Color.WHITE, "Randomus", "Randomus");
     IDto response = clientController.query(request);
+
+    while (response instanceof SendBoard sendBoard) {
+      clientController.showBoard(Boards.fromString(sendBoard.getBoard()), Color.WHITE);
+      response = ConversationService.deserialize(clientController.getJsonFromServer());
+    }
 
     if (response instanceof ResultGame resultGame) {
       var boards = resultGame.getBoards();

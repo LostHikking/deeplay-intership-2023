@@ -94,12 +94,7 @@ public class ServerDaoTest {
   void sendResultTest() throws IOException {
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            Mockito.mock(),
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), Mockito.mock(), Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
     Mockito.when(socket.getOutputStream()).thenReturn(System.out);
@@ -114,12 +109,7 @@ public class ServerDaoTest {
 
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            Mockito.mock(),
-            out,
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), Mockito.mock(), out, "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
     Mockito.when(socket.getOutputStream()).thenReturn(System.out);
@@ -134,12 +124,7 @@ public class ServerDaoTest {
 
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            Mockito.mock(),
-            out,
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), Mockito.mock(), out, "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     Mockito.when(socket.getOutputStream()).thenReturn(System.out);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
@@ -152,12 +137,7 @@ public class ServerDaoTest {
   void notifyWrongMoveTest() throws IOException {
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            Mockito.mock(),
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), Mockito.mock(), Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
     Mockito.when(socket.getOutputStream()).thenReturn(System.out);
@@ -169,29 +149,20 @@ public class ServerDaoTest {
   void notifySuccessMoveTest() throws IOException {
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            Mockito.mock(),
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), Mockito.mock(), Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
     Mockito.when(socket.getOutputStream()).thenReturn(System.out);
 
-    Assertions.assertDoesNotThrow(() -> serverDao.notifySuccessMove(Color.WHITE, Mockito.mock()));
+    Assertions.assertDoesNotThrow(
+        () -> serverDao.notifySuccessMove(Color.WHITE, Mockito.mock(), new HashBoard()));
   }
 
   @Test
   void notifyStartGameTest() throws IOException {
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            Mockito.mock(),
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), Mockito.mock(), Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
     Mockito.when(socket.getOutputStream()).thenReturn(System.out);
@@ -206,12 +177,7 @@ public class ServerDaoTest {
   void closeTest() {
     var serverPlayer =
         new ServerPlayer(
-            Mockito.mock(),
-            Mockito.mock(),
-            Mockito.mock(),
-            "name",
-            Color.WHITE,
-            ChessType.CLASSIC);
+            Mockito.mock(), Mockito.mock(), Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
 

@@ -12,8 +12,8 @@ public record ServerController(ServerDao serverDao) {
     serverDao.notifyWrongMove(color);
   }
 
-  public void notifySuccessMove(Color color, Move lastMove) throws IOException {
-    serverDao.notifySuccessMove(color, lastMove);
+  public void notifySuccessMove(Color color, Move lastMove, Board board) throws IOException {
+    serverDao.notifySuccessMove(color, lastMove, board);
   }
 
   public void notifyStartGame(Board board) throws IOException {

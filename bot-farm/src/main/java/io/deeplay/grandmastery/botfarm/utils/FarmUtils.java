@@ -1,5 +1,7 @@
 package io.deeplay.grandmastery.botfarm.utils;
 
+import io.deeplay.grandmastery.exceptions.QueryException;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,5 +21,24 @@ public class FarmUtils {
     out.write(json);
     out.newLine();
     out.flush();
+  }
+
+  /**
+   * Метод получает json из сервера.
+   *
+   * @param in BufferedReader
+   * @return Json
+   * @throws IOException Ошибка чтения/записи
+   * @throws QueryException Server disconnect
+   */
+  public static String getJsonFromServer(BufferedReader in) throws IOException {
+    var result = in.readLine();
+
+    if (result == null) {
+      throw new QueryException("Server disconnect");
+    }
+
+    log.info("Получили данные от сервера - " + result);
+    return result;
   }
 }
