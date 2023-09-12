@@ -1,6 +1,5 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
@@ -25,7 +24,8 @@ public class TimeTest {
       try {
         GameController gameController =
             new GameController(
-                new LjeDmitryBot(Color.WHITE, "minimax", 3), new AiPlayer(Color.BLACK));
+                new LjeDmitryBot(Color.WHITE, "minimax", 3),
+                new LjeDmitryBot(Color.BLACK, "minimax2", 3));
         gameController.beginPlay(ChessType.CLASSIC);
 
         long startGameTime = System.currentTimeMillis();

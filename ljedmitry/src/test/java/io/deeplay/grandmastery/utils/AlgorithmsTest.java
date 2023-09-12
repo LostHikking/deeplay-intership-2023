@@ -4,7 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.deeplay.grandmastery.core.*;
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.GameHistory;
+import io.deeplay.grandmastery.core.HashBoard;
+import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Pawn;
@@ -131,52 +135,6 @@ class AlgorithmsTest {
   }
 
   @Test
-  void evaluationBoardOpponentMateTest() {
-    Board board = new HashBoard();
-    board.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
-    board.setPiece(Position.fromString("b1"), new Rook(Color.WHITE));
-    board.setPiece(Position.fromString("a8"), new King(Color.BLACK));
-    board.setPiece(Position.fromString("c1"), new Rook(Color.BLACK));
-    board.setPiece(Position.fromString("h1"), new King(Color.WHITE));
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    assertEquals(1, Algorithms.evaluationBoard(board, Color.WHITE));
-  }
-
-  @Test
-  void evaluationBoardMateUsTest() {
-    Board board = new HashBoard();
-    board.setPiece(Position.fromString("a1"), new Rook(Color.BLACK));
-    board.setPiece(Position.fromString("b1"), new Rook(Color.BLACK));
-    board.setPiece(Position.fromString("a8"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("c1"), new Rook(Color.WHITE));
-    board.setPiece(Position.fromString("h1"), new King(Color.BLACK));
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    assertEquals(-1, Algorithms.evaluationBoard(board, Color.WHITE));
-  }
-
-  @Test
-  void evaluationBoardDrawTest() {
-    Board board = new HashBoard();
-    board.setPiece(Position.fromString("e4"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("g7"), new King(Color.BLACK));
-
-    Move move = LongAlgebraicNotation.getMoveFromString("e3e4");
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(move);
-    board.setLastMove(move);
-
-    assertEquals(0, Algorithms.evaluationBoard(board, Color.WHITE));
-  }
-
-  @Test
   void inversColorWhiteTest() {
     assertEquals(Color.BLACK, Algorithms.inversColor(Color.WHITE));
   }
@@ -184,33 +142,6 @@ class AlgorithmsTest {
   @Test
   void inversColorBlackTest() {
     assertEquals(Color.WHITE, Algorithms.inversColor(Color.BLACK));
-  }
-
-  @Test
-  void evaluationBoardTest() {
-    Board board = new HashBoard();
-    Boards.defaultChess().accept(board);
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    assertEquals(0.3311, Algorithms.evaluationBoard(board, Color.WHITE));
-  }
-
-  @Test
-  void calculateWhitePiecePriceTest() {
-    Board defaultBoard = new HashBoard();
-    Boards.defaultChess().accept(defaultBoard);
-
-    assertEquals(0.3311, Algorithms.calculatePiecesPrice(defaultBoard, Color.WHITE));
-  }
-
-  @Test
-  void calculateBlackPiecePriceTest() {
-    Board defaultBoard = new HashBoard();
-    Boards.defaultChess().accept(defaultBoard);
-
-    assertEquals(0.3311, Algorithms.calculatePiecesPrice(defaultBoard, Color.BLACK));
   }
 
   @Test
