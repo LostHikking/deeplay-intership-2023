@@ -1,8 +1,17 @@
 package io.deeplay.grandmastery.algorithms;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import io.deeplay.grandmastery.LjeDmitryBot;
 import io.deeplay.grandmastery.core.*;
 import io.deeplay.grandmastery.domain.Color;
-import io.deeplay.grandmastery.figures.*;
+import io.deeplay.grandmastery.figures.Bishop;
+import io.deeplay.grandmastery.figures.King;
+import io.deeplay.grandmastery.figures.Knight;
+import io.deeplay.grandmastery.figures.Pawn;
+import io.deeplay.grandmastery.figures.Piece;
+import io.deeplay.grandmastery.figures.Queen;
+import io.deeplay.grandmastery.figures.Rook;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.util.stream.Stream;
@@ -12,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluationTest {
   private Board board;
@@ -290,7 +297,7 @@ public class EvaluationTest {
         Arguments.of(Position.fromString("d5"), 1.3),
         Arguments.of(Position.fromString("a8"), -4.6),
         Arguments.of(Position.fromString("a1"), -5.3),
-        Arguments.of(Position.fromString("h8"), -4.7),
+        Arguments.of(Position.fromString("h8"), -4.6),
         Arguments.of(Position.fromString("h1"), -5.5));
   }
 
@@ -351,6 +358,42 @@ public class EvaluationTest {
   }
 
   @Test
+  void EvalTest() {
+    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("a8"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("d2"), new Queen(Color.WHITE));
+    board.setPiece(Position.fromString("e8"), new Rook(Color.BLACK));
+    board.setLastMove(LongAlgebraicNotation.getMoveFromString("f2d2"));
+
+    LjeDmitryBot bot = new LjeDmitryBot(Color.WHITE, "minimax", 3);
+    LjeDmitryBot bot2 = new LjeDmitryBot(Color.WHITE, "minimax2", 3);
+    bot.startup(board);
+    bot2.startup(board);
+    System.out.println(LongAlgebraicNotation.moveToString(bot.createMove()));
+    System.out.println(LongAlgebraicNotation.moveToString(bot2.createMove()));
+  }
+
+  @Test
+  void Eval2Test() {
+    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("a8"), new King(Color.BLACK));
+    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("d2"), new Queen(Color.WHITE));
+    board.setPiece(Position.fromString("e8"), new Rook(Color.BLACK));
+    GameHistory gameHistory = new GameHistory();
+    board.setLastMove(LongAlgebraicNotation.getMoveFromString("f2d2"));
+    gameHistory.addBoard(board);
+    gameHistory.makeMove(LongAlgebraicNotation.getMoveFromString("f2d2"));
+
+    BoardRender.showBoard(System.out, board, Color.WHITE);
+    System.out.println(
+            Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
+    System.out.println(
+            EvaluationPrev.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses()));
+  }
+
+  @Test
   void lossPieceTest() {
     board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
     board.setPiece(Position.fromString("e2"), new Queen(Color.WHITE));
@@ -371,7 +414,7 @@ public class EvaluationTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(1, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), 1));
+    assertEquals(1, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
   }
 
   @Test
@@ -386,7 +429,9 @@ public class EvaluationTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(-1, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), 1));
+    assertEquals(
+        -1,
+        Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
   }
 
   @Test
@@ -402,6 +447,6 @@ public class EvaluationTest {
     gameHistory.makeMove(move);
     board.setLastMove(move);
 
-    assertEquals(0, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), 1));
+    assertEquals(0, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
   }
 }

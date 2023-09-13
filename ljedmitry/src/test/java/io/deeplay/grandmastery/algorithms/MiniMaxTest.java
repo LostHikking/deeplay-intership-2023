@@ -1,16 +1,15 @@
 package io.deeplay.grandmastery.algorithms;
 
 import io.deeplay.grandmastery.LjeDmitryBot;
-import io.deeplay.grandmastery.core.AiPlayer;
 import io.deeplay.grandmastery.core.GameController;
+import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
 import io.deeplay.grandmastery.utils.Algorithms;
+import java.time.Duration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.Duration;
 
 public class MiniMaxTest {
   private static final String ALGORITHM_NAME = "minimax";
@@ -27,7 +26,7 @@ public class MiniMaxTest {
       GameController gameController =
           new GameController(
               new LjeDmitryBot(botColor, ALGORITHM_NAME, DEEP),
-              new AiPlayer(Algorithms.inversColor(botColor)));
+              new Randomus(Algorithms.inversColor(botColor)));
       gameController.beginPlay(ChessType.CLASSIC);
 
       while (!gameController.isGameOver()) {

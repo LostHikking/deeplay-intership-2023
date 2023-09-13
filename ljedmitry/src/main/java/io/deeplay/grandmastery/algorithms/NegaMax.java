@@ -76,7 +76,7 @@ public class NegaMax implements Algorithm {
       int signEval = color == botColor ? 1 : -1;
       moveThree.put(
           board.getLastMove(),
-          Evaluation.evaluationFunc(board, gameHistory, botColor, bonuses, deep) * signEval);
+			  Evaluation.evaluationFunc(board, gameHistory, botColor, bonuses, new Bonuses()) * signEval);
       return board.getLastMove();
     }
 
