@@ -66,8 +66,8 @@ class EvaluationPrev {
   protected static double evaluationBoard(
       Board board, GameHistory gameHistory, Color color, Bonuses bonuses) {
     return kingEndgameEval(board, color)
-           + calculatePiecesPrice(board, color)
-           + castlingBonus(board, gameHistory, bonuses);
+        + calculatePiecesPrice(board, color)
+        + castlingBonus(board, gameHistory, bonuses);
   }
 
   protected static double kingEndgameEval(Board board, Color color) {

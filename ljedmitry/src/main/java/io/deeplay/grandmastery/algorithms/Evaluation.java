@@ -32,7 +32,11 @@ class Evaluation {
           100.0);
 
   public static double evaluationFunc(
-      Board board, GameHistory gameHistory, Color botColor, Bonuses bonuses, int deep) {
+      Board board,
+      GameHistory gameHistory,
+      Color botColor,
+      Bonuses ourBonuses,
+      Bonuses opponentBonuses) {
     if (GameStateChecker.isMate(board, inversColor(botColor))) {
       return MAX_EVAL;
     } else if (GameStateChecker.isMate(board, botColor)) {
@@ -43,11 +47,11 @@ class Evaluation {
       return 0;
     }
 
-    double our_rate = evaluationBoard(board, gameHistory, botColor, bonuses);
-    if (deep % 2 == 1) {
-      our_rate += pieceExchange(board, botColor);
-    }
-    double opponent_rate = evaluationBoard(board, gameHistory, inversColor(botColor), bonuses);
+    double our_rate =
+        evaluationBoard(board, gameHistory, botColor, ourBonuses) + pieceExchange(board, botColor);
+    double opponent_rate =
+        evaluationBoard(board, gameHistory, inversColor(botColor), opponentBonuses)
+            + pieceExchange(board, inversColor(botColor));
 
     double result = (our_rate - opponent_rate) * (1 + 10 / (our_rate + opponent_rate)) / 1000;
     if (result < MIN_EVAL || result > MAX_EVAL) {
@@ -154,6 +158,7 @@ class Evaluation {
             } else {
               result -= calculatePiecePrice(board, friendly, color);
             }
+            break;
           }
         }
       }
