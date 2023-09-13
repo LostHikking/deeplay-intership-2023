@@ -4,6 +4,7 @@ dependencies {
     implementation(project(":game"))
     implementation(project(":conversation"))
     implementation(project(":melniknow-bots"))
+    implementation(project(":ljedmitry-bot"))
     implementation("org.reflections:reflections:0.10.2")
 }
 

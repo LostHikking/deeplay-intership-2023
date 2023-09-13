@@ -6,6 +6,7 @@ import io.deeplay.grandmastery.figures.Piece;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -108,5 +109,23 @@ public class HashBoard extends Board {
     pieces.clear();
     blackKing = null;
     whiteKing = null;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof HashBoard hashBoard)) {
+      return false;
+    }
+    return Objects.equals(pieces, hashBoard.pieces)
+        && Objects.equals(blackKing, hashBoard.blackKing)
+        && Objects.equals(whiteKing, hashBoard.whiteKing);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(pieces);
   }
 }
