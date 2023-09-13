@@ -22,7 +22,8 @@ public class MiniMax implements Algorithm {
   private final int deep;
   private final boolean isMax;
   private final Map<Move, Double> moveThree;
-  private final Bonuses bonuses;
+  private final Bonuses ourBonuses;
+  private final Bonuses opponentBonuses;
 
   private int moveCount;
 
@@ -30,7 +31,8 @@ public class MiniMax implements Algorithm {
     this.botColor = playerInfo.getColor();
     this.isMax = true;
     this.deep = deep;
-    this.bonuses = new Bonuses();
+    this.ourBonuses = new Bonuses();
+    this.opponentBonuses = new Bonuses();
     this.moveThree = new HashMap<>();
     this.moveCount = 0;
   }
@@ -52,8 +54,7 @@ public class MiniMax implements Algorithm {
       boolean isMax) {
     if (deep == 0 || isGameOver(board, gameHistory)) {
       moveThree.put(
-          board.getLastMove(),
-          Evaluation.evaluationFunc(board, gameHistory, botColor, bonuses, deep));
+          board.getLastMove(), Evaluation.evaluationFunc(board, gameHistory, botColor, ourBonuses, opponentBonuses));
       return board.getLastMove();
     }
 

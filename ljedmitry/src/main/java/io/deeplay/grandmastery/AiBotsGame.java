@@ -1,7 +1,6 @@
 package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.GameController;
-import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
@@ -10,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AiBotsGame {
-  private static final int COUNT_GAMES = 100;
+  private static final int COUNT_GAMES = 1;
   private static final boolean WITH_GUI = true;
   private static final DecimalFormat df = new DecimalFormat("#.###");
   private static Gui gui;
@@ -31,8 +30,9 @@ public class AiBotsGame {
       try {
         GameController gameController =
             new GameController(
-                new LjeDmitryBot(Color.WHITE, "minimax", 3), new Randomus(Color.BLACK));
-        gameController.beginPlay(ChessType.FISHERS);
+                new LjeDmitryBot(Color.WHITE, "minimax", 3),
+                new LjeDmitryBot(Color.BLACK, "minimax2", 3));
+        gameController.beginPlay(ChessType.CLASSIC);
         if (WITH_GUI) {
           gui.showBoard(gameController.getBoard(), Color.WHITE);
         }

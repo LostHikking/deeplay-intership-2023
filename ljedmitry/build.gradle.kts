@@ -10,6 +10,7 @@ tasks {
         manifest {
             attributes["Main-Class"] = "io.deeplay.grandmastery.HumanVsLjeDmitry"
         }
-        archiveBaseName.set("local-game")
+        archiveBaseName.set("LjeDmitryBot")
+        archiveClassifier.set("")
     }
 }
