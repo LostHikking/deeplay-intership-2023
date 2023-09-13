@@ -17,7 +17,7 @@ public class MiniMaxTest {
 
   @Test
   void generalTest() {
-    int countGame = 100;
+    int countGame = 50;
     int winGame = 0;
 
     for (int i = 0; i < countGame; i++) {

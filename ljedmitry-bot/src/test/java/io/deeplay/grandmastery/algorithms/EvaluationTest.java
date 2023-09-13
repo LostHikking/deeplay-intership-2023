@@ -1,9 +1,12 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.deeplay.grandmastery.LjeDmitryBot;
-import io.deeplay.grandmastery.core.*;
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.GameHistory;
+import io.deeplay.grandmastery.core.HashBoard;
+import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
@@ -214,7 +217,6 @@ public class EvaluationTest {
 
   @Test
   void penaltyCastlingOneRookMoveTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("h1h2");
     Piece rook = new Rook(Color.WHITE);
     board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
     board.setPiece(Position.fromString("h1"), rook);
@@ -222,6 +224,7 @@ public class EvaluationTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
+    Move move = LongAlgebraicNotation.getMoveFromString("h1h2");
     rook.move(board, move);
     board.setLastMove(move);
     gameHistory.addBoard(board);
@@ -232,8 +235,6 @@ public class EvaluationTest {
 
   @Test
   void penaltyCastlingTwoRookMoveTest() {
-    Move firstMove = LongAlgebraicNotation.getMoveFromString("h1h2");
-    Move secondMove = LongAlgebraicNotation.getMoveFromString("a1a2");
     Piece firstRook = new Rook(Color.WHITE);
     Piece secondRook = new Rook(Color.WHITE);
     board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
@@ -243,6 +244,7 @@ public class EvaluationTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
+    Move firstMove = LongAlgebraicNotation.getMoveFromString("h1h2");
     firstRook.move(board, firstMove);
     board.setLastMove(firstMove);
     gameHistory.addBoard(board);
@@ -250,6 +252,7 @@ public class EvaluationTest {
     Bonuses bonuses = new Bonuses();
     Evaluation.castlingBonus(board, gameHistory, bonuses);
 
+    Move secondMove = LongAlgebraicNotation.getMoveFromString("a1a2");
     secondRook.move(board, secondMove);
     board.setLastMove(secondMove);
     gameHistory.addBoard(board);
@@ -312,97 +315,6 @@ public class EvaluationTest {
   }
 
   @Test
-  void securityPieceTest() {
-    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("e2"), new Pawn(Color.WHITE));
-
-    assertTrue(Evaluation.isSecurity(board, Position.fromString("e2"), Color.WHITE));
-  }
-
-  @Test
-  void noSecurityPieceTest() {
-    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("a2"), new Pawn(Color.WHITE));
-
-    assertFalse(Evaluation.isSecurity(board, Position.fromString("a2"), Color.WHITE));
-  }
-
-  @Test
-  void profitExchangePieceTest() {
-    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("e2"), new Pawn(Color.WHITE));
-    board.setPiece(Position.fromString("e1"), new Queen(Color.WHITE));
-    board.setPiece(Position.fromString("e8"), new Queen(Color.BLACK));
-
-    assertEquals(8.0, Evaluation.pieceExchange(board, Color.WHITE));
-  }
-
-  @Test
-  void zeroExchangePieceTest() {
-    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
-    board.setPiece(Position.fromString("e2"), new Queen(Color.WHITE));
-    board.setPiece(Position.fromString("e8"), new Queen(Color.BLACK));
-
-    assertEquals(0, Evaluation.pieceExchange(board, Color.WHITE));
-  }
-
-  @Test
-  void unProfitExchangePieceTest() {
-    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
-    board.setPiece(Position.fromString("e2"), new Queen(Color.WHITE));
-    board.setPiece(Position.fromString("e8"), new Rook(Color.BLACK));
-
-    assertEquals(-4.0, Evaluation.pieceExchange(board, Color.WHITE));
-  }
-
-  @Test
-  void EvalTest() {
-    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("a8"), new King(Color.BLACK));
-    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
-    board.setPiece(Position.fromString("d2"), new Queen(Color.WHITE));
-    board.setPiece(Position.fromString("e8"), new Rook(Color.BLACK));
-    board.setLastMove(LongAlgebraicNotation.getMoveFromString("f2d2"));
-
-    LjeDmitryBot bot = new LjeDmitryBot(Color.WHITE, "minimax", 3);
-    LjeDmitryBot bot2 = new LjeDmitryBot(Color.WHITE, "minimax2", 3);
-    bot.startup(board);
-    bot2.startup(board);
-    System.out.println(LongAlgebraicNotation.moveToString(bot.createMove()));
-    System.out.println(LongAlgebraicNotation.moveToString(bot2.createMove()));
-  }
-
-  @Test
-  void Eval2Test() {
-    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("a8"), new King(Color.BLACK));
-    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
-    board.setPiece(Position.fromString("d2"), new Queen(Color.WHITE));
-    board.setPiece(Position.fromString("e8"), new Rook(Color.BLACK));
-    GameHistory gameHistory = new GameHistory();
-    board.setLastMove(LongAlgebraicNotation.getMoveFromString("f2d2"));
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(LongAlgebraicNotation.getMoveFromString("f2d2"));
-
-    BoardRender.showBoard(System.out, board, Color.WHITE);
-    System.out.println(
-            Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
-    System.out.println(
-            EvaluationPrev.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses()));
-  }
-
-  @Test
-  void lossPieceTest() {
-    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("e2"), new Queen(Color.WHITE));
-    board.setPiece(Position.fromString("e8"), new Queen(Color.BLACK));
-
-    assertEquals(-9.0, Evaluation.pieceExchange(board, Color.WHITE));
-  }
-
-  @Test
   void evaluationBoardOpponentMateTest() {
     Board board = new HashBoard();
     board.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
@@ -414,7 +326,9 @@ public class EvaluationTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(1, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
+    assertEquals(
+        1,
+        Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
   }
 
   @Test
@@ -447,6 +361,8 @@ public class EvaluationTest {
     gameHistory.makeMove(move);
     board.setLastMove(move);
 
-    assertEquals(0, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
+    assertEquals(
+        0,
+        Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
   }
 }

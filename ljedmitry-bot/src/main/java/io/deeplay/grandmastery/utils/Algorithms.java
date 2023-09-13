@@ -12,9 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Algorithms {
-  public static final double MAX_EVAL = 1.0;
-  public static final double MIN_EVAL = -1.0;
-
+  /**
+   * Создает копию истории игры и выполняет ход на доске.
+   *
+   * @param board Шахматная доска.
+   * @param gameHistory История игры.
+   * @return Новая копия истории игры с выполненным ходом.
+   */
   public static GameHistory copyHistoryAndMove(Board board, GameHistory gameHistory) {
     GameHistory copyHistory = gameHistory.getCopy();
     copyHistory.addBoard(board);
@@ -23,6 +27,13 @@ public class Algorithms {
     return copyHistory;
   }
 
+  /**
+   * Создает копию доски и выполняет ход на ней.
+   *
+   * @param move Ход, который нужно выполнить.
+   * @param board Исходная шахматная доска.
+   * @return Новая копия доски с выполненным ходом.
+   */
   public static Board copyAndMove(Move move, Board board) {
     Board copyBoard = new HashBoard();
     Boards.copy(board).accept(copyBoard);
@@ -34,6 +45,13 @@ public class Algorithms {
     return copyBoard;
   }
 
+  /**
+   * Получает список всех возможных ходов для заданного цвета на доске.
+   *
+   * @param board Шахматная доска.
+   * @param color Цвет (белые или черные).
+   * @return Список всех возможных ходов.
+   */
   public static List<Move> getPossibleMoves(Board board, Color color) {
     List<Move> moves = new ArrayList<>();
     List<Position> positions = board.getAllPiecePositionByColor(color);
@@ -45,12 +63,25 @@ public class Algorithms {
     return moves;
   }
 
+  /**
+   * Проверяет, завершилась ли игра на доске.
+   *
+   * @param board Шахматная доска.
+   * @param gameHistory История игры.
+   * @return true, если игра завершена, иначе false.
+   */
   public static boolean isGameOver(Board board, GameHistory gameHistory) {
     return GameStateChecker.isMate(board, Color.WHITE)
         || GameStateChecker.isMate(board, Color.BLACK)
         || GameStateChecker.isDraw(board, gameHistory);
   }
 
+  /**
+   * Инвертирует цвет стороны.
+   *
+   * @param color Исходный цвет.
+   * @return Инвертированный цвет.
+   */
   public static Color inversColor(Color color) {
     return color == Color.WHITE ? Color.BLACK : Color.WHITE;
   }

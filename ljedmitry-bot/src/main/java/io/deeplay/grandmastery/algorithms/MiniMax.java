@@ -1,6 +1,12 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.*;
+import static io.deeplay.grandmastery.algorithms.Evaluation.MAX_EVAL;
+import static io.deeplay.grandmastery.algorithms.Evaluation.MIN_EVAL;
+import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
+import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
+import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
+import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
@@ -11,28 +17,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PrevMinimax implements Algorithm {
+/** Реализация алгоритма MiniMax для поиска лучшего хода в игре. */
+public class MiniMax implements Algorithm {
   private final Color botColor;
   private final int deep;
   private final boolean isMax;
   private final Map<Move, Double> moveThree;
-  private final Bonuses bonuses;
+  private final Bonuses ourBonuses;
+  private final Bonuses opponentBonuses;
 
-  private int moveCount;
-
-  public PrevMinimax(PlayerInfo playerInfo, int deep) {
+  /**
+   * Создает новый экземпляр алгоритма MiniMax.
+   *
+   * @param playerInfo Информация об игроке, для которого применяется алгоритм.
+   * @param deep Глубина поиска в дереве MiniMax.
+   */
+  public MiniMax(PlayerInfo playerInfo, int deep) {
     this.botColor = playerInfo.getColor();
     this.isMax = true;
     this.deep = deep;
-    this.bonuses = new Bonuses();
+    this.ourBonuses = new Bonuses();
+    this.opponentBonuses = new Bonuses();
     this.moveThree = new HashMap<>();
-    this.moveCount = 0;
   }
 
   @Override
   public Move findBestMove(Board board, GameHistory gameHistory) {
     moveThree.clear();
-    moveCount++;
     return minmax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax);
   }
 
@@ -47,7 +58,7 @@ public class PrevMinimax implements Algorithm {
     if (deep == 0 || isGameOver(board, gameHistory)) {
       moveThree.put(
           board.getLastMove(),
-          EvaluationPrev.evaluationFunc(board, gameHistory, botColor, bonuses));
+          Evaluation.evaluationFunc(board, gameHistory, botColor, ourBonuses, opponentBonuses));
       return board.getLastMove();
     }
 

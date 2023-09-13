@@ -1,21 +1,19 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
 import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.GameStateChecker;
-import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.figures.Piece;
-import java.util.List;
 import java.util.Map;
 
 class Evaluation {
+  public static final double MAX_EVAL = 1.0;
+  public static final double MIN_EVAL = -1.0;
   private static final Map<FigureType, Double> PIECE_PRICE =
       Map.of(
           FigureType.PAWN,
@@ -47,13 +45,11 @@ class Evaluation {
       return 0;
     }
 
-    double our_rate =
-        evaluationBoard(board, gameHistory, botColor, ourBonuses) + pieceExchange(board, botColor);
-    double opponent_rate =
-        evaluationBoard(board, gameHistory, inversColor(botColor), opponentBonuses)
-            + pieceExchange(board, inversColor(botColor));
+    double ourRate = evaluationBoard(board, gameHistory, botColor, ourBonuses);
+    double opponentRate =
+        evaluationBoard(board, gameHistory, inversColor(botColor), opponentBonuses);
 
-    double result = (our_rate - opponent_rate) * (1 + 10 / (our_rate + opponent_rate)) / 1000;
+    double result = (ourRate - opponentRate) * (1 + 10 / (ourRate + opponentRate)) / 1000;
     if (result < MIN_EVAL || result > MAX_EVAL) {
       System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
@@ -132,57 +128,5 @@ class Evaluation {
     }
 
     return rowPrice + centerBonus - doublePawnPenalty;
-  }
-
-  protected static double pieceExchange(Board board, Color color) {
-    double result = 0;
-    List<Position> friendlies = board.getAllPiecePositionByColor(color);
-    List<Position> enemies = board.getAllPiecePositionByColor(inversColor(color));
-
-    for (Position friendly : friendlies) {
-      if (!friendly.equals(board.getKingPositionByColor(color))) {
-        for (Position enemy : enemies) {
-          Piece ePiece = board.getPiece(enemy);
-          FigureType promotionPiece = null;
-          if (ePiece.getFigureType() == FigureType.PAWN
-              && (friendly.row().value() == 0 || friendly.row().value() == 7)) {
-            promotionPiece = FigureType.QUEEN;
-          }
-
-          Move move = new Move(enemy, friendly, promotionPiece);
-          if (ePiece.canMove(board, move)) {
-            if (isSecurity(board, friendly, color)) {
-              result -=
-                  calculatePiecePrice(board, friendly, color)
-                      - calculatePiecePrice(board, enemy, inversColor(color));
-            } else {
-              result -= calculatePiecePrice(board, friendly, color);
-            }
-            break;
-          }
-        }
-      }
-    }
-
-    return result;
-  }
-
-  protected static boolean isSecurity(Board board, Position pos, Color color) {
-    List<Position> friendlies = board.getAllPiecePositionByColor(color);
-
-    for (Position friendly : friendlies) {
-      Piece piece = board.getPiece(friendly);
-      FigureType promotionPiece = null;
-      if (piece.getFigureType() == FigureType.PAWN
-          && (friendly.row().value() == 0 || friendly.row().value() == 7)) {
-        promotionPiece = FigureType.QUEEN;
-      }
-
-      Move move = new Move(friendly, pos, promotionPiece);
-      if (piece.canMove(board, move, true, false)) {
-        return true;
-      }
-    }
-    return false;
   }
 }

@@ -1,5 +1,6 @@
 package io.deeplay.grandmastery.botfarm.bots;
 
+import io.deeplay.grandmastery.LjeDmitryBot;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.domain.Color;
@@ -8,7 +9,8 @@ import java.util.function.Function;
 
 public enum Bots {
   RANDOMUS("Randomus", Randomus::new),
-  MINIMAXIMUS("Minimaximus", color -> new Minimaximus(color, 3));
+  MINIMAXIMUS("Minimaximus", color -> new Minimaximus(color, 3)),
+  LJEDMITRY("LjeDmitry", color -> new LjeDmitryBot(color, "minimax", 3));
 
   public final String name;
   public final Function<Color, Player> constructor;

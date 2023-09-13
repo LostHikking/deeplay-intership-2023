@@ -1,10 +1,7 @@
 package io.deeplay.grandmastery;
 
-import com.sun.tools.javac.Main;
 import io.deeplay.grandmastery.algorithms.Algorithm;
 import io.deeplay.grandmastery.algorithms.MiniMax;
-import io.deeplay.grandmastery.algorithms.NegaMax;
-import io.deeplay.grandmastery.algorithms.PrevMinimax;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.Color;
@@ -16,19 +13,18 @@ import java.util.Properties;
 public class LjeDmitryBot extends Player {
   private final Algorithm algorithm;
   private final int deep;
-  private boolean isCastlings;
 
   /**
    * Конструктор с настройками из конфига.
    *
    * @param color Цвет
+   * @throws RuntimeException При ошибке чтения конфига.
    */
   public LjeDmitryBot(Color color) {
     super("LjeDmitry", color);
-    isCastlings = false;
 
     try (InputStream config =
-        Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+        LjeDmitryBot.class.getClassLoader().getResourceAsStream("/config.properties")) {
       Properties properties = new Properties();
       properties.load(config);
 
@@ -54,18 +50,10 @@ public class LjeDmitryBot extends Player {
   }
 
   private Algorithm getAlgorithm(String algorithmName) {
-    switch (algorithmName) {
-      case "minimax" -> {
-        return new MiniMax(this, deep);
-      }
-      case "negamax" -> {
-        return new NegaMax(this, deep);
-      }
-      case "minimax2" -> {
-        return new PrevMinimax(this, deep);
-      }
-      default -> throw new RuntimeException("Неизвестное название алгоритма для бота!");
+    if (algorithmName.equals("minimax")) {
+      return new MiniMax(this, deep);
     }
+    throw new RuntimeException("Неизвестное название алгоритма для бота!");
   }
 
   @Override
@@ -78,13 +66,5 @@ public class LjeDmitryBot extends Player {
   @Override
   public boolean answerDraw() throws GameException {
     return false;
-  }
-
-  public boolean isCastlings() {
-    return isCastlings;
-  }
-
-  public void setCastlings(boolean castlings) {
-    isCastlings = castlings;
   }
 }
