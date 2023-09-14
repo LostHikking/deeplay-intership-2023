@@ -6,9 +6,12 @@ import io.deeplay.grandmastery.figures.Piece;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -18,10 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -200,6 +206,57 @@ public class GuiContainer {
     textArea.setFocusable(false);
     textArea.setName("textArea");
     return scrollPane;
+  }
+
+  /**
+   * Метод для выбора ботов.
+   * @param botsList Список ботов
+   * @param color Цвет бота
+   * @param parentFrame Родительское окно
+   * @return Имя выбранного бота
+   */
+  public String showBotSelectionWindow(List<String> botsList,
+                                       io.deeplay.grandmastery.domain.Color color,
+                                       JFrame parentFrame) {
+    JDialog dialog = new JDialog(parentFrame,
+            "Выберите бота для "
+                    + (color == io.deeplay.grandmastery.domain.Color.WHITE ? "белых:" : "черных:"),
+            true);
+    dialog.setLayout(new FlowLayout());
+    ImageIcon icon =
+            new ImageIcon(Objects.requireNonNull(getClass().getClassLoader()
+                            .getResource("images/GrandmasteryIcon.png")));
+    dialog.setIconImage(icon.getImage());
+
+
+    dialog.getContentPane().setBackground(new Color(245, 245, 220));
+
+    JComboBox<String> botComboBox =
+            new JComboBox<>(new DefaultComboBoxModel<>(botsList.toArray(new String[0])));
+    JButton okButton = new JButton("OK");
+    botComboBox.setBackground(new Color(213, 178, 156));
+    okButton.setBackground(new Color(213, 178, 156));
+    AtomicReference<String> selectedBot = new AtomicReference<>();
+
+    okButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        selectedBot.set((String) botComboBox.getSelectedItem());
+        dialog.setVisible(false);
+        dialog.dispose();
+      }
+    });
+
+    dialog.add(botComboBox);
+    dialog.add(okButton);
+
+    dialog.setSize(new Dimension(230, 70));
+    dialog.setResizable(false);
+
+    dialog.setLocationRelativeTo(parentFrame);
+    dialog.setVisible(true);
+
+    return selectedBot.get();
   }
 
   /** Метод выводит диалоговое окно для выбора режима игры. */
