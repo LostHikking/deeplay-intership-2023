@@ -7,6 +7,9 @@ include("gui")
 include("conversation")
 include("local")
 include("tui")
-include("melniknow-bots")
 include("bot-farm")
-include("ljedmitry-bot")
+include("bots")
+include("bots:ljedmitry-bot")
+findProject(":bots:ljedmitry-bot")?.name = "ljedmitry-bot"
+include("bots:melniknow-bots")
+findProject(":bots:melniknow-bots")?.name = "melniknow-bots"

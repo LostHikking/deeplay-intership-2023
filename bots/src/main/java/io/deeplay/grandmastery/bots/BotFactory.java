@@ -1,4 +1,4 @@
-package io.deeplay.grandmastery.botfarm.bots;
+package io.deeplay.grandmastery.bots;
 
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.Color;

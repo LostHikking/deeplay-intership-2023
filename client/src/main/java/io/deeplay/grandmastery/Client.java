@@ -1,7 +1,5 @@
 package io.deeplay.grandmastery;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.sun.tools.javac.Main;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.HumanPlayer;
@@ -29,13 +27,8 @@ import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.service.ConversationService;
 import io.deeplay.grandmastery.ui.ConsoleUi;
 import io.deeplay.grandmastery.utils.Boards;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,11 +41,9 @@ import lombok.extern.slf4j.Slf4j;
 public class Client {
   private static final ExecutorService MAKE_MOVE = Executors.newSingleThreadExecutor();
   private static final AtomicReference<IOException> IO_EXCEPTION_REF = new AtomicReference<>();
-  private static final int TIME_RECONNECTION = 5000;
 
   protected final String host;
   protected final int port;
-  protected final UI ui;
   protected ClientController clientController;
   protected Player player;
   protected boolean reconnect;
@@ -61,9 +52,9 @@ public class Client {
    * Конструктор для класса Client.
    *
    * @param ui UI
-   * @throws IOException в случаи ошибки с открытием/чтением конфига.
+   * @throws Exception в случаи ошибки с открытием/чтением конфига.
    */
-  public Client(UI ui) throws IOException {
+  public Client(UI ui) throws Exception {
     try (InputStream config =
         Main.class.getClassLoader().getResourceAsStream("config.properties")) {
       Properties properties = new Properties();
@@ -73,45 +64,9 @@ public class Client {
       port = Integer.parseInt(properties.getProperty("port"));
     }
 
-    this.ui = ui;
-    connect();
+    this.clientController = new ClientController(ui);
+    clientController.connect(host, port);
     reconnect = false;
-  }
-
-  /**
-   * Метод для отправки сообщений в UI.
-   *
-   * @param message Сообщение.
-   */
-  public void printEventMessage(String message) {
-    if (ui != null) {
-      ui.printEventMessage(message);
-    }
-  }
-
-  /**
-   * Метод для подключения клиента к серверу. Если подключение не возможно, будет повторная попытка
-   * через {@code TIME_RECONNECTION} мс. И так до тех пор, пока не будет успешного подключения.
-   */
-  protected void connect() {
-    while (true) {
-      try {
-        Socket socket = new Socket(host, port);
-        BufferedReader in =
-            new BufferedReader(new InputStreamReader(socket.getInputStream(), UTF_8));
-        BufferedWriter out =
-            new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
-
-        this.clientController = new ClientController(new ClientDao(socket, in, out), ui);
-        log.info("Соединение с сервером установлено.");
-        printEventMessage("Соединение с сервером установлено.");
-        break;
-      } catch (IOException e) {
-        log.warn("Сервер недоступен. Попробуем снова через некоторое время...");
-        printEventMessage("Сервер недоступен. Попробуем снова через некоторое время...");
-        waitAndReconnect();
-      }
-    }
   }
 
   /**
@@ -119,18 +74,10 @@ public class Client {
    *
    * @throws IOException При проблемах с закрытием текущего соединения или при установке нового.
    */
-  protected void reconnect() throws IOException {
+  protected void reconnect() throws Exception {
     clientController.close();
     reconnect = true;
-    connect();
-  }
-
-  private void waitAndReconnect() {
-    try {
-      Thread.sleep(TIME_RECONNECTION);
-    } catch (InterruptedException ex) {
-      log.error(ex.getMessage(), ex);
-    }
+    clientController.connect(host, port);
   }
 
   private static boolean isServerUnavailable(IOException e) {
@@ -142,14 +89,11 @@ public class Client {
    *
    * @throws IOException ошибка при закрытии потоков ввода/вывода
    * @throws IllegalStateException неизвестный тип ответа от сервера
+   * @throws Exception другая ошибка.
    */
-  public void run() throws IOException, IllegalStateException {
+  public void run() throws Exception {
     do {
       try {
-        //        var bots =
-        //            ((SendListBots) clientController.clientDao().query(new GetListBotsFromFarm()))
-        //                .getBots();
-        //        System.out.println(bots); // EXAMPLE
         GameMode gameMode = clientController.selectMode();
         if (gameMode == GameMode.BOT_VS_BOT) {
           botVsBot(clientController.selectChessType());
@@ -158,10 +102,11 @@ public class Client {
           String name = clientController.inputPlayerName(color);
           ChessType chessType = clientController.selectChessType();
 
-          player = new HumanPlayer(name, color, ui);
+          player = new HumanPlayer(name, color, clientController.getUi());
           StartGameRequest request =
               gameMode == GameMode.HUMAN_VS_BOT
-                  ? new StartGameRequest(name, chessType, color, "Randomus", null)
+                  ? new StartGameRequest(
+                      name, chessType, color, clientController.selectBot(color.getOpposite()), null)
                   : new StartGameRequest(name, chessType, color, null, null);
           IDto response = clientController.query(request);
 
@@ -198,8 +143,11 @@ public class Client {
    * @throws IllegalStateException неизвестный тип ответа от сервера.
    */
   private void botVsBot(ChessType chessType) throws IOException, IllegalStateException {
+    String firstBot = clientController.selectBot(Color.WHITE);
+    String secondBot = clientController.selectBot(Color.BLACK);
+
     StartGameRequest request =
-        new StartGameRequest("AI", chessType, Color.WHITE, "Randomus", "Randomus");
+        new StartGameRequest("AI", chessType, Color.WHITE, firstBot, secondBot);
     IDto response = clientController.query(request);
 
     while (response instanceof SendBoard sendBoard) {
@@ -267,7 +215,7 @@ public class Client {
       } catch (GameException e) {
         if (e.getMessage().contains(GameErrorCode.GAME_ALREADY_OVER.getDescription())) {
           log.error("Игра уже завершилась!");
-          printEventMessage("Игра уже завершилась!");
+          clientController.printEventMessage("Игра уже завершилась!");
           return;
         }
       }

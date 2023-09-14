@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Класс для взаимодействия с пользователем через консоль. */
@@ -237,6 +238,19 @@ public class ConsoleUi implements UI {
   @Override
   public void printEventMessage(String message) {
     printStream.println(message);
+  }
+
+  @Override
+  public String selectBot(List<String> botsList, Color color) throws IOException {
+    printStream.println("Выберите бота для " + (color == Color.WHITE ? "белых:" : "черных:"));
+    List<String> variable = new ArrayList<>();
+    for (int i = 0; i < botsList.size(); i++) {
+      printStream.println((i + 1) + " " + botsList.get(i));
+      variable.add(String.valueOf(i + 1));
+    }
+
+    int numBot = Integer.parseInt(expectInput(variable));
+    return botsList.get(numBot - 1);
   }
 
   /** Метод для вывода сообщения о некорректном ходе на консоль. */

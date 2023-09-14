@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -296,5 +297,47 @@ public class ConsoleUiTest {
     Assertions.assertAll(
         () -> assertFalse(consoleUi.answerDraw()),
         () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8)));
+  }
+
+  @Test
+  public void selectWhiteBot() {
+    String input = "1\n";
+    InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+    consoleUi = new ConsoleUi(inputStream, output);
+
+    String expect =
+        """
+    Выберите бота для белых:
+    1 Randomus
+    2 LjeDmitry
+    3 Melniknow
+        """;
+    Assertions.assertAll(
+        () ->
+            assertEquals(
+                "Randomus",
+                consoleUi.selectBot(List.of("Randomus", "LjeDmitry", "Melniknow"), Color.WHITE)),
+        () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", "")));
+  }
+
+  @Test
+  public void selectBlackBot() {
+    String input = "1\n";
+    InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+    consoleUi = new ConsoleUi(inputStream, output);
+
+    String expect =
+        """
+        Выберите бота для черных:
+        1 Randomus
+        2 LjeDmitry
+        3 Melniknow
+            """;
+    Assertions.assertAll(
+        () ->
+            assertEquals(
+                "Randomus",
+                consoleUi.selectBot(List.of("Randomus", "LjeDmitry", "Melniknow"), Color.BLACK)),
+        () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", "")));
   }
 }
