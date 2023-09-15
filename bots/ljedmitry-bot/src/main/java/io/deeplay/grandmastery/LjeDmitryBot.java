@@ -37,7 +37,6 @@ public class LjeDmitryBot extends Player {
   private Algorithm getAlgorithm(String algorithmName, int deep) {
     return switch (algorithmName) {
       case "minimax" -> new MiniMax(this, deep);
-      case "newMinimax" -> new NewMiniMax(this, deep);
       default -> throw new RuntimeException("Неизвестное название алгоритма: " + algorithmName);
     };
   }
