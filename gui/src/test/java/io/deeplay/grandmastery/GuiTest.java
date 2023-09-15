@@ -25,6 +25,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import javax.swing.JButton;
@@ -96,6 +98,31 @@ class GuiTest {
     FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
     // вызываем метод selectColor() и проверяем результат
     assertEquals(gui.selectColor(), Color.WHITE);
+  }
+
+  @Test
+  public void testShowBotSelectionWindow() throws IllegalAccessException {
+    // Подготовка списка ботов для тестирования
+    List<String> testBotList = new ArrayList<>();
+    testBotList.add("TestBot1");
+    testBotList.add("TestBot2");
+    testBotList.add("TestBot3");
+
+    // Создаем объект Gui
+    Gui gui = new Gui(false);
+
+    // Создаем mock-объект GuiContainer
+    GuiContainer guiContainerMock = mock(GuiContainer.class);
+
+    // Настройка возвращаемого значения mock-объекта
+    when(guiContainerMock.showBotSelectionWindow(testBotList, Color.WHITE, null))
+            .thenReturn("TestBot1");
+
+    // Устанавливаем mock-объект в Gui
+    FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);
+
+    // Вызываем метод showBotSelectionWindow() и проверяем результат
+    assertEquals(gui.selectBot(testBotList, Color.WHITE), "TestBot1");
   }
 
   @Test
