@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 dependencies {
     implementation(project(":game"))
     implementation(project(":conversation"))
-    implementation(project(":bots"))
+    implementation(project(mapOf("path" to ":bots:bots-factory")))
     implementation("org.reflections:reflections:0.10.2")
 }
 

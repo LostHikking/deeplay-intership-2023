@@ -97,7 +97,8 @@ public record ServerDao(Player playerOne, Player playerTwo, Socket socket) {
     if (socket != null) {
       try {
         var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
-        ServerDao.send(out, ConversationService.serialize(new SendBoard(Boards.getString(board))));
+        ServerDao.send(
+            out, ConversationService.serialize(new SendBoard(Boards.getString(board), lastMove)));
       } catch (IOException e) {
         log.error("Не удалось отправить промежуточный результат игры клиенту");
       }

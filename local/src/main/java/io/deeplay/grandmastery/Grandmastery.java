@@ -1,7 +1,5 @@
 package io.deeplay.grandmastery;
 
-import io.deeplay.grandmastery.bots.BotFactory;
-import io.deeplay.grandmastery.bots.Bots;
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.HumanPlayer;
 import io.deeplay.grandmastery.core.Player;
@@ -16,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 /** Главный класс, который запускает локальную игру в шахматы. */
 @Slf4j
 public class Grandmastery {
+  private static Color defaultColor = Color.WHITE;
+  private static GameMode gameMode;
   protected static UI ui;
 
   protected static void createUi(String uiName) throws IllegalArgumentException {
@@ -39,16 +39,15 @@ public class Grandmastery {
   protected static GameController createGameController() throws IOException {
     Player firstPlayer;
     Player secondPlayer;
-    GameMode gameMode = ui.selectMode();
+    gameMode = ui.selectMode();
 
     if (gameMode == GameMode.BOT_VS_BOT) {
       firstPlayer = createBot(Color.WHITE);
       secondPlayer = createBot(Color.BLACK);
     } else if (gameMode == GameMode.HUMAN_VS_BOT) {
-      Color color = ui.selectColor();
-      firstPlayer = new HumanPlayer(ui.inputPlayerName(color), color, ui, false);
-      secondPlayer = createBot(color.getOpposite());
-
+      defaultColor = ui.selectColor();
+      firstPlayer = new HumanPlayer(ui.inputPlayerName(defaultColor), defaultColor, ui, false);
+      secondPlayer = createBot(defaultColor.getOpposite());
     } else {
       firstPlayer = new HumanPlayer(ui.inputPlayerName(Color.WHITE), Color.WHITE, ui, false);
       secondPlayer = new HumanPlayer(ui.inputPlayerName(Color.BLACK), Color.BLACK, ui, false);
@@ -67,20 +66,28 @@ public class Grandmastery {
       createUi(UI.getUiFromConfig());
       GameController gameController = createGameController();
       gameController.beginPlay(ui.selectChessType());
+
       ui.printHelp();
-      ui.showBoard(gameController.getBoard(), Color.WHITE);
+      ui.showBoard(gameController.getBoard(), defaultColor);
+
       while (!gameController.isGameOver()) {
         try {
           gameController.nextMove();
           ui.showMove(
               gameController.getOpponentPlayer().getLastMove(),
               gameController.getOpponentPlayer().getColor());
-          ui.showBoard(gameController.getBoard(), gameController.getCurrentPlayer().getColor());
+
+          Color displayColor =
+              gameMode == GameMode.HUMAN_VS_HUMAN
+                  ? gameController.getCurrentPlayer().getColor()
+                  : defaultColor;
+          ui.showBoard(gameController.getBoard(), displayColor);
         } catch (GameException e) {
           ui.incorrectMove();
         }
       }
-      ui.showBoard(gameController.getBoard(), Color.WHITE);
+
+      ui.showBoard(gameController.getBoard(), defaultColor);
       ui.showResultGame(gameController.getGameStatus());
     } catch (GameException | IOException e) {
       log.error(e.getMessage());

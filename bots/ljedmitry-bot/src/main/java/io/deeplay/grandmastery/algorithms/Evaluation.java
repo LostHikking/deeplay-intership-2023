@@ -5,10 +5,12 @@ import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.GameStateChecker;
+import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
 import io.deeplay.grandmastery.figures.Piece;
+import java.util.List;
 import java.util.Map;
 
 class Evaluation {
@@ -34,7 +36,8 @@ class Evaluation {
       GameHistory gameHistory,
       Color botColor,
       Bonuses ourBonuses,
-      Bonuses opponentBonuses) {
+      Bonuses enemyBonuses,
+      boolean isMax) {
     if (GameStateChecker.isMate(board, inversColor(botColor))) {
       return MAX_EVAL;
     } else if (GameStateChecker.isMate(board, botColor)) {
@@ -46,17 +49,25 @@ class Evaluation {
     }
 
     double ourRate = evaluationBoard(board, gameHistory, botColor, ourBonuses);
-    double opponentRate =
-        evaluationBoard(board, gameHistory, inversColor(botColor), opponentBonuses);
+    double enemyRate = evaluationBoard(board, gameHistory, inversColor(botColor), enemyBonuses);
+    if (!isMax) {
+      ourRate += pieceExchange(board, botColor);
+    } else {
+      enemyRate += pieceExchange(board, inversColor(botColor));
+    }
 
-    return (ourRate - opponentRate) * (1 + 10 / (ourRate + opponentRate)) / 1000;
+    double result = (ourRate - enemyRate) * (1 + 10 / (ourRate + enemyRate)) / 1000;
+    result = Math.round(result * 1e9) / 1e9;
+    return result;
   }
 
-  public static double castlingBonus(Board board, GameHistory gameHistory, Bonuses bonuses) {
+  public static double castlingBonus(
+      Board board, GameHistory gameHistory, Bonuses bonuses, Color color) {
     Piece movedPiece = board.getPiece(board.getLastMove().to());
-    if (movedPiece.getFigureType() == FigureType.KING
-        || movedPiece.getFigureType() == FigureType.ROOK) {
-      return bonuses.castling(movedPiece, board.getLastMove(), gameHistory) * 50.0;
+    if (movedPiece.getColor() == color
+        && (movedPiece.getFigureType() == FigureType.KING
+            || movedPiece.getFigureType() == FigureType.ROOK)) {
+      return bonuses.castling(movedPiece, board.getLastMove(), gameHistory) * 2.0;
     }
 
     return 0.0;
@@ -66,7 +77,9 @@ class Evaluation {
       Board board, GameHistory gameHistory, Color color, Bonuses bonuses) {
     return kingEndgameEval(board, color)
         + calculatePiecesPrice(board, color)
-        + castlingBonus(board, gameHistory, bonuses);
+        + castlingBonus(board, gameHistory, bonuses, color)
+        + bonuses.middlegame(board, gameHistory, color)
+        + bonuses.openLines(board, color, gameHistory.getMoves().size());
   }
 
   protected static double kingEndgameEval(Board board, Color color) {
@@ -124,5 +137,55 @@ class Evaluation {
     }
 
     return rowPrice + centerBonus - doublePawnPenalty;
+  }
+
+  protected static double pieceExchange(Board board, Color color) {
+    double result = 0;
+    boolean isSecurity;
+    List<Position> friendlies = board.getAllPiecePositionByColor(color);
+    List<Position> enemies = board.getAllPiecePositionByColor(inversColor(color));
+
+    for (Position friendly : friendlies) {
+      if (!friendly.equals(board.getKingPositionByColor(color))) {
+        isSecurity = isSecurity(board, friendly, color);
+
+        for (Position enemy : enemies) {
+          Piece enemyPiece = board.getPiece(enemy);
+          FigureType promotionPiece = null;
+          if (enemyPiece.getFigureType() == FigureType.PAWN
+              && (friendly.row().value() == 0 || friendly.row().value() == 7)) {
+            promotionPiece = FigureType.QUEEN;
+          }
+
+          Move move = new Move(enemy, friendly, promotionPiece);
+          if (!isSecurity && enemyPiece.canMove(board, move)) {
+            result -= calculatePiecePrice(board, friendly, color);
+            break;
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  protected static boolean isSecurity(Board board, Position pos, Color color) {
+    List<Position> friendlies = board.getAllPiecePositionByColor(color);
+
+    for (Position friendly : friendlies) {
+      if (!friendly.equals(pos)) {
+        Piece piece = board.getPiece(friendly);
+        FigureType promotionPiece = null;
+        if (piece.getFigureType() == FigureType.PAWN
+            && (pos.row().value() == 0 || pos.row().value() == 7)) {
+          promotionPiece = FigureType.QUEEN;
+        }
+
+        Move move = new Move(friendly, pos, promotionPiece);
+        if (piece.canMove(board, move, true, false)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

@@ -56,9 +56,10 @@ public class MiniMax implements Algorithm {
       double beta,
       boolean isMax) {
     if (deep == 0 || isGameOver(board, gameHistory)) {
-      moveThree.put(
-          board.getLastMove(),
-          Evaluation.evaluationFunc(board, gameHistory, botColor, ourBonuses, opponentBonuses));
+      double eval =
+          Evaluation.evaluationFunc(
+              board, gameHistory, botColor, ourBonuses, opponentBonuses, isMax);
+      moveThree.put(board.getLastMove(), eval);
       return board.getLastMove();
     }
 
@@ -69,9 +70,8 @@ public class MiniMax implements Algorithm {
     for (Move move : allMoves) {
       Board copyBoard = copyAndMove(move, board);
       GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
-      double eval =
-          moveThree.get(
-              minmax(copyBoard, copyHistory, inversColor(color), deep - 1, alpha, beta, !isMax));
+      Move tmp = minmax(copyBoard, copyHistory, inversColor(color), deep - 1, alpha, beta, !isMax);
+      double eval = moveThree.get(tmp);
 
       if (isMax) {
         if (eval > alpha) {

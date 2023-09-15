@@ -1,8 +1,8 @@
 package io.deeplay.grandmastery.botfarm;
 
+import io.deeplay.grandmastery.BotFactory;
+import io.deeplay.grandmastery.Bots;
 import io.deeplay.grandmastery.botfarm.utils.FarmUtils;
-import io.deeplay.grandmastery.bots.BotFactory;
-import io.deeplay.grandmastery.bots.Bots;
 import io.deeplay.grandmastery.dto.CreateFarmGameRequest;
 import io.deeplay.grandmastery.dto.CreateFarmGameResponse;
 import io.deeplay.grandmastery.dto.GetListBotsFromFarm;

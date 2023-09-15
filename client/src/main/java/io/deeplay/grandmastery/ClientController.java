@@ -85,8 +85,13 @@ public class ClientController {
     return clientDao.query(request);
   }
 
-  public void showBoard(Board boardFromString, Color color) {
-    ui.showBoard(boardFromString, color);
+  public void showBotVsBotMove(Board board, Color color) {
+    ui.showBoard(board, Color.WHITE);
+    ui.showMove(board.getLastMove(), color);
+  }
+
+  public void showBoard(Board board, Color color) {
+    ui.showBoard(board, color);
   }
 
   public void showResultGame(GameState gameState) {
