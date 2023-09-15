@@ -1,8 +1,8 @@
 package io.deeplay.grandmastery.algorithms;
 
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.GameHistory;
-import io.deeplay.grandmastery.core.Move;
+import io.deeplay.grandmastery.core.*;
+import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
@@ -64,13 +64,10 @@ class Bonuses {
     return result;
   }
 
-  protected double openLines(Board board, Color color, int countMove) {
+  protected double openLines(Board board, Color color) {
     double result = 0.0;
-    if (countMove < 10) {
-      return result;
-    }
-
     List<Position> friendlies = board.getAllPiecePositionByColor(color);
+
     for (Position friendly : friendlies) {
       Piece piece = board.getPiece(friendly);
       if (piece.getFigureType() == FigureType.ROOK) {
@@ -100,4 +97,63 @@ class Bonuses {
 
     return result;
   }
+
+  //  private double openDiagonalLines(Board board, Position pos) {
+  //    int row = pos.row().value();
+  //    int col = pos.col().value();
+  //    int leftStartRow = row;
+  //    int leftStartCol = col;
+  //    int leftEndRow = row;
+  //    int leftEndCol = col;
+  //
+  //    while (leftStartRow > 0) {
+  //      leftStartRow--;
+  //      leftStartCol++;
+  //    }
+  //
+  //    while (leftEndCol > 0) {
+  //      leftEndCol--;
+  //      leftEndRow++;
+  //    }
+  //
+  //    int rightStartRow = row;
+  //    int rightStartCol = col;
+  //    int rightEndRow = row;
+  //    int rightEndCol = col;
+  //
+  //    while (rightStartRow > 0) {
+  //      rightStartRow--;
+  //      rightStartCol--;
+  //    }
+  //
+  //    while (rightEndCol < 7) {
+  //      rightEndRow++;
+  //      rightEndCol++;
+  //    }
+  //
+  //    boolean openRightDiag = false;
+  //    boolean openLeftDiag = false;
+  //    if (leftStartRow != leftEndRow && leftStartCol != leftEndCol) {
+  //      openLeftDiag =
+  //          Figures.hasNoFigureOnDiagonalBetweenPositions(
+  //              board, leftStartRow, leftEndRow, leftStartCol, leftEndCol, List.of(pos));
+  //    }
+  //
+  //    if (rightStartRow != rightEndRow && rightStartCol != rightEndCol) {
+  //      openRightDiag =
+  //          Figures.hasNoFigureOnDiagonalBetweenPositions(
+  //              board, rightStartRow, rightEndRow, rightStartCol, rightEndCol, List.of(pos));
+  //    }
+  //
+  //    double result = 0.0;
+  //    if (openLeftDiag) {
+  //      result += row + col == 7 ? 0.5 : 0.25;
+  //    }
+  //
+  //    if (openRightDiag) {
+  //      result += row - col == 0 ? 0.5 : 0.25;
+  //    }
+  //
+  //    return result;
+  //  }
 }
