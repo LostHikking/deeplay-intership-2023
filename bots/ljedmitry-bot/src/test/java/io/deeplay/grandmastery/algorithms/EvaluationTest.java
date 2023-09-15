@@ -1,8 +1,11 @@
 package io.deeplay.grandmastery.algorithms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
@@ -194,7 +197,7 @@ public class EvaluationTest {
     gameHistory.addBoard(board);
     gameHistory.makeMove(move);
 
-    assertEquals(50.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses()));
+    assertEquals(2.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
   }
 
   @Test
@@ -212,7 +215,7 @@ public class EvaluationTest {
     gameHistory.addBoard(board);
     gameHistory.makeMove(move);
 
-    assertEquals(-50.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses()));
+    assertEquals(-2.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
   }
 
   @Test
@@ -230,7 +233,7 @@ public class EvaluationTest {
     gameHistory.addBoard(board);
     gameHistory.makeMove(move);
 
-    assertEquals(-25.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses()));
+    assertEquals(-1.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
   }
 
   @Test
@@ -250,7 +253,7 @@ public class EvaluationTest {
     gameHistory.addBoard(board);
     gameHistory.makeMove(firstMove);
     Bonuses bonuses = new Bonuses();
-    Evaluation.castlingBonus(board, gameHistory, bonuses);
+    Evaluation.castlingBonus(board, gameHistory, bonuses, Color.WHITE);
 
     Move secondMove = LongAlgebraicNotation.getMoveFromString("a1a2");
     secondRook.move(board, secondMove);
@@ -258,7 +261,7 @@ public class EvaluationTest {
     gameHistory.addBoard(board);
     gameHistory.makeMove(secondMove);
 
-    assertEquals(-50.0, Evaluation.castlingBonus(board, gameHistory, bonuses));
+    assertEquals(-2.0, Evaluation.castlingBonus(board, gameHistory, bonuses, Color.WHITE));
   }
 
   @Test
@@ -275,7 +278,7 @@ public class EvaluationTest {
     gameHistory.addBoard(board);
     gameHistory.makeMove(move);
 
-    assertEquals(0, Evaluation.castlingBonus(board, gameHistory, new Bonuses()));
+    assertEquals(0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
   }
 
   @ParameterizedTest
@@ -315,6 +318,133 @@ public class EvaluationTest {
   }
 
   @Test
+  void securityPieceTest() {
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e2"), new Pawn(Color.WHITE));
+
+    assertTrue(Evaluation.isSecurity(board, Position.fromString("e2"), Color.WHITE));
+  }
+
+  @Test
+  void securityPawnPieceTest() {
+    board.setPiece(Position.fromString("c8"), new Bishop(Color.BLACK));
+    board.setPiece(Position.fromString("h3"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("g2"), new Pawn(Color.WHITE));
+    BoardRender.showBoard(System.out, board, Color.WHITE);
+
+    assertTrue(Evaluation.isSecurity(board, Position.fromString("h3"), Color.WHITE));
+  }
+
+  @Test
+  void noSecurityPieceTest() {
+    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("a2"), new Pawn(Color.WHITE));
+
+    assertFalse(Evaluation.isSecurity(board, Position.fromString("a2"), Color.WHITE));
+  }
+
+  @Test
+  void zeroExchangePieceTest() {
+    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e1"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("e2"), new Queen(Color.WHITE));
+    board.setPiece(Position.fromString("e8"), new Queen(Color.BLACK));
+
+    assertEquals(0, Evaluation.pieceExchange(board, Color.WHITE));
+  }
+
+  @Test
+  void securityPiecePawnPromotionTest() {
+    board.setPiece(Position.fromString("e8"), new Rook(Color.WHITE));
+    board.setPiece(Position.fromString("f7"), new Pawn(Color.WHITE));
+
+    assertTrue(Evaluation.isSecurity(board, Position.fromString("e8"), Color.WHITE));
+  }
+
+  @Test
+  void lossPieceTest() {
+    board.setPiece(Position.fromString("a1"), new King(Color.WHITE));
+    board.setPiece(Position.fromString("e2"), new Queen(Color.WHITE));
+    board.setPiece(Position.fromString("e8"), new Queen(Color.BLACK));
+
+    assertEquals(-9.0, Evaluation.pieceExchange(board, Color.WHITE));
+  }
+
+  @Test
+  void lossPiecePawnPromotionTest() {
+    board.setPiece(Position.fromString("f7"), new Pawn(Color.WHITE));
+    board.setPiece(Position.fromString("e8"), new Queen(Color.BLACK));
+
+    assertEquals(-9.0, Evaluation.pieceExchange(board, Color.BLACK));
+  }
+
+  @Test
+  void evaluationOurBoardTest() {
+    Board firstBoard = new HashBoard();
+    firstBoard.setPiece(Position.fromString("a2"), new Rook(Color.WHITE));
+    firstBoard.setPiece(Position.fromString("b1"), new Rook(Color.WHITE));
+    firstBoard.setPiece(Position.fromString("h8"), new King(Color.BLACK));
+    firstBoard.setPiece(Position.fromString("c1"), new Rook(Color.BLACK));
+    firstBoard.setPiece(Position.fromString("h2"), new King(Color.WHITE));
+    firstBoard.setLastMove(LongAlgebraicNotation.getMoveFromString("c3c1"));
+
+    GameHistory firstGameHistory = new GameHistory();
+    firstGameHistory.startup(firstBoard);
+
+    Board secondBoard = new HashBoard();
+    secondBoard.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
+    secondBoard.setPiece(Position.fromString("b1"), new Rook(Color.WHITE));
+    secondBoard.setPiece(Position.fromString("h8"), new King(Color.BLACK));
+    secondBoard.setPiece(Position.fromString("c1"), new Rook(Color.BLACK));
+    secondBoard.setPiece(Position.fromString("h2"), new King(Color.WHITE));
+    secondBoard.setLastMove(LongAlgebraicNotation.getMoveFromString("c3c1"));
+
+    GameHistory secondGameHistory = new GameHistory();
+    secondGameHistory.startup(secondBoard);
+
+    double firstEval =
+        Evaluation.evaluationFunc(
+            firstBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), false);
+    double secondEval =
+        Evaluation.evaluationFunc(
+            secondBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), false);
+    assertTrue(firstEval < secondEval);
+  }
+
+  @Test
+  void evaluationEnemyBoardTest() {
+    Board firstBoard = new HashBoard();
+    firstBoard.setPiece(Position.fromString("a2"), new Rook(Color.WHITE));
+    firstBoard.setPiece(Position.fromString("b1"), new Rook(Color.WHITE));
+    firstBoard.setPiece(Position.fromString("h8"), new King(Color.BLACK));
+    firstBoard.setPiece(Position.fromString("c1"), new Rook(Color.BLACK));
+    firstBoard.setPiece(Position.fromString("h2"), new King(Color.WHITE));
+    firstBoard.setLastMove(LongAlgebraicNotation.getMoveFromString("c3c1"));
+
+    GameHistory firstGameHistory = new GameHistory();
+    firstGameHistory.startup(firstBoard);
+
+    Board secondBoard = new HashBoard();
+    secondBoard.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
+    secondBoard.setPiece(Position.fromString("b1"), new Rook(Color.WHITE));
+    secondBoard.setPiece(Position.fromString("h8"), new King(Color.BLACK));
+    secondBoard.setPiece(Position.fromString("c1"), new Rook(Color.BLACK));
+    secondBoard.setPiece(Position.fromString("h2"), new King(Color.WHITE));
+    secondBoard.setLastMove(LongAlgebraicNotation.getMoveFromString("c3c1"));
+
+    GameHistory secondGameHistory = new GameHistory();
+    secondGameHistory.startup(secondBoard);
+
+    double firstEval =
+        Evaluation.evaluationFunc(
+            firstBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true);
+    double secondEval =
+        Evaluation.evaluationFunc(
+            secondBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true);
+    assertEquals(firstEval, secondEval);
+  }
+
+  @Test
   void evaluationBoardOpponentMateTest() {
     Board board = new HashBoard();
     board.setPiece(Position.fromString("a1"), new Rook(Color.WHITE));
@@ -328,7 +458,8 @@ public class EvaluationTest {
 
     assertEquals(
         1,
-        Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
+        Evaluation.evaluationFunc(
+            board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true));
   }
 
   @Test
@@ -345,7 +476,8 @@ public class EvaluationTest {
 
     assertEquals(
         -1,
-        Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
+        Evaluation.evaluationFunc(
+            board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true));
   }
 
   @Test
@@ -363,6 +495,7 @@ public class EvaluationTest {
 
     assertEquals(
         0,
-        Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses()));
+        Evaluation.evaluationFunc(
+            board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true));
   }
 }

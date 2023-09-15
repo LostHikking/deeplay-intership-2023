@@ -150,9 +150,13 @@ public class Client {
         new StartGameRequest("AI", chessType, Color.WHITE, firstBot, secondBot);
     IDto response = clientController.query(request);
 
+    Color curColor = Color.WHITE;
     while (response instanceof SendBoard sendBoard) {
-      clientController.showBoard(Boards.fromString(sendBoard.getBoard()), Color.WHITE);
+      Board board = Boards.fromString(sendBoard.getBoard());
+      board.setLastMove(sendBoard.getMove());
+      clientController.showBotVsBotMove(board, curColor);
       response = ConversationService.deserialize(clientController.getJsonFromServer());
+      curColor = curColor.getOpposite();
     }
 
     if (response instanceof ResultGame resultGame) {

@@ -1,6 +1,7 @@
 package io.deeplay.grandmastery.dto;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.deeplay.grandmastery.core.Move;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,4 +19,5 @@ import lombok.ToString;
 @JsonTypeName
 public class SendBoard extends IDto {
   String board;
+  Move move;
 }

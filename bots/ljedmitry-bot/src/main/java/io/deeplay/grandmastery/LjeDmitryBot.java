@@ -6,33 +6,20 @@ import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.exceptions.GameException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import lombok.Getter;
 
+@Getter
 public class LjeDmitryBot extends Player {
   private final Algorithm algorithm;
-  private final int deep;
 
   /**
-   * Конструктор с настройками из конфига.
+   * Конструктор по умолчанию, с последней версией алгоритма.
    *
    * @param color Цвет
-   * @throws RuntimeException При ошибке чтения конфига.
    */
   public LjeDmitryBot(Color color) {
     super("LjeDmitry", color);
-
-    try (InputStream config =
-        LjeDmitryBot.class.getClassLoader().getResourceAsStream("/config.properties")) {
-      Properties properties = new Properties();
-      properties.load(config);
-
-      deep = Integer.parseInt(properties.getProperty("deep"));
-      algorithm = getAlgorithm(properties.getProperty("algorithm"));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    this.algorithm = new MiniMax(this, 3);
   }
 
   /**
@@ -44,16 +31,14 @@ public class LjeDmitryBot extends Player {
    */
   public LjeDmitryBot(Color color, String algorithmName, int deep) {
     super("LjeDmitry", color);
-
-    this.deep = deep;
-    this.algorithm = getAlgorithm(algorithmName);
+    this.algorithm = getAlgorithm(algorithmName, deep);
   }
 
-  private Algorithm getAlgorithm(String algorithmName) {
-    if (algorithmName.equals("minimax")) {
-      return new MiniMax(this, deep);
-    }
-    throw new RuntimeException("Неизвестное название алгоритма для бота!");
+  private Algorithm getAlgorithm(String algorithmName, int deep) {
+    return switch (algorithmName) {
+      case "minimax" -> new MiniMax(this, deep);
+      default -> throw new RuntimeException("Неизвестное название алгоритма: " + algorithmName);
+    };
   }
 
   @Override

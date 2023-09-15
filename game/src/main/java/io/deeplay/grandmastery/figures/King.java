@@ -114,7 +114,7 @@ public class King extends Piece {
         row,
         fromCol,
         rookFromCastling.col().value(),
-        List.of(board.getPiece(rookFromCastling)))) {
+        List.of(rookFromCastling))) {
       return false;
     }
 

@@ -70,13 +70,9 @@ public class Pawn extends Piece {
   }
 
   private boolean canCapture(Move move, Board board) {
-    if (deltaCol(move) == 1
+    return deltaCol(move) == 1
         && deltaRowByColor(move, this.getColor()) == 1
-        && board.hasPiece(move.to())) {
-      return board.getPiece(move.to()).getColor() != this.getColor();
-    } else {
-      return false;
-    }
+        && board.hasPiece(move.to());
   }
 
   private boolean checkCaptureEnPassant(Move move, Board board) {
