@@ -14,7 +14,7 @@ public enum Bots {
   RANDOMUS("Randomus", Randomus::new),
   MINIMAXIMUS("Minimaximus", color -> new Minimaximus(color, 3)),
   MINIMAX("MotoMaxBot", color -> new MiniMaxBot("Moto",color, 3)),
-  LJEDMITRY("LjeDmitry", color -> new LjeDmitryBot(color, "minimax", 3));
+  LJEDMITRY("LjeDmitry", LjeDmitryBot::new);
 
   public final String name;
 

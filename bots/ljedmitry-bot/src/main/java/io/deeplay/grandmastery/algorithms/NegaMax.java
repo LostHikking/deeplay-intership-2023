@@ -1,7 +1,7 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.MAX_EVAL;
-import static io.deeplay.grandmastery.utils.Algorithms.MIN_EVAL;
+import static io.deeplay.grandmastery.algorithms.Evaluation.MAX_EVAL;
+import static io.deeplay.grandmastery.algorithms.Evaluation.MIN_EVAL;
 import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
 import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
 import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
@@ -76,7 +76,8 @@ public class NegaMax implements Algorithm {
       int signEval = color == botColor ? 1 : -1;
       moveThree.put(
           board.getLastMove(),
-			  Evaluation.evaluationFunc(board, gameHistory, botColor, bonuses, new Bonuses()) * signEval);
+          Evaluation.evaluationFunc(board, gameHistory, botColor, bonuses, new Bonuses())
+              * signEval);
       return board.getLastMove();
     }
 

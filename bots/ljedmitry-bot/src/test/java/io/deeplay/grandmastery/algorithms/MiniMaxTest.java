@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class MiniMaxTest {
-  private static final String ALGORITHM_NAME = "minimax";
+  private static final String ALGORITHM_NAME = "newMinimax";
   private static final int DEEP = 2;
 
   @Test

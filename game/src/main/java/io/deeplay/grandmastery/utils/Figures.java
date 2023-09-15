@@ -6,7 +6,6 @@ import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.core.Row;
 import io.deeplay.grandmastery.domain.FigureType;
-import io.deeplay.grandmastery.figures.Piece;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +32,7 @@ public class Figures {
    * @param move Ход.
    * @return Валиден ли ход
    */
+  @SuppressWarnings("ReferenceEquality")
   public static boolean basicValidMove(
       Move move, Board board, boolean withKingCheck, boolean withColorCheck) {
     var figureFrom = board.getPiece(move.from());
@@ -50,9 +50,7 @@ public class Figures {
       return false;
     }
 
-    return isValidPosition(move.from())
-        && isValidPosition(move.to())
-        && !figureFrom.equals(figureTo);
+    return isValidPosition(move.from()) && isValidPosition(move.to()) && figureFrom != figureTo;
   }
 
   /**
@@ -79,18 +77,34 @@ public class Figures {
   }
 
   /**
-   * Метод проверяет есть ли какая-либо фигура на заданной вертикали между двумя позициями.
+   * Метод проверяет есть ли какая-либо фигура на заданной вертикали между двумя позициями. Без
+   * исключений
    *
    * @param board Доска
-   * @param colNumber Позиция колонки по которой мы бежим
+   * @param col Позиция колонки по которой мы бежим
    * @param startRow Начальная позиция по row
    * @param endRow Конечная позиция по row
    * @return Есть ли фигура
    */
+  public static boolean hasNotFigureBetweenRows(Board board, int col, int startRow, int endRow) {
+    return hasNotFigureBetweenRows(board, col, startRow, endRow, Collections.emptyList());
+  }
+
+  /**
+   * Метод проверяет есть ли какая-либо фигура на заданной вертикали между двумя позициями.
+   *
+   * @param board Доска
+   * @param col Позиция колонки по которой мы бежим
+   * @param startRow Начальная позиция по row
+   * @param endRow Конечная позиция по row
+   * @param exception фигуры, которые будет игнорироваться, при проверке
+   * @return Есть ли фигура
+   */
   public static boolean hasNotFigureBetweenRows(
-      Board board, int colNumber, int startRow, int endRow) {
+      Board board, int col, int startRow, int endRow, List<Position> exception) {
     for (var pos = Math.min(startRow, endRow) + 1; pos < Math.max(startRow, endRow); pos++) {
-      if (board.getPiece(colNumber, pos) != null) {
+      Position position = new Position(new Column(col), new Row(pos));
+      if (!exception.contains(position) && board.hasPiece(position)) {
         return false;
       }
     }
@@ -122,10 +136,10 @@ public class Figures {
    * @return Есть ли фигура
    */
   public static boolean hasNotFigureBetweenCols(
-      Board board, int row, int startCol, int endCol, List<Piece> exception) {
+      Board board, int row, int startCol, int endCol, List<Position> exception) {
     for (var pos = Math.min(startCol, endCol) + 1; pos < Math.max(startCol, endCol); pos++) {
-      Piece piece = board.getPiece(pos, row);
-      if (piece != null && !exception.contains(piece)) {
+      Position position = new Position(new Column(pos), new Row(row));
+      if (!exception.contains(position) && board.hasPiece(position)) {
         return false;
       }
     }
@@ -134,7 +148,8 @@ public class Figures {
   }
 
   /**
-   * Метод проверяет есть ли какая-либо фигура на заданной диагонали между двумя позициями.
+   * Метод проверяет есть ли какая-либо фигура на заданной диагонали между двумя позициями. Без
+   * исключений
    *
    * @param board Доска
    * @param startRow Начальная позиция по row
@@ -145,6 +160,23 @@ public class Figures {
    */
   public static boolean hasNoFigureOnDiagonalBetweenPositions(
       Board board, int startRow, int endRow, int startCol, int endCol) {
+    return hasNoFigureOnDiagonalBetweenPositions(
+        board, startRow, endRow, startCol, endCol, Collections.emptyList());
+  }
+
+  /**
+   * Метод проверяет есть ли какая-либо фигура на заданной диагонали между двумя позициями.
+   *
+   * @param board Доска
+   * @param startRow Начальная позиция по row
+   * @param endRow Начальная позиция по row
+   * @param startCol Начальная позиция по col
+   * @param endCol Конечная позиция по col
+   * @param exception фигуры, которые будет игнорироваться, при проверке
+   * @return Есть ли фигура
+   */
+  public static boolean hasNoFigureOnDiagonalBetweenPositions(
+      Board board, int startRow, int endRow, int startCol, int endCol, List<Position> exception) {
     int dx;
     int x = startCol;
     int dy;
@@ -162,7 +194,8 @@ public class Figures {
     while (x != endCol - dx) {
       x += dx;
       y += dy;
-      if (board.getPiece(x, y) != null) {
+      Position position = new Position(new Column(x), new Row(y));
+      if (!exception.contains(position) && board.hasPiece(position)) {
         return false;
       }
     }
