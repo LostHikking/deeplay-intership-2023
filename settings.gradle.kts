@@ -14,4 +14,3 @@ findProject(":bots:ljedmitry-bot")?.name = "ljedmitry-bot"
 include("bots:melniknow-bots")
 findProject(":bots:melniknow-bots")?.name = "melniknow-bots"
 include("bots:yurkevich-bots")
-findProject(":bots:yurkevich-bots")?.name = "yurkevich-bots"
