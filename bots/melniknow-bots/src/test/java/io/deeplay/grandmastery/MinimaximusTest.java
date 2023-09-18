@@ -1,11 +1,10 @@
-package io.deeplay.grandmastery.utils;
+package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.GameController;
 import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
-import io.deeplay.grandmastery.minimaximus.Minimaximus;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

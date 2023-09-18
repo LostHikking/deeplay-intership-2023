@@ -1,4 +1,4 @@
-package io.deeplay.grandmastery.minimaximus;
+package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
@@ -14,8 +14,7 @@ import io.deeplay.grandmastery.utils.BotUtils;
 import java.util.List;
 import java.util.Map;
 
-/** Минимакс бот с альфа-бета отсечением. */
-public class Minimaximus extends Player {
+public class Negamaximus extends Player {
   public record MoveAndEst(Move move, Integer est) {}
 
   private static final Integer[][] king = {
@@ -111,8 +110,8 @@ public class Minimaximus extends Player {
    * @param color цвет
    * @param deep глубина
    */
-  public Minimaximus(Color color, int deep) {
-    super("Melniknow-minimaximus", color);
+  public Negamaximus(Color color, int deep) {
+    super("Melniknow-negamaximus", color);
     this.deep = deep;
   }
 
@@ -123,12 +122,11 @@ public class Minimaximus extends Player {
     }
 
     var moveAndEst =
-        startMiniMax(
+        startNegaMax(
             deep,
             getBoard(),
             color,
             lastMove,
-            color,
             Integer.MIN_VALUE,
             Integer.MAX_VALUE,
             gameHistory,
@@ -150,18 +148,16 @@ public class Minimaximus extends Player {
    * @param board доска
    * @param currentColor цвет, который ходит
    * @param lastMove последний сделанный на доске ход
-   * @param mainColor цвет, для которого считается оценка
    * @param alpha альфа
    * @param beta бета
    * @param gameHistory история партии
    * @return лучший ход и его оценка
    */
-  public static MoveAndEst startMiniMax(
+  public static MoveAndEst startNegaMax(
       int deep,
       Board board,
       Color currentColor,
       Move lastMove,
-      Color mainColor,
       int alpha,
       int beta,
       GameHistory gameHistory,
@@ -171,12 +167,16 @@ public class Minimaximus extends Player {
     var isMate = GameStateChecker.isMate(board, currentColor);
 
     if (deep == 0 || isMate || isDraw) {
-      return new MoveAndEst(
-          lastMove, getEstimationForBoard(board, mainColor, isDraw, isMate, currentColor));
+      var res =
+          new MoveAndEst(lastMove, getEstimationForBoard(board, isDraw, isMate, currentColor));
+
+      if (currentColor == Color.BLACK) {
+        res = new MoveAndEst(res.move, -res.est);
+      }
+      return res;
     }
 
-    var isMax = currentColor == mainColor;
-    var moveAndEst = new MoveAndEst(null, isMax ? Integer.MIN_VALUE : Integer.MAX_VALUE);
+    var moveAndEst = new MoveAndEst(null, Integer.MIN_VALUE);
 
     if (possibleMove.isEmpty()) {
       return moveAndEst;
@@ -191,33 +191,26 @@ public class Minimaximus extends Player {
       tempGameHistory.makeMove(move);
 
       var recursiveValue =
-          startMiniMax(
+          startNegaMax(
               deep - 1,
               tempBoard,
               currentColor.getOpposite(),
               move,
-              mainColor,
-              alpha,
-              beta,
+              -beta,
+              -alpha,
               tempGameHistory,
               BotUtils.getPossibleMoves(tempBoard, currentColor.getOpposite()));
+      recursiveValue = new MoveAndEst(recursiveValue.move, -recursiveValue.est);
 
-      if (isMax) {
-        alpha = Math.max(alpha, recursiveValue.est);
-        if (moveAndEst.est < recursiveValue.est) {
-          moveAndEst = new MoveAndEst(move, recursiveValue.est);
-        }
-
-      } else {
-        beta = Math.min(beta, recursiveValue.est);
-        if (moveAndEst.est > recursiveValue.est) {
-          moveAndEst = new MoveAndEst(move, recursiveValue.est);
-        }
+      if (recursiveValue.est > moveAndEst.est) {
+        moveAndEst = new MoveAndEst(move, recursiveValue.est);
       }
 
-      if (beta <= alpha) {
-        break;
-      }
+      alpha = Math.max(alpha, recursiveValue.est);
+
+      //      if (alpha >= beta) {
+      //        break;
+      //      }
     }
 
     return moveAndEst;
@@ -227,26 +220,21 @@ public class Minimaximus extends Player {
    * Функция возвращает разницу оценки позиций на доске для определённого цвета.
    *
    * @param board Доска
-   * @param mainColor Цвет
    * @param isDraw история партии
    * @return Разница оценки позиций
    */
   public static int getEstimationForBoard(
-      Board board, Color mainColor, boolean isDraw, boolean isMate, Color current) {
+      Board board, boolean isDraw, boolean isMate, Color current) {
     if (isMate) {
-      if (mainColor == current) {
-        return -20000;
-      } else {
-        return 20000;
-      }
+      return current == Color.BLACK ? 20_000 : -20_000;
     }
 
     if (isDraw) {
-      return getSimpleEstimationForColor(board, mainColor.getOpposite())
-          - getSimpleEstimationForColor(board, mainColor);
+      return getSimpleEstimationForColor(board, Color.BLACK)
+          - getSimpleEstimationForColor(board, Color.WHITE);
     }
-    return getSimpleEstimationForColor(board, mainColor)
-        - getSimpleEstimationForColor(board, mainColor.getOpposite());
+    return getSimpleEstimationForColor(board, Color.WHITE)
+        - getSimpleEstimationForColor(board, Color.BLACK);
   }
 
   /**
