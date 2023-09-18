@@ -2,6 +2,7 @@ package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.algorithms.Algorithm;
 import io.deeplay.grandmastery.algorithms.MiniMax;
+import io.deeplay.grandmastery.algorithms.NegaMax;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Player;
 import io.deeplay.grandmastery.domain.Color;
@@ -37,6 +38,7 @@ public class LjeDmitryBot extends Player {
   private Algorithm getAlgorithm(String algorithmName, int deep) {
     return switch (algorithmName) {
       case "minimax" -> new MiniMax(this, deep);
+      case "negamax" -> new NegaMax(this, deep);
       default -> throw new RuntimeException("Неизвестное название алгоритма: " + algorithmName);
     };
   }
