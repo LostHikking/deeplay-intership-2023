@@ -29,4 +29,8 @@ public enum GameErrorCode {
   public GameException asException() {
     return new GameException(this);
   }
+
+  public GameException asException(Exception e) {
+    return new GameException(this, e);
+  }
 }

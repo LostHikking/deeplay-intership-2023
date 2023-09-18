@@ -6,4 +6,6 @@ import io.deeplay.grandmastery.core.Move;
 
 public interface Algorithm {
   Move findBestMove(Board board, GameHistory gameHistory);
+
+  Move getBestMoveAfterTimout();
 }

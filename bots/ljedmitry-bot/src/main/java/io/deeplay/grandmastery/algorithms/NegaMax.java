@@ -21,25 +21,19 @@ public class NegaMax implements Algorithm {
   private final Bonuses ourBonuses;
   private final Bonuses enemyBonuses;
 
+  private Node bestMove;
+
   public NegaMax(PlayerInfo playerInfo, int deep) {
     this.botColor = playerInfo.getColor();
     this.deep = deep;
     this.ourBonuses = new Bonuses();
     this.enemyBonuses = new Bonuses();
-  }
-
-  private static class Node {
-    protected Move move;
-    protected double eval;
-
-    public Node(Move move, double eval) {
-      this.move = move;
-      this.eval = eval;
-    }
+    this.bestMove = null;
   }
 
   @Override
   public Move findBestMove(Board board, GameHistory gameHistory) {
+    bestMove = null;
     return negamax(board, gameHistory, botColor, deep, MIN_EVAL, MAX_EVAL).move;
   }
 
@@ -65,8 +59,11 @@ public class NegaMax implements Algorithm {
 
     List<Move> allMoves = getPossibleMoves(board, color);
     Node bestMove = new Node(allMoves.get(0), MIN_EVAL);
-    double maxEval = MIN_EVAL;
+    if (deep == this.deep) {
+      this.bestMove = bestMove;
+    }
 
+    double maxEval = MIN_EVAL;
     for (Move move : allMoves) {
       Board copyBoard = copyAndMove(move, board);
       GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
@@ -75,7 +72,8 @@ public class NegaMax implements Algorithm {
 
       if (eval > maxEval) {
         maxEval = eval;
-        bestMove = new Node(move, maxEval);
+        bestMove.move = move;
+        bestMove.eval = maxEval;
       }
       alpha = Math.max(alpha, eval);
 
@@ -85,5 +83,10 @@ public class NegaMax implements Algorithm {
     }
 
     return bestMove;
+  }
+
+  @Override
+  public Move getBestMoveAfterTimout() {
+    return bestMove.move;
   }
 }

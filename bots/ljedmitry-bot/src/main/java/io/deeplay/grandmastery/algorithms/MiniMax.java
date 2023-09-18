@@ -13,18 +13,16 @@ import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.Color;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Реализация алгоритма MiniMax для поиска лучшего хода в игре. */
 public class MiniMax implements Algorithm {
   private final Color botColor;
   private final int deep;
   private final boolean isMax;
-  private final Map<Move, Double> moveThree;
   private final Bonuses ourBonuses;
   private final Bonuses opponentBonuses;
+  private Node bestMove;
 
   /**
    * Создает новый экземпляр алгоритма MiniMax.
@@ -38,16 +36,16 @@ public class MiniMax implements Algorithm {
     this.deep = deep;
     this.ourBonuses = new Bonuses();
     this.opponentBonuses = new Bonuses();
-    this.moveThree = new HashMap<>();
+    this.bestMove = null;
   }
 
   @Override
   public Move findBestMove(Board board, GameHistory gameHistory) {
-    moveThree.clear();
-    return minmax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax);
+    this.bestMove = null;
+    return minmax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax).move;
   }
 
-  private Move minmax(
+  private Node minmax(
       Board board,
       GameHistory gameHistory,
       Color color,
@@ -59,31 +57,31 @@ public class MiniMax implements Algorithm {
       double eval =
           Evaluation.evaluationFunc(
               board, gameHistory, botColor, ourBonuses, opponentBonuses, isMax);
-      moveThree.put(board.getLastMove(), eval);
-      return board.getLastMove();
+      return new Node(board.getLastMove(), eval);
     }
 
     List<Move> allMoves = getPossibleMoves(board, color);
-    Move bestMove = allMoves.get(0);
-    moveThree.put(bestMove, isMax ? MIN_EVAL : MAX_EVAL);
+    Node bestMove = new Node(allMoves.get(0), isMax ? MIN_EVAL : MAX_EVAL);
+    if (deep == this.deep) {
+      this.bestMove = bestMove;
+    }
 
     for (Move move : allMoves) {
       Board copyBoard = copyAndMove(move, board);
       GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
-      Move tmp = minmax(copyBoard, copyHistory, inversColor(color), deep - 1, alpha, beta, !isMax);
-      double eval = moveThree.get(tmp);
+      double eval =
+          minmax(copyBoard, copyHistory, inversColor(color), deep - 1, alpha, beta, !isMax).eval;
 
       if (isMax) {
         if (eval > alpha) {
           alpha = eval;
-          moveThree.put(move, eval);
-          bestMove = move;
+          bestMove.move = move;
+          bestMove.eval = eval;
         }
       } else {
         if (eval < beta) {
           beta = eval;
-          moveThree.put(move, eval);
-          bestMove = move;
+          bestMove = new Node(move, eval);
         }
       }
 
@@ -93,5 +91,10 @@ public class MiniMax implements Algorithm {
     }
 
     return bestMove;
+  }
+
+  @Override
+  public Move getBestMoveAfterTimout() {
+    return bestMove.move;
   }
 }
