@@ -35,7 +35,8 @@ public class BotFactoryTest {
 
   @Test
   void getBotsListTest() {
-    Set<String> expectBots = Set.of("Randomus", "LjeDmitry", "Minimaximus", "MotoMaxBot");
+    Set<String> expectBots =
+        Set.of("Randomus", "LjeDmitry", "Minimaximus", "MotoMaxBot", "Negamaximus");
     Assertions.assertEquals(expectBots, new HashSet<>(Bots.getBotsList()));
   }
 }
