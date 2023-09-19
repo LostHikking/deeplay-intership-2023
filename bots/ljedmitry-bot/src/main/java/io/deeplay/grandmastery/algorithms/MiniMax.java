@@ -11,7 +11,6 @@ import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
-import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.Color;
 import java.util.List;
 
@@ -27,11 +26,11 @@ public class MiniMax implements Algorithm {
   /**
    * Создает новый экземпляр алгоритма MiniMax.
    *
-   * @param playerInfo Информация об игроке, для которого применяется алгоритм.
-   * @param deep Глубина поиска в дереве MiniMax.
+   * @param color Цвет бота.
+   * @param deep Глубина поиска.
    */
-  public MiniMax(PlayerInfo playerInfo, int deep) {
-    this.botColor = playerInfo.getColor();
+  public MiniMax(Color color, int deep) {
+    this.botColor = color;
     this.isMax = true;
     this.deep = deep;
     this.ourBonuses = new Bonuses();
@@ -45,6 +44,18 @@ public class MiniMax implements Algorithm {
     return minmax(board, gameHistory, botColor, this.deep, MIN_EVAL, MAX_EVAL, this.isMax).move;
   }
 
+  /**
+   * Выполняет алгоритм NegaMax для поиска лучшего хода.
+   *
+   * @param board Доска.
+   * @param gameHistory История игры.
+   * @param color Цвет бота.
+   * @param deep Глубина поиска.
+   * @param alpha Значение альфа (верхняя граница) для альфа-бета отсечения.
+   * @param beta Значение бета (нижняя граница) для альфа-бета отсечения.
+   * @param isMax Является ли текущий уровень максимизирующим.
+   * @return Лучший найденный ход и его оценка.
+   */
   private Node minmax(
       Board board,
       GameHistory gameHistory,

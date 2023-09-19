@@ -1,4 +1,4 @@
 dependencies {
-    implementation(project(mapOf("path" to ":game")))
-    implementation(project(mapOf("path" to ":gui")))
+    implementation(project(":game"))
+    implementation(project(":gui"))
 }

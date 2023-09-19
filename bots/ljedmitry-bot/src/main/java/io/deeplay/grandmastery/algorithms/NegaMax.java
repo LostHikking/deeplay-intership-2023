@@ -11,28 +11,59 @@ import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
-import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
+/**
+ * Реализация алгоритма NegaMax для поиска лучшего хода в шахматах.
+ *
+ * <p>Алгоритм NegaMax - это улучшенная версия алгоритма Minimax для поиска оптимальных ходов с
+ * использованием альфа-бета отсечения.
+ *
+ * <p>Этот класс позволяет выполнять поиск лучшего хода в параллельном режиме с использованием
+ * ForkJoinPool.
+ */
 public class NegaMax implements ParallelAlgorithm {
   private final Color botColor;
   private final int deep;
   private final Bonuses ourBonuses;
   private final Bonuses enemyBonuses;
-  private final ForkJoinPool pool = ForkJoinPool.commonPool();
+  private final ForkJoinPool pool;
 
   private Node bestMove;
 
-  public NegaMax(PlayerInfo playerInfo, int deep) {
-    this.botColor = playerInfo.getColor();
+  /**
+   * Создает новый экземпляр класса NegaMax.
+   *
+   * @param color Цвет бота.
+   * @param deep Глубина поиска.
+   */
+  public NegaMax(Color color, int deep) {
+    this.botColor = color;
     this.deep = deep;
     this.ourBonuses = new Bonuses();
     this.enemyBonuses = new Bonuses();
     this.bestMove = null;
+    this.pool = new ForkJoinPool(6);
+  }
+
+  /**
+   * Создает новый экземпляр класса NegaMax с указанным количеством потоков.
+   *
+   * @param color Цвет бота.
+   * @param deep Глубина поиска.
+   * @param parallelism Количество параллельных потоков.
+   */
+  public NegaMax(Color color, int deep, int parallelism) {
+    this.botColor = color;
+    this.deep = deep;
+    this.ourBonuses = new Bonuses();
+    this.enemyBonuses = new Bonuses();
+    this.bestMove = null;
+    this.pool = new ForkJoinPool(parallelism);
   }
 
   @Override
@@ -44,6 +75,7 @@ public class NegaMax implements ParallelAlgorithm {
     return pool.invoke(task).move;
   }
 
+  /** Задача для параллельного выполнения алгоритма NegaMax. */
   private class NegamaxTask extends RecursiveTask<Node> {
     private final Board board;
     private final GameHistory gameHistory;
@@ -53,6 +85,17 @@ public class NegaMax implements ParallelAlgorithm {
     private final double alpha;
     private final Move move;
 
+    /**
+     * Создает новую задачу NegaMaxTask.
+     *
+     * @param board Доска.
+     * @param gameHistory История игры.
+     * @param color Цвет бота.
+     * @param deep Глубина поиска.
+     * @param alpha Значение альфа (верхняя граница) для альфа-бета отсечения.
+     * @param beta Значение бета (нижняя граница) для альфа-бета отсечения.
+     * @param move Ход, связанный с этой задачей.
+     */
     public NegamaxTask(
         Board board,
         GameHistory gameHistory,
@@ -70,6 +113,17 @@ public class NegaMax implements ParallelAlgorithm {
       this.move = move;
     }
 
+    /**
+     * Выполняет алгоритм NegaMax для поиска лучшего хода.
+     *
+     * @param board Доска.
+     * @param gameHistory История игры.
+     * @param color Цвет бота.
+     * @param deep Глубина поиска.
+     * @param alpha Значение альфа (верхняя граница) для альфа-бета отсечения.
+     * @param beta Значение бета (нижняя граница) для альфа-бета отсечения.
+     * @return Лучший найденный ход и его оценка.
+     */
     private Node negamax(
         Board board, GameHistory gameHistory, Color color, int deep, double alpha, double beta) {
       if (deep == 0 || isGameOver(board, gameHistory)) {

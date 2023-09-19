@@ -24,7 +24,7 @@ public class LjeDmitryBot extends Player {
    */
   public LjeDmitryBot(Color color) {
     super("LjeDmitry", color);
-    this.algorithm = new NegaMax(this, 3);
+    this.algorithm = new NegaMax(getColor(), 4);
   }
 
   /**
@@ -39,10 +39,18 @@ public class LjeDmitryBot extends Player {
     this.algorithm = getAlgorithm(algorithmName, deep);
   }
 
+  /**
+   * Возвращает алгоритм по его названию и заданной глубине поиска.
+   *
+   * @param algorithmName Название алгоритма (например, "minimax" или "negamax").
+   * @param deep Глубина поиска для алгоритма.
+   * @return Экземпляр алгоритма соответствующего типа.
+   * @throws RuntimeException Если передано неизвестное название алгоритма.
+   */
   private Algorithm getAlgorithm(String algorithmName, int deep) {
     return switch (algorithmName) {
-      case "minimax" -> new MiniMax(this, deep);
-      case "negamax" -> new NegaMax(this, deep);
+      case "minimax" -> new MiniMax(getColor(), deep);
+      case "negamax" -> new NegaMax(getColor(), deep);
       default -> throw new RuntimeException("Неизвестное название алгоритма: " + algorithmName);
     };
   }
