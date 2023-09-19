@@ -13,13 +13,17 @@ import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.PlayerInfo;
 import io.deeplay.grandmastery.domain.Color;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
-public class NegaMax implements Algorithm {
+public class NegaMax implements ParallelAlgorithm {
   private final Color botColor;
   private final int deep;
   private final Bonuses ourBonuses;
   private final Bonuses enemyBonuses;
+  private final ForkJoinPool pool = ForkJoinPool.commonPool();
 
   private Node bestMove;
 
@@ -34,55 +38,132 @@ public class NegaMax implements Algorithm {
   @Override
   public Move findBestMove(Board board, GameHistory gameHistory) {
     bestMove = null;
-    return negamax(board, gameHistory, botColor, deep, MIN_EVAL, MAX_EVAL).move;
+    NegamaxTask task =
+        new NegamaxTask(board, gameHistory, botColor, deep, MIN_EVAL, MAX_EVAL, null);
+
+    return pool.invoke(task).move;
   }
 
-  private Node negamax(
-      Board board, GameHistory gameHistory, Color color, int deep, double alpha, double beta) {
-    if (deep == 0 || isGameOver(board, gameHistory)) {
-      double signEval;
-      boolean isBotColor;
-      if (color == botColor) {
-        signEval = 1.0;
-        isBotColor = true;
-      } else {
-        signEval = -1.0;
-        isBotColor = false;
-      }
+  private class NegamaxTask extends RecursiveTask<Node> {
+    private final Board board;
+    private final GameHistory gameHistory;
+    private final Color color;
+    private final int deep;
+    private final double beta;
+    private final double alpha;
+    private final Move move;
 
-      return new Node(
-          board.getLastMove(),
-          Evaluation.evaluationFunc(
-                  board, gameHistory, botColor, ourBonuses, enemyBonuses, isBotColor)
-              * signEval);
+    public NegamaxTask(
+        Board board,
+        GameHistory gameHistory,
+        Color color,
+        int deep,
+        double alpha,
+        double beta,
+        Move move) {
+      this.board = board;
+      this.gameHistory = gameHistory;
+      this.color = color;
+      this.deep = deep;
+      this.alpha = alpha;
+      this.beta = beta;
+      this.move = move;
     }
 
-    List<Move> allMoves = getPossibleMoves(board, color);
-    Node bestMove = new Node(allMoves.get(0), MIN_EVAL);
-    if (deep == this.deep) {
-      this.bestMove = bestMove;
+    private Node negamax(
+        Board board, GameHistory gameHistory, Color color, int deep, double alpha, double beta) {
+      if (deep == 0 || isGameOver(board, gameHistory)) {
+        double signEval;
+        boolean isBotColor;
+        if (color == botColor) {
+          signEval = 1.0;
+          isBotColor = true;
+        } else {
+          signEval = -1.0;
+          isBotColor = false;
+        }
+
+        return new Node(
+            board.getLastMove(),
+            Evaluation.evaluationFunc(
+                    board, gameHistory, botColor, ourBonuses, enemyBonuses, isBotColor)
+                * signEval);
+      }
+
+      List<Move> moves = getPossibleMoves(board, color);
+      Node bestMove = new Node(moves.get(0), MIN_EVAL);
+      double maxEval = MIN_EVAL;
+      if (deep == NegaMax.this.deep) {
+        NegaMax.this.bestMove = bestMove;
+      }
+
+      List<NegamaxTask> tasks = new ArrayList<>();
+      for (int i = 0; i < moves.size(); i++) {
+        Board copyBoard = copyAndMove(moves.get(i), board);
+        GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
+
+        if (i == 0 || getPool().getQueuedTaskCount() > 0) {
+          double eval =
+              -negamax(copyBoard, copyHistory, inversColor(color), deep - 1, -beta, -alpha).eval;
+
+          if (eval > maxEval) {
+            maxEval = eval;
+            bestMove.move = moves.get(i);
+            bestMove.eval = maxEval;
+          }
+          alpha = Math.max(alpha, eval);
+
+          if (alpha >= beta) {
+            break;
+          }
+        } else {
+          NegamaxTask task =
+              new NegamaxTask(
+                  copyBoard,
+                  copyHistory,
+                  inversColor(color),
+                  deep - 1,
+                  -beta,
+                  -alpha,
+                  moves.get(i));
+          task.fork();
+          tasks.add(task);
+        }
+      }
+
+      for (NegamaxTask task : tasks) {
+        if (task.join() == null) {
+          break;
+        } else {
+          Node node = task.getRawResult();
+          if (-node.eval > maxEval) {
+            maxEval = -node.eval;
+            bestMove.move = task.move;
+            bestMove.eval = maxEval;
+          }
+          alpha = Math.max(alpha, -node.eval);
+        }
+
+        if (alpha >= beta) {
+          break;
+        }
+      }
+
+      return bestMove;
     }
 
-    double maxEval = MIN_EVAL;
-    for (Move move : allMoves) {
-      Board copyBoard = copyAndMove(move, board);
-      GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
-      double eval =
-          -negamax(copyBoard, copyHistory, inversColor(color), deep - 1, -beta, -alpha).eval;
-
-      if (eval > maxEval) {
-        maxEval = eval;
-        bestMove.move = move;
-        bestMove.eval = maxEval;
-      }
-      alpha = Math.max(alpha, eval);
-
+    @Override
+    protected Node compute() {
       if (alpha >= beta) {
-        break;
+        return null;
       }
+      return negamax(board, gameHistory, color, deep, alpha, beta);
     }
+  }
 
-    return bestMove;
+  @Override
+  public void shutdownPool() {
+    pool.shutdown();
   }
 
   @Override
