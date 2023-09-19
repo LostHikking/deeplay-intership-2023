@@ -25,6 +25,8 @@ public enum Bots {
   DEFENDING_EXPECTIMAX(
       "DefendingExpectiMax(moto)",
           color -> new ExpectiMaxBot("Moto", color, new DefendingStrategy(), 3)),
+
+  DEEPLODOCUS("Deeplodocus", Deeplodocus::new),
   LJEDMITRY("LjeDmitry", LjeDmitryBot::new);
 
   public final String name;

@@ -41,6 +41,7 @@ public class BotFactoryTest {
             "LjeDmitry",
             "Minimaximus",
             "Negamaximus",
+            "Deeplodocus",
             "AttackingMiniMax(moto)",
             "DefendingMiniMax(moto)",
             "AttackingExpectiMax(moto)",
