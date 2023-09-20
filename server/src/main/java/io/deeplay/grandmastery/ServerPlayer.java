@@ -75,7 +75,7 @@ public class ServerPlayer extends Player {
     } catch (SocketException e) {
       throw new ServerException("Соединение разорвано");
     } catch (Exception e) {
-      throw GameErrorCode.ERROR_PLAYER_MAKE_MOVE.asException();
+      throw GameErrorCode.ERROR_PLAYER_MAKE_MOVE.asException(e);
     }
   }
 
@@ -100,7 +100,7 @@ public class ServerPlayer extends Player {
     } catch (SocketException e) {
       throw new ServerException("Соединение разорвано");
     } catch (Exception e) {
-      throw GameErrorCode.ERROR_PLAYER_MAKE_MOVE.asException();
+      throw GameErrorCode.ERROR_PLAYER_MAKE_MOVE.asException(e);
     }
   }
 }

@@ -52,7 +52,11 @@ public class MiniMaxTest {
       makeMove(testGame, gameHistory, bestMove);
 
       if (!enemyMoves.isEmpty()) {
-        makeMove(testGame, gameHistory, enemyMoves.poll());
+        try {
+          makeMove(testGame, gameHistory, enemyMoves.poll());
+        } catch (GameException e) {
+          break;
+        }
       }
     }
 
@@ -83,6 +87,8 @@ public class MiniMaxTest {
         ChessPuzzles.easyWhitePuzzle(),
         ChessPuzzles.easyBlackPuzzle(),
         ChessPuzzles.blackCheckmateInOneMove(),
-        ChessPuzzles.normalBlackPuzzle());
+        ChessPuzzles.normalBlackPuzzle(),
+        ChessPuzzles.normalWhitePuzzle(),
+        ChessPuzzles.blackCheckmateInTwoMove());
   }
 }

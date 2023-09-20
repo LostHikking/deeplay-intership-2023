@@ -201,6 +201,10 @@ public class NegaMax implements ParallelAlgorithm {
     pool.shutdown();
   }
 
+  public boolean isShutdownPool() {
+    return pool.isShutdown();
+  }
+
   @Override
   public Move getBestMoveAfterTimout() {
     return bestMove.move;

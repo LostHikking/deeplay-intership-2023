@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
@@ -230,7 +229,6 @@ public class EvaluationTest {
     board.setPiece(Position.fromString("c8"), new Bishop(Color.BLACK));
     board.setPiece(Position.fromString("h3"), new Pawn(Color.WHITE));
     board.setPiece(Position.fromString("g2"), new Pawn(Color.WHITE));
-    BoardRender.showBoard(System.out, board, Color.WHITE);
 
     assertTrue(Evaluation.isSecurity(board, Position.fromString("h3"), Color.WHITE));
   }

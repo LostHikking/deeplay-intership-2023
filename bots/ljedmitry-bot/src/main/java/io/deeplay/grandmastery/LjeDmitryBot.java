@@ -15,7 +15,7 @@ import lombok.Getter;
 @Getter
 public class LjeDmitryBot extends Player {
   /** Максимальное время хода (5 сек.) */
-  private static final long TIMEOUT_MILI = 4950;
+  private static final long TIMEOUT_MILI = 4900;
 
   /** Алгоритм используемый ботом, для принятия решения. */
   private final Algorithm algorithm;
@@ -40,6 +40,17 @@ public class LjeDmitryBot extends Player {
   public LjeDmitryBot(Color color, String algorithmName, int deep) {
     super("LjeDmitry", color);
     this.algorithm = getAlgorithm(algorithmName, deep);
+  }
+
+  /**
+   * Конструктор с объектом алгоритма.
+   *
+   * @param color Цвет
+   * @param algorithm Алгоритм.
+   */
+  public LjeDmitryBot(Color color, Algorithm algorithm) {
+    super("LjeDmitry", color);
+    this.algorithm = algorithm;
   }
 
   /**

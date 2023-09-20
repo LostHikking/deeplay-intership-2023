@@ -31,7 +31,7 @@ class Bonuses {
             || piece.getFigureType() == FigureType.ROOK
             || piece.getFigureType() == FigureType.BISHOP)) {
           int beginRow = color == Color.WHITE ? 0 : 7;
-          result -= friendly.row().value() == beginRow ? 1 : 0;
+          result -= friendly.row().value() == beginRow ? 1.0 : 0.0;
         }
       }
     }

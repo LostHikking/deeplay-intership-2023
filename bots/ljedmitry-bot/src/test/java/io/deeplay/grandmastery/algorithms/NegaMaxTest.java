@@ -52,12 +52,16 @@ public class NegaMaxTest {
       makeMove(testGame, gameHistory, bestMove);
 
       if (!enemyMoves.isEmpty()) {
-        makeMove(testGame, gameHistory, enemyMoves.poll());
+        try {
+          makeMove(testGame, gameHistory, enemyMoves.poll());
+        } catch (GameException e) {
+          break;
+        }
       }
     }
 
-    Assertions.assertEquals(expect, actualMoves, puzzleName);
     negaMax.shutdownPool();
+    Assertions.assertEquals(expect, actualMoves, puzzleName);
   }
 
   /**
@@ -84,6 +88,8 @@ public class NegaMaxTest {
         ChessPuzzles.easyWhitePuzzle(),
         ChessPuzzles.easyBlackPuzzle(),
         ChessPuzzles.blackCheckmateInOneMove(),
-        ChessPuzzles.normalBlackPuzzle());
+        ChessPuzzles.normalBlackPuzzle(),
+        ChessPuzzles.normalWhitePuzzle(),
+        ChessPuzzles.blackCheckmateInTwoMove());
   }
 }

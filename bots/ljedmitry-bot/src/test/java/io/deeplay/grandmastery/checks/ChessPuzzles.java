@@ -42,6 +42,21 @@ public class ChessPuzzles {
   }
 
   /**
+   * Возвращает аргументы для шахматной задачи "Мат черным в два хода" (нормально).
+   *
+   * @return Аргументы для тестирования.
+   */
+  public static Arguments blackCheckmateInTwoMove() {
+    String boardStr = "_p___P_R_____P_N___pP___r______R_p__nPQ____q__P__kp__P_K_p___bPB";
+    Board board = Boards.fromString(boardStr);
+
+    List<Move> expectMoves = LongAlgebraicNotation.getMovesFromString("d1d8,f4f7");
+    Queue<Move> enemyMoves = new ArrayDeque<>(LongAlgebraicNotation.getMovesFromString("e7d8"));
+    return PuzzleDataProvider.createArguments(
+        Color.WHITE, board, expectMoves, enemyMoves, "blackCheckmateInTwoMove");
+  }
+
+  /**
    * Возвращает аргументы легкой шахматной задачи для черных.
    *
    * @return Аргументы для тестирования.
@@ -68,5 +83,21 @@ public class ChessPuzzles {
     Queue<Move> enemyMoves = new ArrayDeque<>(LongAlgebraicNotation.getMovesFromString("e1f1"));
     return PuzzleDataProvider.createArguments(
         Color.BLACK, board, expectMoves, enemyMoves, "normalBlackPuzzle");
+  }
+
+  /**
+   * Возвращает аргументы шахматной задачи, среднего уровня, для белых.
+   *
+   * @return Аргументы для тестирования.
+   */
+  public static Arguments normalWhitePuzzle() {
+    String boardStr = "______P_____p_k_______________P__________R________K_n________PP_";
+    Board board = Boards.fromString(boardStr);
+
+    List<Move> expectMoves = LongAlgebraicNotation.getMovesFromString("g5e4,e4f2,b7a7");
+    Queue<Move> enemyMoves =
+        new ArrayDeque<>(LongAlgebraicNotation.getMovesFromString("g3f3,f3f2"));
+    return PuzzleDataProvider.createArguments(
+        Color.WHITE, board, expectMoves, enemyMoves, "normalWhitePuzzle");
   }
 }
