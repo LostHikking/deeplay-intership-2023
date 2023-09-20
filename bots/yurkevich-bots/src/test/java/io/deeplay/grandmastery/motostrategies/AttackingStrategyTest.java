@@ -35,11 +35,11 @@ class AttackingStrategyTest {
     board1.setPiece(new Position(new Column(7), new Row(7)), whiteKing1);
     board1.setPiece(new Position(new Column(7), new Row(0)), blackKing1);
     Move move =
-            new Move(
-                    new Position(new Column(0), new Row(1)),
-                    new Position(new Column(0), new Row(0)),
-                    null,
-                    null);
+        new Move(
+            new Position(new Column(0), new Row(1)),
+            new Position(new Column(0), new Row(0)),
+            null,
+            null);
     testState1 = new State(board1, Color.BLACK, Color.BLACK, move, null, true);
     attackingStrategy1.init(testState1);
     attackingStrategy1.setBasePiecesCost(Color.BLACK);

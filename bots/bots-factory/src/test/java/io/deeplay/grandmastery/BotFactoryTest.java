@@ -36,9 +36,15 @@ public class BotFactoryTest {
   @Test
   void getBotsListTest() {
     Set<String> expectBots =
-        Set.of("Randomus", "LjeDmitry", "Minimaximus", "Negamaximus",
-                "AttackingMiniMax(moto)","DefendingMiniMax(moto)",
-                "AttackingExpectiMax(moto)","DefendingExpectiMax(moto)");
+        Set.of(
+            "Randomus",
+            "LjeDmitry",
+            "Minimaximus",
+            "Negamaximus",
+            "AttackingMiniMax(moto)",
+            "DefendingMiniMax(moto)",
+            "AttackingExpectiMax(moto)",
+            "DefendingExpectiMax(moto)");
     Assertions.assertEquals(expectBots, new HashSet<>(Bots.getBotsList()));
   }
 }

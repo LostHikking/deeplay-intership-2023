@@ -30,8 +30,8 @@ public abstract class Bot extends Player {
    * @param state Состояние.
    * @return Список детей.
    */
-  public ArrayList<State> createChildStates(State state) {
-    ArrayList<State> childStates = new ArrayList<>();
+  public List<State> createChildStates(State state) {
+    List<State> childStates = new ArrayList<>();
     Board parentBoard = state.getBoard();
     Piece piece;
     List<Move> moves;
