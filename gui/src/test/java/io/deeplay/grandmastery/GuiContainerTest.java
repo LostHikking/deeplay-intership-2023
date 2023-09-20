@@ -57,7 +57,6 @@ class GuiContainerTest {
     return null;
   }
 
-
   @Test
   void testAddLogWithEmptyLogs() {
     init();

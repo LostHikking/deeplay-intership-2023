@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class BonusesTest {
   private static final int TEST_COUNT_MOVE = 15;
-  
+
   private Board board;
 
   @BeforeEach

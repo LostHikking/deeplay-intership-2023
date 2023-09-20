@@ -110,11 +110,7 @@ public class King extends Piece {
     }
 
     if (!Figures.hasNotFigureBetweenCols(
-        board,
-        row,
-        fromCol,
-        rookFromCastling.col().value(),
-        List.of(rookFromCastling))) {
+        board, row, fromCol, rookFromCastling.col().value(), List.of(rookFromCastling))) {
       return false;
     }
 

@@ -173,14 +173,14 @@ public class Gui implements UI {
 
   @Override
   public String selectBot(List<String> botsList, Color color) {
-    return guiContainer.showBotSelectionWindow(botsList, color,null);
+    return guiContainer.showBotSelectionWindow(botsList, color, null);
   }
+
   /**
    * Метод, обрабатывающий выбор пользователя в диалоговом окне для выбора режима.
    *
    * @return Режим игры, выбранный игроком.
    */
-
   @Override
   public GameMode selectMode() {
     int selectedMode = guiContainer.showModeSelectionWindow();
