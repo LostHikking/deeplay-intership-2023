@@ -13,9 +13,15 @@ import io.deeplay.grandmastery.figures.Piece;
 import java.util.List;
 import java.util.Map;
 
+/** Класс, предоставляющий методы для оценки текущей игровой позиции. */
 class Evaluation {
+  /** Максимальное значение оценки позиции. */
   public static final double MAX_EVAL = 1.0;
+
+  /** Минимальное значение оценки позиции. */
   public static final double MIN_EVAL = -1.0;
+
+  /** Вес (оценка) каждой фигуры. */
   private static final Map<FigureType, Double> PIECE_PRICE =
       Map.of(
           FigureType.PAWN,
@@ -31,13 +37,17 @@ class Evaluation {
           FigureType.KING,
           100.0);
 
+  /**
+   * Главная оценочная функция.
+   *
+   * @param board Доска.
+   * @param gameHistory История игры.
+   * @param botColor Цвет бота.
+   * @param botMove Флаг, указывающий, ходит ли сейчас бот.
+   * @return Оценка текущей позиции.
+   */
   public static double evaluationFunc(
-      Board board,
-      GameHistory gameHistory,
-      Color botColor,
-      Bonuses ourBonuses,
-      Bonuses enemyBonuses,
-      boolean isMax) {
+      Board board, GameHistory gameHistory, Color botColor, boolean botMove) {
     if (GameStateChecker.isMate(board, inversColor(botColor))) {
       return MAX_EVAL;
     } else if (GameStateChecker.isMate(board, botColor)) {
@@ -48,9 +58,9 @@ class Evaluation {
       return 0;
     }
 
-    double ourRate = evaluationBoard(board, gameHistory, botColor, ourBonuses);
-    double enemyRate = evaluationBoard(board, gameHistory, inversColor(botColor), enemyBonuses);
-    if (!isMax) {
+    double ourRate = evaluationBoard(board, gameHistory, botColor);
+    double enemyRate = evaluationBoard(board, gameHistory, inversColor(botColor));
+    if (!botMove) {
       ourRate += pieceExchange(board, botColor);
     } else {
       enemyRate += pieceExchange(board, inversColor(botColor));
@@ -61,27 +71,29 @@ class Evaluation {
     return result;
   }
 
-  public static double castlingBonus(
-      Board board, GameHistory gameHistory, Bonuses bonuses, Color color) {
-    Piece movedPiece = board.getPiece(board.getLastMove().to());
-    if (movedPiece.getColor() == color
-        && (movedPiece.getFigureType() == FigureType.KING
-            || movedPiece.getFigureType() == FigureType.ROOK)) {
-      return bonuses.castling(movedPiece, board.getLastMove(), gameHistory) * 2.0;
-    }
-
-    return 0.0;
-  }
-
-  protected static double evaluationBoard(
-      Board board, GameHistory gameHistory, Color color, Bonuses bonuses) {
+  /**
+   * Оценивает текущую позицию на доске, с учетом различных факторов, таких как фигуры на доске и
+   * бонусы.
+   *
+   * @param board Доска.
+   * @param gameHistory История игры.
+   * @param color Цвет для которого проводится оценка.
+   * @return Оценка текущей позиции с учетом различных факторов.
+   */
+  protected static double evaluationBoard(Board board, GameHistory gameHistory, Color color) {
     return kingEndgameEval(board, color)
         + calculatePiecesPrice(board, color)
-        + castlingBonus(board, gameHistory, bonuses, color)
-        + bonuses.middlegame(board, gameHistory, color)
-        + bonuses.openLines(board, color, gameHistory.getMoves().size());
+        + Bonuses.middlegame(board, gameHistory, color)
+        + Bonuses.openLines(board, color, gameHistory.getMoves().size());
   }
 
+  /**
+   * Оценивает позицию короля в конце игры (эндшпиле).
+   *
+   * @param board Доска.
+   * @param color Цвет короля.
+   * @return Оценка позиции короля.
+   */
   protected static double kingEndgameEval(Board board, Color color) {
     Position kingPos = board.getKingPositionByColor(color);
     Position enemyKingPos = board.getKingPositionByColor(inversColor(color));
@@ -106,18 +118,41 @@ class Evaluation {
         + ((moveCount + rowDistForEnemyKing + colDistForEnemyKing) * 0.1);
   }
 
+  /**
+   * Рассчитывает стоимость фигур на доске для заданного цвета.
+   *
+   * @param board Доска.
+   * @param color Цвет фигур, для которых рассчитывается стоимость.
+   * @return Суммарная стоимость фигур на доске для заданного цвета.
+   */
   protected static double calculatePiecesPrice(Board board, Color color) {
     return board.getAllPiecePositionByColor(color).stream()
         .map(pos -> calculatePiecePrice(board, pos, color))
         .reduce(0.0, Double::sum);
   }
 
+  /**
+   * Рассчитывает стоимость одной фигуры на доске для заданного цвета.
+   *
+   * @param board Доска.
+   * @param pos Позиция фигуры.
+   * @param color Цвет фигур, для которых рассчитывается стоимость.
+   * @return Стоимость одной фигуры на доске для заданного цвета.
+   */
   protected static double calculatePiecePrice(Board board, Position pos, Color color) {
     return board.getPiece(pos).getFigureType() == FigureType.PAWN
         ? calculatePawnPrice(board, pos, color)
         : PIECE_PRICE.get(board.getPiece(pos).getFigureType());
   }
 
+  /**
+   * Оценивает стоимость пешки на доске для заданного цвета.
+   *
+   * @param board Доска.
+   * @param pos Позиция пешки.
+   * @param color Цвет пешки.
+   * @return Стоимости пешки на доске для заданного цвета.
+   */
   private static double calculatePawnPrice(Board board, Position pos, Color color) {
     int row = pos.row().value();
     int col = pos.col().value();
@@ -139,6 +174,13 @@ class Evaluation {
     return rowPrice + centerBonus - doublePawnPenalty;
   }
 
+  /**
+   * Рассчитывает штраф за незащищённую фигуру под боем на ходу противника.
+   *
+   * @param board Доска.
+   * @param color Цвет фигур, для которых рассчитывается штраф.
+   * @return Штраф.
+   */
   protected static double pieceExchange(Board board, Color color) {
     double result = 0;
     boolean isSecurity;
@@ -168,6 +210,14 @@ class Evaluation {
     return result;
   }
 
+  /**
+   * Проверяет, защищена ли фигура (под боем дружественных фигур).
+   *
+   * @param board Доска.
+   * @param pos Позиция фигуры, которую нужно проверить на безопасность.
+   * @param color Цвет фигуры.
+   * @return {@code true}, если фигура защищена, иначе {@code false}.
+   */
   protected static boolean isSecurity(Board board, Position pos, Color color) {
     List<Position> friendlies = board.getAllPiecePositionByColor(color);
 

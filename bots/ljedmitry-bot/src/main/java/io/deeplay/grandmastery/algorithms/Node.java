@@ -2,6 +2,7 @@ package io.deeplay.grandmastery.algorithms;
 
 import io.deeplay.grandmastery.core.Move;
 
+/** Класс, представляющий узел дерева игры, содержащий ход и его оценку. */
 public class Node {
   protected Move move;
   protected double eval;

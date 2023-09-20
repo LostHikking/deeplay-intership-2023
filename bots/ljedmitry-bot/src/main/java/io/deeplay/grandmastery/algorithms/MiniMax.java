@@ -19,8 +19,6 @@ public class MiniMax implements Algorithm {
   private final Color botColor;
   private final int deep;
   private final boolean isMax;
-  private final Bonuses ourBonuses;
-  private final Bonuses opponentBonuses;
   private Node bestMove;
 
   /**
@@ -33,8 +31,6 @@ public class MiniMax implements Algorithm {
     this.botColor = color;
     this.isMax = true;
     this.deep = deep;
-    this.ourBonuses = new Bonuses();
-    this.opponentBonuses = new Bonuses();
     this.bestMove = null;
   }
 
@@ -65,9 +61,7 @@ public class MiniMax implements Algorithm {
       double beta,
       boolean isMax) {
     if (deep == 0 || isGameOver(board, gameHistory)) {
-      double eval =
-          Evaluation.evaluationFunc(
-              board, gameHistory, botColor, ourBonuses, opponentBonuses, isMax);
+      double eval = Evaluation.evaluationFunc(board, gameHistory, botColor, isMax);
       return new Node(board.getLastMove(), eval);
     }
 

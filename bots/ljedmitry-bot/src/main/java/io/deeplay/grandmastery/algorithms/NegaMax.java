@@ -29,8 +29,6 @@ import java.util.concurrent.RecursiveTask;
 public class NegaMax implements ParallelAlgorithm {
   private final Color botColor;
   private final int deep;
-  private final Bonuses ourBonuses;
-  private final Bonuses enemyBonuses;
   private final ForkJoinPool pool;
 
   private Node bestMove;
@@ -44,8 +42,6 @@ public class NegaMax implements ParallelAlgorithm {
   public NegaMax(Color color, int deep) {
     this.botColor = color;
     this.deep = deep;
-    this.ourBonuses = new Bonuses();
-    this.enemyBonuses = new Bonuses();
     this.bestMove = null;
     this.pool = new ForkJoinPool(6);
   }
@@ -60,8 +56,6 @@ public class NegaMax implements ParallelAlgorithm {
   public NegaMax(Color color, int deep, int parallelism) {
     this.botColor = color;
     this.deep = deep;
-    this.ourBonuses = new Bonuses();
-    this.enemyBonuses = new Bonuses();
     this.bestMove = null;
     this.pool = new ForkJoinPool(parallelism);
   }
@@ -139,9 +133,7 @@ public class NegaMax implements ParallelAlgorithm {
 
         return new Node(
             board.getLastMove(),
-            Evaluation.evaluationFunc(
-                    board, gameHistory, botColor, ourBonuses, enemyBonuses, isBotColor)
-                * signEval);
+            Evaluation.evaluationFunc(board, gameHistory, botColor, isBotColor) * signEval);
       }
 
       List<Move> moves = getPossibleMoves(board, color);

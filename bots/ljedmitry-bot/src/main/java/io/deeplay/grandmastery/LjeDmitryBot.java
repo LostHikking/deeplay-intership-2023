@@ -14,7 +14,10 @@ import lombok.Getter;
 
 @Getter
 public class LjeDmitryBot extends Player {
+  /** Максимальное время хода (5 сек.) */
   private static final long TIMEOUT_MILI = 4950;
+
+  /** Алгоритм используемый ботом, для принятия решения. */
   private final Algorithm algorithm;
 
   /**
