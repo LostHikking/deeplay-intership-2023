@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
@@ -15,7 +14,6 @@ import io.deeplay.grandmastery.figures.Bishop;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Knight;
 import io.deeplay.grandmastery.figures.Pawn;
-import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.figures.Queen;
 import io.deeplay.grandmastery.figures.Rook;
 import io.deeplay.grandmastery.utils.Boards;
@@ -182,105 +180,6 @@ public class EvaluationTest {
         () -> assertEquals(expectEval, Evaluation.calculatePiecesPrice(board, Color.BLACK)));
   }
 
-  @Test
-  void castlingBonusTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e1g1");
-    Piece king = new King(Color.WHITE);
-    board.setPiece(move.from(), king);
-    board.setPiece(Position.fromString("h1"), new Rook(Color.WHITE));
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    king.move(board, move);
-    board.setLastMove(move);
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(move);
-
-    assertEquals(2.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
-  }
-
-  @Test
-  void penaltyCastlingKingMoveTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e1e2");
-    Piece king = new King(Color.WHITE);
-    board.setPiece(move.from(), king);
-    board.setPiece(Position.fromString("h1"), new Rook(Color.WHITE));
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    king.move(board, move);
-    board.setLastMove(move);
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(move);
-
-    assertEquals(-2.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
-  }
-
-  @Test
-  void penaltyCastlingOneRookMoveTest() {
-    Piece rook = new Rook(Color.WHITE);
-    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("h1"), rook);
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    Move move = LongAlgebraicNotation.getMoveFromString("h1h2");
-    rook.move(board, move);
-    board.setLastMove(move);
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(move);
-
-    assertEquals(-1.0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
-  }
-
-  @Test
-  void penaltyCastlingTwoRookMoveTest() {
-    Piece firstRook = new Rook(Color.WHITE);
-    Piece secondRook = new Rook(Color.WHITE);
-    board.setPiece(Position.fromString("e1"), new King(Color.WHITE));
-    board.setPiece(Position.fromString("h1"), firstRook);
-    board.setPiece(Position.fromString("a1"), secondRook);
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    Move firstMove = LongAlgebraicNotation.getMoveFromString("h1h2");
-    firstRook.move(board, firstMove);
-    board.setLastMove(firstMove);
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(firstMove);
-    Bonuses bonuses = new Bonuses();
-    Evaluation.castlingBonus(board, gameHistory, bonuses, Color.WHITE);
-
-    Move secondMove = LongAlgebraicNotation.getMoveFromString("a1a2");
-    secondRook.move(board, secondMove);
-    board.setLastMove(secondMove);
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(secondMove);
-
-    assertEquals(-2.0, Evaluation.castlingBonus(board, gameHistory, bonuses, Color.WHITE));
-  }
-
-  @Test
-  void noCastlingBonusTest() {
-    Move move = LongAlgebraicNotation.getMoveFromString("e1e2");
-    Piece queen = new Queen(Color.WHITE);
-    board.setPiece(move.from(), queen);
-
-    GameHistory gameHistory = new GameHistory();
-    gameHistory.startup(board);
-
-    queen.move(board, move);
-    board.setLastMove(move);
-    gameHistory.addBoard(board);
-    gameHistory.makeMove(move);
-
-    assertEquals(0, Evaluation.castlingBonus(board, gameHistory, new Bonuses(), Color.WHITE));
-  }
-
   @ParameterizedTest
   @MethodSource("argsKingEndGameFactory")
   void kingEndGameTest(Position kingPos, double expectEval) {
@@ -330,7 +229,6 @@ public class EvaluationTest {
     board.setPiece(Position.fromString("c8"), new Bishop(Color.BLACK));
     board.setPiece(Position.fromString("h3"), new Pawn(Color.WHITE));
     board.setPiece(Position.fromString("g2"), new Pawn(Color.WHITE));
-    BoardRender.showBoard(System.out, board, Color.WHITE);
 
     assertTrue(Evaluation.isSecurity(board, Position.fromString("h3"), Color.WHITE));
   }
@@ -402,12 +300,9 @@ public class EvaluationTest {
     GameHistory secondGameHistory = new GameHistory();
     secondGameHistory.startup(secondBoard);
 
-    double firstEval =
-        Evaluation.evaluationFunc(
-            firstBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), false);
+    double firstEval = Evaluation.evaluationFunc(firstBoard, secondGameHistory, Color.WHITE, false);
     double secondEval =
-        Evaluation.evaluationFunc(
-            secondBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), false);
+        Evaluation.evaluationFunc(secondBoard, secondGameHistory, Color.WHITE, false);
     assertTrue(firstEval < secondEval);
   }
 
@@ -435,12 +330,9 @@ public class EvaluationTest {
     GameHistory secondGameHistory = new GameHistory();
     secondGameHistory.startup(secondBoard);
 
-    double firstEval =
-        Evaluation.evaluationFunc(
-            firstBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true);
+    double firstEval = Evaluation.evaluationFunc(firstBoard, secondGameHistory, Color.WHITE, true);
     double secondEval =
-        Evaluation.evaluationFunc(
-            secondBoard, secondGameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true);
+        Evaluation.evaluationFunc(secondBoard, secondGameHistory, Color.WHITE, true);
     assertEquals(firstEval, secondEval);
   }
 
@@ -456,10 +348,7 @@ public class EvaluationTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(
-        1,
-        Evaluation.evaluationFunc(
-            board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true));
+    assertEquals(1, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, true));
   }
 
   @Test
@@ -474,10 +363,7 @@ public class EvaluationTest {
     GameHistory gameHistory = new GameHistory();
     gameHistory.startup(board);
 
-    assertEquals(
-        -1,
-        Evaluation.evaluationFunc(
-            board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true));
+    assertEquals(-1, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, true));
   }
 
   @Test
@@ -493,9 +379,6 @@ public class EvaluationTest {
     gameHistory.makeMove(move);
     board.setLastMove(move);
 
-    assertEquals(
-        0,
-        Evaluation.evaluationFunc(
-            board, gameHistory, Color.WHITE, new Bonuses(), new Bonuses(), true));
+    assertEquals(0, Evaluation.evaluationFunc(board, gameHistory, Color.WHITE, true));
   }
 }

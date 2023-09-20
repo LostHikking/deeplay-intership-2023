@@ -2,7 +2,6 @@ package io.deeplay.grandmastery.algorithms;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
-import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.FigureType;
@@ -10,43 +9,18 @@ import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.Figures;
 import java.util.List;
 
+/** Класс для вычисления бонусов и штрафов в оценке доски. */
 class Bonuses {
-  private double castling;
 
-  public Bonuses() {
-    this.castling = 0;
-  }
-
-  protected double castling(Piece movedPiece, Move move, GameHistory gameHistory) {
-    if (castling > -1 && castling < 1) {
-      if (movedPiece.getFigureType() == FigureType.KING) {
-        if (isCastling(move)) {
-          castling = 1.0;
-          return castling;
-        }
-        castling = -1.0;
-        return castling;
-      } else if (movedPiece.getFigureType() == FigureType.ROOK
-          && gameHistory.getBoards().size() > 1
-          && !gameHistory.getBeforeLastBoard().getPiece(move.from()).isMoved()) {
-        castling -= 0.5;
-        return castling;
-      }
-    }
-
-    return 0.0;
-  }
-
-  private boolean isCastling(Move move) {
-    int rowFrom = move.from().row().value();
-    int rowTo = move.to().row().value();
-    int colFrom = move.from().col().value();
-    int colTo = move.to().col().value();
-
-    return (rowFrom == 0 || rowFrom == 7) && rowFrom == rowTo && Math.abs(colTo - colFrom) == 2;
-  }
-
-  protected double middlegame(Board board, GameHistory gameHistory, Color color) {
+  /**
+   * Вычисляет штраф в миттельшпиле (середине игры) за невыведенные фигуры.
+   *
+   * @param board Доска.
+   * @param gameHistory История игры.
+   * @param color Цвет игрока.
+   * @return Штраф.
+   */
+  protected static double middlegame(Board board, GameHistory gameHistory, Color color) {
     double result = 0.0;
     if (gameHistory.getMoves().size() > 13) {
       List<Position> friendlies = board.getAllPiecePositionByColor(color);
@@ -57,14 +31,22 @@ class Bonuses {
             || piece.getFigureType() == FigureType.ROOK
             || piece.getFigureType() == FigureType.BISHOP)) {
           int beginRow = color == Color.WHITE ? 0 : 7;
-          result -= friendly.row().value() == beginRow ? 1 : 0;
+          result -= friendly.row().value() == beginRow ? 1.0 : 0.0;
         }
       }
     }
     return result;
   }
 
-  protected double openLines(Board board, Color color, int countMove) {
+  /**
+   * Вычисляет бонусы за открытые вертикальные и горизонтальные линии.
+   *
+   * @param board Доска.
+   * @param color Цвет игрока.
+   * @param countMove Количество сделанных ходов.
+   * @return Бонусы за открытые вертикальные и горизонтальные линии.
+   */
+  protected static double openLines(Board board, Color color, int countMove) {
     double result = 0.0;
     if (countMove < 10) {
       return result;
@@ -82,7 +64,15 @@ class Bonuses {
     return result;
   }
 
-  private double openVerticalAndHorizontalLines(Board board, Color color, Position pos) {
+  /**
+   * Вычисляет бонусы за открытые вертикальные и горизонтальные линии для конкретной фигуры.
+   *
+   * @param board Доска.
+   * @param color Цвет игрока.
+   * @param pos Позиция фигуры на доске.
+   * @return Бонусы за открытые вертикальные и горизонтальные линии для фигуры.
+   */
+  private static double openVerticalAndHorizontalLines(Board board, Color color, Position pos) {
     int row = pos.row().value();
     int col = pos.col().value();
     boolean openHorizontal = Figures.hasNotFigureBetweenCols(board, row, -1, 8, List.of(pos));

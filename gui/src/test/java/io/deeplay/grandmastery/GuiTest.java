@@ -116,7 +116,7 @@ class GuiTest {
 
     // Настройка возвращаемого значения mock-объекта
     when(guiContainerMock.showBotSelectionWindow(testBotList, Color.WHITE, null))
-            .thenReturn("TestBot1");
+        .thenReturn("TestBot1");
 
     // Устанавливаем mock-объект в Gui
     FieldUtils.writeDeclaredField(gui, "guiContainer", guiContainerMock, true);

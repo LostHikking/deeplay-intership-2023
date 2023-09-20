@@ -17,11 +17,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class MiniMaxTest {
+public class NegaMaxTest {
   private static final int DEEP = 3;
 
   /**
-   * Проводит тестирование алгоритма MiniMax на шахматных задачах.
+   * Проводит тестирование алгоритма NegaMax на шахматных задачах.
    *
    * @param color Цвет, за который играет бот.
    * @param board Исходное состояние доски, с задачей.
@@ -32,10 +32,10 @@ public class MiniMaxTest {
    */
   @ParameterizedTest
   @MethodSource("chessPuzzles")
-  public void minimaxChessPuzzlesTest(
+  public void negamaxChessPuzzlesTest(
       Color color, Board board, List<Move> expect, Queue<Move> enemyMoves, String puzzleName)
       throws GameException {
-    MiniMax miniMax = new MiniMax(color, DEEP);
+    NegaMax negaMax = new NegaMax(color, DEEP, 2);
     List<Move> actualMoves = new ArrayList<>();
     GameHistory gameHistory = new GameHistory();
     Game testGame = new Game();
@@ -47,7 +47,7 @@ public class MiniMaxTest {
     }
 
     for (int i = 0; i < expect.size(); i++) {
-      Move bestMove = miniMax.findBestMove(testGame.getCopyBoard(), gameHistory);
+      Move bestMove = negaMax.findBestMove(testGame.getCopyBoard(), gameHistory);
       actualMoves.add(bestMove);
       makeMove(testGame, gameHistory, bestMove);
 
@@ -60,6 +60,7 @@ public class MiniMaxTest {
       }
     }
 
+    negaMax.shutdownPool();
     Assertions.assertEquals(expect, actualMoves, puzzleName);
   }
 

@@ -135,15 +135,5 @@ class AlgorithmsTest {
   }
 
   @Test
-  void inversColorWhiteTest() {
-    assertEquals(Color.BLACK, Algorithms.inversColor(Color.WHITE));
-  }
-
-  @Test
-  void inversColorBlackTest() {
-    assertEquals(Color.WHITE, Algorithms.inversColor(Color.BLACK));
-  }
-
-  @Test
   void kingEndgameEvalTest() {}
 }

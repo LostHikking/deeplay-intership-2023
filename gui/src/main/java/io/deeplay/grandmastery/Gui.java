@@ -173,14 +173,14 @@ public class Gui implements UI {
 
   @Override
   public String selectBot(List<String> botsList, Color color) {
-    return guiContainer.showBotSelectionWindow(botsList, color,null);
+    return guiContainer.showBotSelectionWindow(botsList, color, null);
   }
+
   /**
    * Метод, обрабатывающий выбор пользователя в диалоговом окне для выбора режима.
    *
    * @return Режим игры, выбранный игроком.
    */
-
   @Override
   public GameMode selectMode() {
     int selectedMode = guiContainer.showModeSelectionWindow();
@@ -592,7 +592,6 @@ public class Gui implements UI {
                 if (clickQueue.size() == 1) {
                   makeBoardUnclickable();
                   makePossibleMovesClickable(board, col, row);
-                  // System.out.println("This cell clickable");
                   synchronized (monitor) {
                     // Уведомляем метод inputMove о новом значении в очереди
                     monitor.notify();

@@ -75,14 +75,4 @@ public class Algorithms {
         || GameStateChecker.isMate(board, Color.BLACK)
         || GameStateChecker.isDraw(board, gameHistory);
   }
-
-  /**
-   * Инвертирует цвет стороны.
-   *
-   * @param color Исходный цвет.
-   * @return Инвертированный цвет.
-   */
-  public static Color inversColor(Color color) {
-    return color == Color.WHITE ? Color.BLACK : Color.WHITE;
-  }
 }

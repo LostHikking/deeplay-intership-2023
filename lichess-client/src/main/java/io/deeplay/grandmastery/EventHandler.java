@@ -96,7 +96,6 @@ public class EventHandler {
     }
 
     var bot = BotFactory.create(botName, color);
-    System.out.println("COLOR: " + color);
     var board = new HashBoard();
     Boards.defaultChess().accept(board);
     bot.startup(board);
@@ -146,6 +145,7 @@ public class EventHandler {
     playNextMove(onlineGame, true, null);
   }
 
+  @SuppressWarnings("StringSplitter")
   void updateGameState(OnlineGame onlineGame, GameEvent.State state) {
     log.info("Game state: {}", state);
 

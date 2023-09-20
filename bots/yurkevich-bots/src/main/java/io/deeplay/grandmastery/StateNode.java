@@ -51,6 +51,7 @@ public class StateNode {
 
   /**
    * Конструктор для вершины.
+   *
    * @param board Доска.
    * @param mainColor Цвет бота.
    * @param movingColor Цвет ходящего игрока.
@@ -81,9 +82,7 @@ public class StateNode {
     setTerminalCost();
   }
 
-  /**
-   * Метод устанавливает стоимость состояния.
-   */
+  /** Метод устанавливает стоимость состояния. */
   public void setCost() {
     // устанавливаю базовую стоимость
     setBasePiecesCost(mainColor);
