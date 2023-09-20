@@ -42,7 +42,7 @@ public class NegaMax implements ParallelAlgorithm {
     this.botColor = color;
     this.deep = deep;
     this.bestMove = null;
-    this.pool = new ForkJoinPool(6);
+    this.pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() / 2 + 1);
   }
 
   /**
