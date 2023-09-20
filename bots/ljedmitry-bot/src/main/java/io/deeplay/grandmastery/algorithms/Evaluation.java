@@ -1,7 +1,5 @@
 package io.deeplay.grandmastery.algorithms;
 
-import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
-
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.GameStateChecker;
@@ -48,7 +46,7 @@ class Evaluation {
    */
   public static double evaluationFunc(
       Board board, GameHistory gameHistory, Color botColor, boolean botMove) {
-    if (GameStateChecker.isMate(board, inversColor(botColor))) {
+    if (GameStateChecker.isMate(board, botColor.getOpposite())) {
       return MAX_EVAL;
     } else if (GameStateChecker.isMate(board, botColor)) {
       return MIN_EVAL;
@@ -59,11 +57,11 @@ class Evaluation {
     }
 
     double ourRate = evaluationBoard(board, gameHistory, botColor);
-    double enemyRate = evaluationBoard(board, gameHistory, inversColor(botColor));
+    double enemyRate = evaluationBoard(board, gameHistory, botColor.getOpposite());
     if (!botMove) {
       ourRate += pieceExchange(board, botColor);
     } else {
-      enemyRate += pieceExchange(board, inversColor(botColor));
+      enemyRate += pieceExchange(board, botColor.getOpposite());
     }
 
     double result = (ourRate - enemyRate) * (1 + 10 / (ourRate + enemyRate)) / 1000;
@@ -96,7 +94,7 @@ class Evaluation {
    */
   protected static double kingEndgameEval(Board board, Color color) {
     Position kingPos = board.getKingPositionByColor(color);
-    Position enemyKingPos = board.getKingPositionByColor(inversColor(color));
+    Position enemyKingPos = board.getKingPositionByColor(color.getOpposite());
     if (board.getAllPiecePositionByColor(color).size() != 1) {
       return 0.0;
     }
@@ -185,7 +183,7 @@ class Evaluation {
     double result = 0;
     boolean isSecurity;
     List<Position> friendlies = board.getAllPiecePositionByColor(color);
-    List<Position> enemies = board.getAllPiecePositionByColor(inversColor(color));
+    List<Position> enemies = board.getAllPiecePositionByColor(color.getOpposite());
 
     for (Position friendly : friendlies) {
       if (!friendly.equals(board.getKingPositionByColor(color))) {

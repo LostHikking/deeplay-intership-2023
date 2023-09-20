@@ -5,7 +5,6 @@ import static io.deeplay.grandmastery.algorithms.Evaluation.MIN_EVAL;
 import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
 import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
 import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
-import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
 import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
 
 import io.deeplay.grandmastery.core.Board;
@@ -121,24 +120,16 @@ public class NegaMax implements ParallelAlgorithm {
     private Node negamax(
         Board board, GameHistory gameHistory, Color color, int deep, double alpha, double beta) {
       if (deep == 0 || isGameOver(board, gameHistory)) {
-        double signEval;
-        boolean isBotColor;
-        if (color == botColor) {
-          signEval = 1.0;
-          isBotColor = true;
-        } else {
-          signEval = -1.0;
-          isBotColor = false;
-        }
+        double signEval = color == botColor ? 1.0 : -1.0;
+        boolean isBotMove = color == botColor;
 
         return new Node(
             board.getLastMove(),
-            Evaluation.evaluationFunc(board, gameHistory, botColor, isBotColor) * signEval);
+            Evaluation.evaluationFunc(board, gameHistory, botColor, isBotMove) * signEval);
       }
 
       List<Move> moves = getPossibleMoves(board, color);
       Node bestMove = new Node(moves.get(0), MIN_EVAL);
-      double maxEval = MIN_EVAL;
       if (deep == NegaMax.this.deep) {
         NegaMax.this.bestMove = bestMove;
       }
@@ -150,14 +141,13 @@ public class NegaMax implements ParallelAlgorithm {
 
         if (i == 0 || getPool().getQueuedTaskCount() > 0) {
           double eval =
-              -negamax(copyBoard, copyHistory, inversColor(color), deep - 1, -beta, -alpha).eval;
+              -negamax(copyBoard, copyHistory, color.getOpposite(), deep - 1, -beta, -alpha).eval;
 
-          if (eval > maxEval) {
-            maxEval = eval;
+          if (eval > alpha) {
+            alpha = eval;
             bestMove.move = moves.get(i);
-            bestMove.eval = maxEval;
+            bestMove.eval = eval;
           }
-          alpha = Math.max(alpha, eval);
 
           if (alpha >= beta) {
             break;
@@ -167,7 +157,7 @@ public class NegaMax implements ParallelAlgorithm {
               new NegamaxTask(
                   copyBoard,
                   copyHistory,
-                  inversColor(color),
+                  color.getOpposite(),
                   deep - 1,
                   -beta,
                   -alpha,
@@ -182,12 +172,11 @@ public class NegaMax implements ParallelAlgorithm {
           break;
         } else {
           Node node = task.getRawResult();
-          if (-node.eval > maxEval) {
-            maxEval = -node.eval;
+          if (-node.eval > alpha) {
+            alpha = -node.eval;
             bestMove.move = task.move;
-            bestMove.eval = maxEval;
+            bestMove.eval = alpha;
           }
-          alpha = Math.max(alpha, -node.eval);
         }
 
         if (alpha >= beta) {

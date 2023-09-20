@@ -5,7 +5,6 @@ import static io.deeplay.grandmastery.algorithms.Evaluation.MIN_EVAL;
 import static io.deeplay.grandmastery.utils.Algorithms.copyAndMove;
 import static io.deeplay.grandmastery.utils.Algorithms.copyHistoryAndMove;
 import static io.deeplay.grandmastery.utils.Algorithms.getPossibleMoves;
-import static io.deeplay.grandmastery.utils.Algorithms.inversColor;
 import static io.deeplay.grandmastery.utils.Algorithms.isGameOver;
 
 import io.deeplay.grandmastery.core.Board;
@@ -75,7 +74,7 @@ public class MiniMax implements Algorithm {
       Board copyBoard = copyAndMove(move, board);
       GameHistory copyHistory = copyHistoryAndMove(copyBoard, gameHistory);
       double eval =
-          minmax(copyBoard, copyHistory, inversColor(color), deep - 1, alpha, beta, !isMax).eval;
+          minmax(copyBoard, copyHistory, color.getOpposite(), deep - 1, alpha, beta, !isMax).eval;
 
       if (isMax) {
         if (eval > alpha) {
