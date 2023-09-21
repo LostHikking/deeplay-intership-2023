@@ -20,9 +20,9 @@ class BotTest {
     Boards.defaultChess().accept(board);
     GameHistory gameHistory = new GameHistory();
     Color mainColor = Color.WHITE;
-    Color movingColor = Color.WHITE;
+    Color movingColor = Color.BLACK;
     State rootNode = new State(board, mainColor, movingColor, null, gameHistory, true);
-    MiniMaxBot miniMaxBot = new MiniMaxBot("Moto", Color.WHITE, new AttackingStrategy(), 2);
+    MiniMaxBot miniMaxBot = new MiniMaxBot("Moto", Color.BLACK, new AttackingStrategy(), 2);
     List<State> childNodes = miniMaxBot.createChildStates(rootNode);
 
     int expectedPawnMoves =
@@ -31,12 +31,8 @@ class BotTest {
         4; // В начальной позиции у каждого игрока 2 коня, каждый имеет 2 возможных хода
     int expectedTotalMoves = expectedPawnMoves + expectedKnightMoves;
     assertEquals(expectedTotalMoves, childNodes.size());
-    if (rootNode.isMainNode()) {
-      childNodes.forEach(
+    childNodes.forEach(
           childNode -> assertEquals(rootNode.getMainColor(), childNode.getMovingColor()));
-    } else {
-      childNodes.forEach(
-          childNode -> assertEquals(rootNode.getOpponentColor(), childNode.getMovingColor()));
-    }
+
   }
 }

@@ -36,11 +36,7 @@ public abstract class Bot extends Player {
     Piece piece;
     List<Move> moves;
     Color nextColor;
-    if (state.isMainNode()) {
-      nextColor = state.getMainColor();
-    } else {
-      nextColor = state.getMovingColor() == Color.BLACK ? Color.WHITE : Color.BLACK;
-    }
+    nextColor = state.getMovingColor() == Color.BLACK ? Color.WHITE : Color.BLACK;
     for (Position position : parentBoard.getAllPiecePositionByColor(nextColor)) {
       piece = parentBoard.getPiece(position);
       moves = piece.getAllMoves(parentBoard, position);

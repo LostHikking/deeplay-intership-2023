@@ -101,7 +101,8 @@ public class MiniMaxBot extends Bot {
   public Move createMove() throws GameException {
     Board board = this.getBoard();
     Color mainColor = this.getColor();
-    State mainState = new State(board, mainColor, mainColor, null, gameHistory, true);
+    Color opponentColor = mainColor == Color.BLACK ? Color.WHITE : Color.BLACK;
+    State mainState = new State(board, mainColor, opponentColor, null, gameHistory, true);
     minimax(mainState, searchDepth, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
     Move move = mainState.getMove();
     if (move.promotionPiece() != null) {
