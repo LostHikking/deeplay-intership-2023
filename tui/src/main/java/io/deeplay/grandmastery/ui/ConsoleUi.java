@@ -321,6 +321,15 @@ public class ConsoleUi implements UI {
     return botsList.get(numBot - 1);
   }
 
+  @Override
+  public boolean newGame() throws IOException {
+    printStream.println("1 - начать новую игру.");
+    printStream.println("2 - закрыть приложение.");
+
+    int input = Integer.parseInt(expectInput(List.of("1", "2")));
+    return input == 1;
+  }
+
   /** Метод для вывода сообщения о некорректном ходе на консоль. */
   @Override
   public void incorrectMove() {

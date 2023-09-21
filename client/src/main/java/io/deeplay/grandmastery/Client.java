@@ -134,6 +134,10 @@ public class Client {
     } while (reconnect);
 
     clientController.close();
+    if (clientController.startNewGame()) {
+      clientController.connect(host, port);
+      run();
+    }
   }
 
   /**
@@ -200,7 +204,6 @@ public class Client {
       }
     } while (!(serverDto instanceof ResultGame));
 
-    MAKE_MOVE.shutdown();
     player.gameOver(((ResultGame) serverDto).getGameState());
     reconnect = false;
   }

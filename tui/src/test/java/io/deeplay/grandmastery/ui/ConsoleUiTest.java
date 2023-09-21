@@ -325,7 +325,7 @@ public class ConsoleUiTest {
    */
   @ParameterizedTest
   @ValueSource(strings = {"Y", "y"})
-  public void confirmSurrender(String answer) {
+  public void confirmSurrenderTest(String answer) {
     InputStream inputStream = new ByteArrayInputStream(answer.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
@@ -342,7 +342,7 @@ public class ConsoleUiTest {
    */
   @ParameterizedTest
   @ValueSource(strings = {"N", "n"})
-  public void noConfirmSurrender(String answer) {
+  public void noConfirmSurrenderTest(String answer) {
     InputStream inputStream = new ByteArrayInputStream(answer.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
@@ -359,7 +359,7 @@ public class ConsoleUiTest {
    */
   @ParameterizedTest
   @ValueSource(strings = {"Y", "y"})
-  public void acceptDraw(String answer) {
+  public void acceptDrawTest(String answer) {
     InputStream inputStream = new ByteArrayInputStream(answer.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
@@ -376,7 +376,7 @@ public class ConsoleUiTest {
    */
   @ParameterizedTest
   @ValueSource(strings = {"N", "n"})
-  public void refuseDraw(String answer) {
+  public void refuseDrawTest(String answer) {
     InputStream inputStream = new ByteArrayInputStream(answer.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
 
@@ -387,7 +387,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void selectWhiteBot() {
+  public void selectWhiteBotTest() {
     String input = "1\n";
     InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
@@ -408,7 +408,7 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void selectBlackBot() {
+  public void selectBlackBotTest() {
     String input = "1\n";
     InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
     consoleUi = new ConsoleUi(inputStream, output);
@@ -425,6 +425,38 @@ public class ConsoleUiTest {
             assertEquals(
                 "Randomus",
                 consoleUi.selectBot(List.of("Randomus", "LjeDmitry", "Melniknow"), Color.BLACK)),
+        () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", "")));
+  }
+
+  @Test
+  public void newGameTest() {
+    String input = "1\n";
+    InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+    consoleUi = new ConsoleUi(inputStream, output);
+
+    String expect =
+        """
+            1 - начать новую игру.
+            2 - закрыть приложение.
+            """;
+    Assertions.assertAll(
+        () -> assertTrue(consoleUi.newGame()),
+        () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", "")));
+  }
+
+  @Test
+  public void closeGameTest() {
+    String input = "2\n";
+    InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+    consoleUi = new ConsoleUi(inputStream, output);
+
+    String expect =
+        """
+                1 - начать новую игру.
+                2 - закрыть приложение.
+                """;
+    Assertions.assertAll(
+        () -> assertFalse(consoleUi.newGame()),
         () -> assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", "")));
   }
 }

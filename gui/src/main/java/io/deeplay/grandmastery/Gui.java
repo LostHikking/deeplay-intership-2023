@@ -179,6 +179,11 @@ public class Gui implements UI {
     return guiContainer.showBotSelectionWindow(botsList, color, null);
   }
 
+  @Override
+  public boolean newGame() {
+    return guiContainer.showNewGameWindow() == 0;
+  }
+
   /**
    * Метод, обрабатывающий выбор пользователя в диалоговом окне для выбора режима.
    *
