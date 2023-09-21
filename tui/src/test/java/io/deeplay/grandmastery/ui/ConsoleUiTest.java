@@ -6,10 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.HashBoard;
+import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.ByteArrayInputStream;
@@ -242,6 +244,24 @@ public class ConsoleUiTest {
      Ход черных: e7e6
     \\―――――――――――――――――――――――――――――――――――――――――――――――――――/
         """;
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", ""));
+  }
+
+  @Test
+  public void showNotDefaultMoveTest() {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showMove(new Move(null, null, null, MoveType.SURRENDER), Color.WHITE);
+
+    String expect = "";
+    assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", ""));
+  }
+
+  @Test
+  public void showNullMoveTest() {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showMove(null, Color.BLACK);
+
+    String expect = "";
     assertEquals(expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", ""));
   }
 
