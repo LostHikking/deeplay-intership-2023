@@ -248,7 +248,7 @@ public class GuiContainer {
     dialog.add(botComboBox);
     dialog.add(okButton);
 
-    dialog.setSize(new Dimension(230, 70));
+    dialog.setSize(new Dimension(350, 70));
     dialog.setResizable(false);
 
     dialog.setLocationRelativeTo(parentFrame);
