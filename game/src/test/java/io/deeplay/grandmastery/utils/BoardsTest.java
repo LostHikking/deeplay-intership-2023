@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.Column;
+import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
@@ -251,5 +252,28 @@ public class BoardsTest {
     }
 
     return pieces;
+  }
+
+  @Test
+  void getFenFromBoard() {
+    var board = new HashBoard();
+    Boards.defaultChess().accept(board);
+
+    var fen = Boards.getFenFromBoard(board, Color.WHITE, new GameHistory());
+    var excepted = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+    Assertions.assertEquals(excepted, fen);
+  }
+
+  @Test
+  void writeFenBoard() {
+    var stringBuilder = new StringBuilder();
+    var board = new HashBoard();
+
+    Boards.defaultChess().accept(board);
+    Boards.writeFenBoard(stringBuilder, board);
+
+    var excepted = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    Assertions.assertEquals(excepted, stringBuilder.toString());
   }
 }
