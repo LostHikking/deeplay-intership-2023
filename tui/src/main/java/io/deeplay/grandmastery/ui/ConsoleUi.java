@@ -8,6 +8,7 @@ import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
@@ -144,6 +145,10 @@ public class ConsoleUi implements UI {
    */
   @Override
   public void showMove(Move move, Color color) {
+    if (move == null || move.moveType() != MoveType.DEFAULT) {
+      return;
+    }
+
     printStream.println("/―――――――――――――――――――――――――――――――――――――――――――――――――――\\");
     printStream.println(
         " Ход "
