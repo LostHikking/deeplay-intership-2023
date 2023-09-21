@@ -120,9 +120,10 @@ public class ClientTest {
     ResultGame resultGame = new ResultGame(GameState.WHITE_WIN, List.of(""));
     ClientController mockClientController = mock(ClientController.class);
 
-    when(mockClientController.selectMode()).thenReturn(GameMode.BOT_VS_BOT);
-    when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC);
-    when(mockClientController.query(any())).thenReturn(resultGame);
+    when(mockClientController.selectMode()).thenReturn(GameMode.BOT_VS_BOT, GameMode.BOT_VS_BOT);
+    when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC, ChessType.CLASSIC);
+    when(mockClientController.query(any())).thenReturn(resultGame, resultGame);
+    when(mockClientController.startNewGame()).thenReturn(true, false);
 
     client.clientController = mockClientController;
     Assertions.assertAll(
@@ -156,6 +157,7 @@ public class ClientTest {
         new StartGameResponse("rp____PRnp____PNbp____PBqp____PQkp____PKbp____PBnp____PNrp____PR");
 
     when(mockClientController.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
+    when(mockClientController.startNewGame()).thenReturn(false);
     when(mockClientController.getUi()).thenReturn(mockUi);
     when(mockClientController.selectColor()).thenReturn(Color.WHITE);
     when(mockClientController.inputPlayerName(Color.WHITE)).thenReturn("Player");
@@ -175,6 +177,7 @@ public class ClientTest {
     Assertions.assertAll(
         () -> assertDoesNotThrow(client::run),
         () -> assertFalse(client.reconnect),
+        () -> assertEquals(mockUi, client.clientController.getUi()),
         () -> assertTrue(client.player.isGameOver(), "Player game over"),
         () -> assertTrue(client.player.getGameHistory().isGameOver(), "History game over"),
         () -> verify(mockClientController, times(1)).close());

@@ -312,6 +312,33 @@ public class GuiContainer {
         options[0]);
   }
 
+  /** Метод выводит диалоговое окно для подтверждения начала новой игры/отказа. */
+  public int showNewGameWindow() {
+    // Создаем панель для выравнивания компонентов.
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+    // Создаем компонент с выравниванием по центру.
+    JLabel messageLabel = new JLabel("Хотите начать новую игру?");
+    messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    // Добавляем компоненты на панель.
+    panel.add(Box.createVerticalGlue()); // Пространство сверху
+    panel.add(messageLabel);
+    panel.add(Box.createVerticalGlue()); // Пространство снизу
+    Object[] options = {"Да", "Нет"};
+
+    return JOptionPane.showOptionDialog(
+        null,
+        panel,
+        "Новая игра",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.PLAIN_MESSAGE,
+        null,
+        options,
+        options[0]);
+  }
+
   /** Метод выводит диалоговое окно для выбора цвета. */
   public int showColorSelectionWindow() {
     JPanel panel = new JPanel();

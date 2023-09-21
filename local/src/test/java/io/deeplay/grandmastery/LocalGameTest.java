@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.deeplay.grandmastery.core.GameController;
@@ -71,6 +74,24 @@ public class LocalGameTest {
   }
 
   @Test
+  public void runLocalGameTest() throws IOException {
+    UI mockUI = mock(UI.class);
+    when(mockUI.selectMode()).thenReturn(GameMode.BOT_VS_BOT);
+    when(mockUI.selectBot(any(), any())).thenReturn("Randomus");
+    when(mockUI.newGame()).thenReturn(false);
+
+    Grandmastery.ui = mockUI;
+    Grandmastery.main(null);
+    Assertions.assertAll(
+        () -> verify(mockUI, times(1)).printHelp(),
+        () -> verify(mockUI, atLeast(2)).showBoard(any(), any()),
+        () -> verify(mockUI, atLeast(2)).showMove(any(), any()),
+        () -> verify(mockUI, times(0)).incorrectMove(),
+        () -> verify(mockUI, times(1)).showResultGame(any()),
+        () -> verify(mockUI, times(1)).close());
+  }
+
+  @Test
   public void createGameControllerBotVsBotTest() throws IOException {
     UI mockUI = mock(UI.class);
     when(mockUI.selectMode()).thenReturn(GameMode.BOT_VS_BOT);
@@ -133,12 +154,14 @@ public class LocalGameTest {
 
   @Test
   public void createUiTest() {
+    Grandmastery.ui = null;
     Grandmastery.createUi("tui");
     assertTrue(Grandmastery.ui instanceof ConsoleUi);
   }
 
   @Test
   public void tryCreateUnknownUiTest() {
+    Grandmastery.ui = null;
     assertThrows(IllegalArgumentException.class, () -> Grandmastery.createUi("ababa"));
   }
 }

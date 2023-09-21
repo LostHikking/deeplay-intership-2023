@@ -116,6 +116,14 @@ public interface UI {
   String selectBot(List<String> botsList, Color color) throws IOException;
 
   /**
+   * Предлагает выбор, начать новую игру или закрыть приложение.
+   *
+   * @return true, если начать новую игру; в противном случае - false.
+   * @throws IOException В случае ошибки ввода/вывода.
+   */
+  boolean newGame() throws IOException;
+
+  /**
    * Достает название ui из конфига в своем модуле.
    *
    * @return название ui.

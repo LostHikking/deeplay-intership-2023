@@ -16,9 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 public class Grandmastery {
   private static Color defaultColor = Color.WHITE;
   private static GameMode gameMode;
-  protected static UI ui;
+  protected static UI ui = null;
 
   protected static void createUi(String uiName) throws IllegalArgumentException {
+    if (ui != null) {
+      return;
+    }
+
     switch (uiName) {
       case "gui" -> ui = new Gui(true);
       case "tui" -> ui = new ConsoleUi(System.in, System.out);
@@ -64,31 +68,34 @@ public class Grandmastery {
   public static void main(String[] args) {
     try {
       createUi(UI.getUiFromConfig());
-      GameController gameController = createGameController();
-      gameController.beginPlay(ui.selectChessType());
 
-      ui.printHelp();
-      ui.showBoard(gameController.getBoard(), defaultColor);
+      do {
+        GameController gameController = createGameController();
+        gameController.beginPlay(ui.selectChessType());
 
-      while (!gameController.isGameOver()) {
-        try {
-          gameController.nextMove();
-          ui.showMove(
-              gameController.getOpponentPlayer().getLastMove(),
-              gameController.getOpponentPlayer().getColor());
+        ui.printHelp();
+        ui.showBoard(gameController.getBoard(), defaultColor);
 
-          Color displayColor =
-              gameMode == GameMode.HUMAN_VS_HUMAN
-                  ? gameController.getCurrentPlayer().getColor()
-                  : defaultColor;
-          ui.showBoard(gameController.getBoard(), displayColor);
-        } catch (GameException e) {
-          ui.incorrectMove();
+        while (!gameController.isGameOver()) {
+          try {
+            gameController.nextMove();
+            ui.showMove(
+                gameController.getOpponentPlayer().getLastMove(),
+                gameController.getOpponentPlayer().getColor());
+
+            Color displayColor =
+                gameMode == GameMode.HUMAN_VS_HUMAN
+                    ? gameController.getCurrentPlayer().getColor()
+                    : defaultColor;
+            ui.showBoard(gameController.getBoard(), displayColor);
+          } catch (GameException e) {
+            ui.incorrectMove();
+          }
         }
-      }
 
-      ui.showBoard(gameController.getBoard(), defaultColor);
-      ui.showResultGame(gameController.getGameStatus());
+        ui.showBoard(gameController.getBoard(), defaultColor);
+        ui.showResultGame(gameController.getGameStatus());
+      } while (ui.newGame());
     } catch (GameException | IOException e) {
       log.error(e.getMessage());
     } finally {

@@ -19,13 +19,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ClientController {
   private static final int TIME_RECONNECTION = 5000;
 
-  private final UI ui;
+  @Getter private final UI ui;
   private ClientDao clientDao;
 
   public ClientController(UI ui) {
@@ -119,7 +120,7 @@ public class ClientController {
     return ui.selectBot(bots, color);
   }
 
-  public UI getUi() {
-    return ui;
+  public boolean startNewGame() throws IOException {
+    return ui.newGame();
   }
 }
