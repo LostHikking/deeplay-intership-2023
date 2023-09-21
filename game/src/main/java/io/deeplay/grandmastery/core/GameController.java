@@ -126,7 +126,7 @@ public class GameController {
     try {
       Player currentPlayer = (Player) getCurrentPlayer();
       this.move = currentPlayer.createMove();
-      if (checkSurOrDrawOffer()) {
+      if (checkAnyTypeMove()) {
         return;
       }
 
@@ -155,9 +155,18 @@ public class GameController {
    *
    * @return {@code true}, если да, иначе {@code false}
    */
-  private boolean checkSurOrDrawOffer() {
+  private boolean checkAnyTypeMove() {
     if (this.move == null) {
       throw GameErrorCode.ERROR_PLAYER_MAKE_MOVE.asException();
+    }
+
+    if (move.moveType() == MoveType.TECHNICAL_DEFEAT) {
+      gameStatus =
+          gameStatus == GameState.WHITE_MOVE
+              ? GameState.TECHNICAL_DEFEAT_WHITE
+              : GameState.TECHNICAL_DEFEAT_BLACK;
+      notifyGameOver();
+      return true;
     }
 
     if (move.moveType() == MoveType.SURRENDER) {
@@ -186,7 +195,7 @@ public class GameController {
    */
   public boolean isGameOver() {
     switch (gameStatus) {
-      case WHITE_WIN, BLACK_WIN, DRAW -> {
+      case WHITE_WIN, BLACK_WIN, TECHNICAL_DEFEAT_WHITE, TECHNICAL_DEFEAT_BLACK, DRAW -> {
         return true;
       }
       default -> {

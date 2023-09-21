@@ -1,13 +1,14 @@
 package io.deeplay.grandmastery.ui;
 
 import io.deeplay.grandmastery.core.Board;
-import io.deeplay.grandmastery.core.BoardRender;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.UI;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.domain.GameErrorCode;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.figures.Piece;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -159,9 +160,13 @@ public class ConsoleUi implements UI {
   @Override
   public void showResultGame(GameState gameState) {
     if (gameState == GameState.WHITE_WIN) {
-      printStream.println("Белые выиграли");
+      printStream.println("Белые выиграли!");
     } else if (gameState == GameState.BLACK_WIN) {
-      printStream.println("Чёрные выиграли");
+      printStream.println("Чёрные выиграли!");
+    } else if (gameState == GameState.TECHNICAL_DEFEAT_WHITE) {
+      printStream.println("Техническое поражение белых. Чёрные выиграли!");
+    } else if (gameState == GameState.TECHNICAL_DEFEAT_BLACK) {
+      printStream.println("Техническое поражение черных. Белые выиграли!");
     } else {
       printStream.println("Ничья");
     }
@@ -221,8 +226,71 @@ public class ConsoleUi implements UI {
    */
   @Override
   public void showBoard(Board board, Color color) {
-    BoardRender.showBoard(printStream, board, color);
+    String space = " ";
+    int startIndex;
+    int endIndex;
+    int direction;
+
+    if (color == Color.WHITE) {
+      startIndex = 7;
+      endIndex = 0;
+      direction = -1;
+    } else {
+      startIndex = 0;
+      endIndex = 7;
+      direction = 1;
+    }
+
+    for (int i = startIndex; i != endIndex + direction; i += direction) {
+      printStream.print(color == Color.WHITE ? (i + 1) + space : space + " ");
+      for (int j = 0; j < 8; j++) {
+        int horizontalIndex = (color == Color.WHITE) ? j : 7 - j;
+        Piece piece = board.getPiece(horizontalIndex, i);
+        if (piece != null) {
+          printStream.print("│" + pieceSymbol(piece));
+        } else {
+          printStream.print("│" + space);
+        }
+      }
+      printStream.print(color == Color.WHITE ? "│\n" : "│" + space + (i + 1) + "\n");
+    }
+
+    printStream.print(" " + space.repeat(2));
+    for (int i = 0; i < 8; i++) {
+      printStream.print(color == Color.WHITE ? (char) (97 + i) + space : (char) (104 - i) + space);
+    }
     printStream.println();
+    printStream.flush();
+  }
+
+  /**
+   * Метод возвращает символ фигуры.
+   *
+   * @param piece фигура, которую необходимо отобразить.
+   * @return Символ.
+   */
+  private static char pieceSymbol(Piece piece) {
+    switch (piece.getFigureType()) {
+      case KING -> {
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265A : 0x2654);
+      }
+      case QUEEN -> {
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265B : 0x2655);
+      }
+      case ROOK -> {
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265C : 0x2656);
+      }
+      case BISHOP -> {
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265D : 0x2657);
+      }
+      case KNIGHT -> {
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265E : 0x2658);
+      }
+      case PAWN -> {
+        return (char) ((piece.getColor() == Color.WHITE) ? 0x265F : 0x2659);
+      }
+      default -> throw GameErrorCode.INCORRECT_FIGURE_CHARACTER.asException();
+    }
   }
 
   @Override

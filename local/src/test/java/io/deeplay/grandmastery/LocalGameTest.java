@@ -18,7 +18,9 @@ import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.ui.ConsoleUi;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.Assertions;
@@ -33,25 +35,27 @@ public class LocalGameTest {
 
   @Test
   public void localGameBotVsBotTest() {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+
     for (int i = 0; i < COUNT_GAME; i++) {
+      Player player1 = new Randomus(Color.WHITE);
+      Player player2 = new Randomus(Color.BLACK);
+      GameController gameController = new GameController(player1, player2);
+      gameController.beginPlay(i < COUNT_GAME / 2 ? ChessType.CLASSIC : ChessType.FISHERS);
+
+      Runnable gameTask =
+          () -> {
+            while (!gameController.isGameOver()) {
+              try {
+                gameController.nextMove();
+              } catch (GameException e) {
+                incorrectMove++;
+              }
+            }
+          };
+
+      Future<?> future = executor.submit(gameTask);
       try {
-        Player player1 = new Randomus(Color.WHITE);
-        Player player2 = new Randomus(Color.BLACK);
-        GameController gameController = new GameController(player1, player2);
-        gameController.beginPlay(i < COUNT_GAME / 2 ? ChessType.CLASSIC : ChessType.FISHERS);
-
-        CompletableFuture<Void> future =
-            CompletableFuture.runAsync(
-                () -> {
-                  while (!gameController.isGameOver()) {
-                    try {
-                      gameController.nextMove();
-                    } catch (GameException e) {
-                      incorrectMove++;
-                    }
-                  }
-                });
-
         future.get(GAME_TIMEOUT_SECONDS, TimeUnit.SECONDS);
       } catch (TimeoutException e) {
         fail("Игра №" + i + " превышено ограничение времени в " + GAME_TIMEOUT_SECONDS + " cек.");
@@ -60,6 +64,7 @@ public class LocalGameTest {
       }
     }
 
+    executor.shutdown();
     Assertions.assertAll(
         () -> assertEquals(0, errorGameOver, "Game errors"),
         () -> assertEquals(0, incorrectMove, "Incorrect moves"));

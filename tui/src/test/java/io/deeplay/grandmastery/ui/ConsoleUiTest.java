@@ -4,10 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.deeplay.grandmastery.core.Board;
+import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.utils.Boards;
 import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -167,6 +170,54 @@ public class ConsoleUiTest {
   }
 
   @Test
+  public void testShowWhiteBoard() {
+    Board board = new HashBoard();
+    Boards.defaultChess().accept(board);
+
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showBoard(board, Color.WHITE);
+    String expectedOutput =
+        """
+    8 │♖│♘│♗│♕│♔│♗│♘│♖│
+    7 │♙│♙│♙│♙│♙│♙│♙│♙│
+    6 │ │ │ │ │ │ │ │ │
+    5 │ │ │ │ │ │ │ │ │
+    4 │ │ │ │ │ │ │ │ │
+    3 │ │ │ │ │ │ │ │ │
+    2 │♟│♟│♟│♟│♟│♟│♟│♟│
+    1 │♜│♞│♝│♛│♚│♝│♞│♜│
+       a b c d e f g h""";
+
+    expectedOutput = expectedOutput.replaceAll(" ", " ");
+    expectedOutput += " ";
+    assertEquals(expectedOutput, output.toString(StandardCharsets.UTF_8).trim());
+  }
+
+  @Test
+  public void testShowBlackBoard() {
+    Board board = new HashBoard();
+    Boards.defaultChess().accept(board);
+
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showBoard(board, Color.BLACK);
+    String expectedOutput =
+        """
+      │♜│♞│♝│♚│♛│♝│♞│♜│ 1
+      │♟│♟│♟│♟│♟│♟│♟│♟│ 2
+      │ │ │ │ │ │ │ │ │ 3
+      │ │ │ │ │ │ │ │ │ 4
+      │ │ │ │ │ │ │ │ │ 5
+      │ │ │ │ │ │ │ │ │ 6
+      │♙│♙│♙│♙│♙│♙│♙│♙│ 7
+      │♖│♘│♗│♔│♕│♗│♘│♖│ 8
+     \s\sh g f e d c b a""";
+
+    expectedOutput = expectedOutput.replaceAll(" ", " ");
+    expectedOutput += " ";
+    assertEquals(expectedOutput, output.toString(StandardCharsets.UTF_8).trim());
+  }
+
+  @Test
   public void showWhiteMoveTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.showMove(LongAlgebraicNotation.getMoveFromString("e2e4"), Color.WHITE);
@@ -195,11 +246,39 @@ public class ConsoleUiTest {
   }
 
   @Test
-  public void showResulWinnerGameTest() {
+  public void showResulWhiteWinGameTest() {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.showResultGame(GameState.WHITE_WIN);
 
-    assertEquals("Белые выиграли", output.toString(StandardCharsets.UTF_8).trim());
+    assertEquals("Белые выиграли!", output.toString(StandardCharsets.UTF_8).trim());
+  }
+
+  @Test
+  public void showResulBlackWinGameTest() {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showResultGame(GameState.BLACK_WIN);
+
+    assertEquals("Чёрные выиграли!", output.toString(StandardCharsets.UTF_8).trim());
+  }
+
+  @Test
+  public void showResulTechDefeatWhiteGameTest() {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showResultGame(GameState.TECHNICAL_DEFEAT_WHITE);
+
+    assertEquals(
+        "Техническое поражение белых. Чёрные выиграли!",
+        output.toString(StandardCharsets.UTF_8).trim());
+  }
+
+  @Test
+  public void showResulTechDefeatBlackGameTest() {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    consoleUi.showResultGame(GameState.TECHNICAL_DEFEAT_BLACK);
+
+    assertEquals(
+        "Техническое поражение черных. Белые выиграли!",
+        output.toString(StandardCharsets.UTF_8).trim());
   }
 
   @Test
@@ -207,6 +286,14 @@ public class ConsoleUiTest {
     consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
     consoleUi.showResultGame(GameState.DRAW);
     assertEquals("Ничья", output.toString(StandardCharsets.UTF_8).trim());
+  }
+
+  @Test
+  public void printEventMassage() {
+    consoleUi = new ConsoleUi(InputStream.nullInputStream(), output);
+    String eventMassage = "Привет игрок!";
+    consoleUi.printEventMessage(eventMassage);
+    assertEquals(eventMassage, output.toString(StandardCharsets.UTF_8).trim());
   }
 
   @Test

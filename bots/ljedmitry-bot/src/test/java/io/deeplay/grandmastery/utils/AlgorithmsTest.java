@@ -133,7 +133,4 @@ class AlgorithmsTest {
 
     assertTrue(Algorithms.isGameOver(board, gameHistory));
   }
-
-  @Test
-  void kingEndgameEvalTest() {}
 }

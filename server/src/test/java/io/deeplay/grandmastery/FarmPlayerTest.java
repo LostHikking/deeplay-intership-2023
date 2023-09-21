@@ -1,5 +1,7 @@
 package io.deeplay.grandmastery;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.ChessType;
@@ -11,12 +13,20 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.slf4j.LoggerFactory;
 
 class FarmPlayerTest {
   private FarmPlayer farmPlayer;
+
+  @BeforeAll
+  public static void offLoggers() {
+    Logger farmPlayerLogger = (Logger) LoggerFactory.getLogger(FarmPlayer.class);
+    farmPlayerLogger.setLevel(Level.OFF);
+  }
 
   @BeforeEach
   void init() throws IOException {

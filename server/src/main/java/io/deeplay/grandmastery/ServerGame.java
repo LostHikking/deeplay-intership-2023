@@ -88,7 +88,10 @@ public class ServerGame implements Runnable {
       serverController.close();
     } catch (IOException | ServerException e) {
       var color = gameController.getCurrentPlayer().getColor();
-      var gameStatus = color == Color.WHITE ? GameState.BLACK_WIN : GameState.WHITE_WIN;
+      var gameStatus =
+          color == Color.WHITE
+              ? GameState.TECHNICAL_DEFEAT_WHITE
+              : GameState.TECHNICAL_DEFEAT_BLACK;
       try {
         serverController.sendResult(gameStatus, gameController.getGameHistory().getBoards());
       } catch (IOException ex) {

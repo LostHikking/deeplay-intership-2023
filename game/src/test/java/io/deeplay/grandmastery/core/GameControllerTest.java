@@ -14,10 +14,12 @@ import static org.mockito.Mockito.when;
 import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.domain.MoveType;
 import io.deeplay.grandmastery.exceptions.GameException;
 import io.deeplay.grandmastery.figures.King;
 import io.deeplay.grandmastery.figures.Pawn;
 import io.deeplay.grandmastery.utils.Boards;
+import io.deeplay.grandmastery.utils.LongAlgebraicNotation;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -238,5 +240,57 @@ public class GameControllerTest {
     Assertions.assertAll(
         () -> assertFalse(gameController.isGameOver()),
         () -> assertEquals(GameState.WHITE_MOVE, gameController.getGameStatus()));
+  }
+
+  @Test
+  public void whiteTechnicalDefeatTest() {
+    Player whiteMockPlayer = mock(Player.class);
+    Player blackMockPlayer = mock(Player.class);
+    when(whiteMockPlayer.getColor()).thenReturn(Color.WHITE);
+    when(blackMockPlayer.getColor()).thenReturn(Color.BLACK);
+    when(whiteMockPlayer.createMove())
+        .thenReturn(new Move(null, null, null, MoveType.TECHNICAL_DEFEAT));
+
+    gameController = new GameController(whiteMockPlayer, blackMockPlayer);
+    gameController.beginPlay(ChessType.CLASSIC);
+    gameController.nextMove();
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.TECHNICAL_DEFEAT_WHITE, gameController.getGameStatus()));
+  }
+
+  @Test
+  public void blackTechnicalDefeatTest() {
+    Player whiteMockPlayer = mock(Player.class);
+    Player blackMockPlayer = mock(Player.class);
+    when(whiteMockPlayer.getColor()).thenReturn(Color.WHITE);
+    when(blackMockPlayer.getColor()).thenReturn(Color.BLACK);
+    when(whiteMockPlayer.createMove()).thenReturn(LongAlgebraicNotation.getMoveFromString("e2e4"));
+    when(blackMockPlayer.createMove())
+        .thenReturn(new Move(null, null, null, MoveType.TECHNICAL_DEFEAT));
+
+    gameController = new GameController(whiteMockPlayer, blackMockPlayer);
+    gameController.beginPlay(ChessType.CLASSIC);
+    gameController.nextMove();
+    gameController.nextMove();
+
+    Assertions.assertAll(
+        () -> assertTrue(gameController.isGameOver()),
+        () -> assertEquals(GameState.TECHNICAL_DEFEAT_BLACK, gameController.getGameStatus()));
+  }
+
+  @Test
+  public void nullMoveTest() {
+    Player whiteMockPlayer = mock(Player.class);
+    Player blackMockPlayer = mock(Player.class);
+    when(whiteMockPlayer.getColor()).thenReturn(Color.WHITE);
+    when(blackMockPlayer.getColor()).thenReturn(Color.BLACK);
+    when(whiteMockPlayer.createMove()).thenReturn(null);
+
+    gameController = new GameController(whiteMockPlayer, blackMockPlayer);
+    gameController.beginPlay(ChessType.CLASSIC);
+
+    Assertions.assertThrows(GameException.class, gameController::nextMove);
   }
 }
