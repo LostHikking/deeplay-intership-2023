@@ -14,9 +14,9 @@ import io.deeplay.grandmastery.utils.Boards;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Экспектимакс бот с алгоритмом Монте-Карло. */
-public class ExpectiMaxBotMcts extends Bot {
-  public ExpectiMaxBotMcts(String name, Color color, Strategy strategy, int searchDepth) {
+/** Минимакс бот с алгоритмом Монте-Карло. */
+public class MiniMaxBotMcts extends Bot {
+  public MiniMaxBotMcts(String name, Color color, Strategy strategy, int searchDepth) {
     super(name, color, strategy, searchDepth);
   }
 
@@ -122,7 +122,7 @@ public class ExpectiMaxBotMcts extends Bot {
    * @param maximizingPlayer Игрок.
    * @return Цену лучшего состояния.
    */
-  public int expectiMaxMcts(State state, int depth, boolean maximizingPlayer) {
+  public int minimaxMcts(State state, int depth, boolean maximizingPlayer, int alpha, int beta) {
     strategy.setTerminalCost(state);
     if (state.isTerminal() || depth == 0) {
       if (state.isTerminal()) {
@@ -135,40 +135,42 @@ public class ExpectiMaxBotMcts extends Bot {
       return state.getValue();
     }
 
+    int bestValue = maximizingPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE;
     List<State> children = createChildStates(state);
+    state.setChildren(children);
+    for (State child : children) {
+      int value = minimaxMcts(child, depth - 1, !maximizingPlayer, alpha, beta);
 
-    if (maximizingPlayer) {
-      int bestValue = Integer.MIN_VALUE;
-      for (State child : children) {
-        int value = expectiMaxMcts(child, depth - 1, false);
-        bestValue = determineBestMove(state, child, value, bestValue);
+      bestValue = determineBestMove(state, child, value, bestValue, maximizingPlayer);
+
+      if (maximizingPlayer) {
+        alpha = Math.max(alpha, bestValue);
+      } else {
+        beta = Math.min(beta, bestValue);
       }
-      return bestValue;
-    } else {
-      int averageValue = 0;
-      int childCount = 0;
-      for (State child : children) {
-        int value = expectiMaxMcts(child, depth - 1, true);
-        averageValue = averageValue + value;
-        childCount = childCount + 1;
+      if (beta <= alpha) {
+        break;
       }
-      int result = childCount == 0 ? 0 : averageValue / childCount;
-      state.setValue(result);
-      return result;
     }
+    return bestValue;
   }
 
   /**
-   * Вспомогательный метод для выбора лучшего хода.
+   * Ищет лучшее значение в зависимости от игрока, совершающего ход.
    *
-   * @param node Состояние
-   * @param child Ребенок.
-   * @param value Значение.
+   * @param node Вершина.
+   * @param child Дети.
+   * @param value Само значение.
    * @param bestValue Лучшее значение.
-   * @return Измененное или нет лучшее значение.
+   * @param maximizingPlayer Игрок, совершающий ход.
+   * @return лучшее значение.
    */
-  private int determineBestMove(State node, State child, int value, int bestValue) {
-    if (value > bestValue) {
+  private int determineBestMove(
+          State node, State child, int value, int bestValue, boolean maximizingPlayer) {
+    if (maximizingPlayer && value > bestValue) {
+      bestValue = value;
+      updateNodeValueAndMove(node, child, bestValue);
+    } else if (!maximizingPlayer && value < bestValue) {
       bestValue = value;
       updateNodeValueAndMove(node, child, bestValue);
     }
@@ -195,7 +197,7 @@ public class ExpectiMaxBotMcts extends Bot {
     Color mainColor = this.getColor();
     Color opponentColor = mainColor == Color.BLACK ? Color.WHITE : Color.BLACK;
     State mainState = new State(board, mainColor, opponentColor, null, gameHistory, true);
-    expectiMaxMcts(mainState, searchDepth, true);
+    minimaxMcts(mainState, searchDepth, true,Integer.MIN_VALUE, Integer.MAX_VALUE);
     return mainState.getMove();
   }
 

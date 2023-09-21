@@ -12,14 +12,14 @@ import io.deeplay.grandmastery.motostrategies.AttackingStrategy;
 import io.deeplay.grandmastery.utils.Boards;
 import org.junit.jupiter.api.Test;
 
-class ExpectiMaxBotMctsTest {
+class MiniMaxBotMctsTest {
 
   @Test
   void simulation() {
     Board board = new HashBoard();
     Boards.defaultChess().accept(board);
-    ExpectiMaxBotMcts expectiMaxBot =
-        new ExpectiMaxBotMcts("Moto", Color.WHITE, new AttackingStrategy(), 2);
+    MiniMaxBotMcts expectiMaxBot =
+        new MiniMaxBotMcts("Moto", Color.WHITE, new AttackingStrategy(), 2);
     int value = expectiMaxBot.simulation(board, Color.BLACK);
     assertTrue(value <= 1 && value >= -1);
   }
@@ -32,9 +32,9 @@ class ExpectiMaxBotMctsTest {
     Color mainColor = Color.WHITE;
     Color movingColor = Color.WHITE;
     State rootNode = new State(board, mainColor, movingColor, null, gameHistory, true);
-    ExpectiMaxBotMcts miniMaxBot =
-        new ExpectiMaxBotMcts("Moto", Color.WHITE, new AttackingStrategy(), 2);
-    miniMaxBot.expectiMaxMcts(rootNode, 2, true);
+    MiniMaxBotMcts miniMaxBot =
+        new MiniMaxBotMcts("Moto", Color.WHITE, new AttackingStrategy(), 2);
+    miniMaxBot.minimaxMcts(rootNode, 2, true,Integer.MIN_VALUE, Integer.MAX_VALUE);
     assertNotNull(rootNode.getMove());
   }
 }
