@@ -20,20 +20,16 @@ import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.utils.Boards;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class GuiTest {
@@ -348,24 +344,6 @@ class GuiTest {
     }
     assertTrue(guiContainer.getCell(0, 2).getMouseListeners().length > 0);
     assertTrue(guiContainer.getCell(2, 2).getMouseListeners().length > 0);
-  }
-
-  @Test
-  @Disabled
-  void inputSimpleMoveTest() throws InterruptedException, ExecutionException {
-    init();
-
-    var future = new FutureTask<>(() -> gui.inputMove("Moto"));
-    new Thread(future).start();
-
-    gui.getClickQueue().put(new Point(0, 1));
-    gui.getClickQueue().put(new Point(0, 3));
-
-    synchronized (gui.getMonitor()) {
-      gui.getMonitor().notify();
-    }
-
-    assertEquals("a2a4", future.get());
   }
 
   @Test

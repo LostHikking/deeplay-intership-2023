@@ -2,6 +2,8 @@ package io.deeplay.grandmastery;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
@@ -16,19 +18,33 @@ import io.deeplay.grandmastery.utils.Boards;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.slf4j.LoggerFactory;
 
 public class ServerDaoTest {
   private ServerPlayer serverPlayer;
   private final BufferedReader bufferedReader = Mockito.mock(BufferedReader.class);
+
+  /** Отключает логи. */
+  @BeforeAll
+  public static void offLoggers() {
+    Logger serverDaoLogger = (Logger) LoggerFactory.getLogger(ServerDao.class);
+    Logger serverPlayerLogger = (Logger) LoggerFactory.getLogger(ServerPlayer.class);
+
+    serverDaoLogger.setLevel(Level.OFF);
+    serverPlayerLogger.setLevel(Level.OFF);
+  }
 
   @BeforeEach
   void init() {
@@ -96,9 +112,16 @@ public class ServerDaoTest {
             Mockito.mock(), Mockito.mock(), Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
-    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
 
-    Assertions.assertDoesNotThrow(() -> serverDao.sendResult(GameState.WHITE_WIN, List.of()));
+    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      Mockito.when(socket.getOutputStream()).thenReturn(output);
+      String expect = "{\"type\":\"ResultGame\",\"gameState\":\"WHITE_WIN\",\"boards\":[]}";
+      serverDao.sendResult(GameState.WHITE_WIN, List.of());
+
+      serverDao.close();
+      Assertions.assertEquals(
+          expect, output.toString(StandardCharsets.UTF_8).replaceAll("\\r", "").trim());
+    }
   }
 
   @Test
@@ -111,7 +134,7 @@ public class ServerDaoTest {
             Mockito.mock(), Mockito.mock(), out, "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
-    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+    Mockito.when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
     Assertions.assertDoesNotThrow(() -> serverDao.sendResult(GameState.WHITE_WIN, List.of()));
   }
@@ -125,9 +148,9 @@ public class ServerDaoTest {
         new ServerPlayer(
             Mockito.mock(), Mockito.mock(), out, "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
-    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+    Mockito.when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
-    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+    Mockito.when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
     Assertions.assertDoesNotThrow(() -> serverDao.sendResult(GameState.WHITE_WIN, List.of()));
   }
@@ -151,7 +174,7 @@ public class ServerDaoTest {
             Mockito.mock(), Mockito.mock(), Mockito.mock(), "name", Color.WHITE, ChessType.CLASSIC);
     var socket = Mockito.mock(Socket.class);
     var serverDao = new ServerDao(serverPlayer, serverPlayer, socket);
-    Mockito.when(socket.getOutputStream()).thenReturn(System.out);
+    Mockito.when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
     Assertions.assertDoesNotThrow(
         () -> serverDao.notifySuccessMove(Color.WHITE, Mockito.mock(), new HashBoard()));

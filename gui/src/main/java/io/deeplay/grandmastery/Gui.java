@@ -336,6 +336,12 @@ public class Gui implements UI {
     } else if (gameState == GameState.BLACK_WIN) {
       message = "Чёрные выиграли!!!";
       sound = "blackWinSound.wav";
+    } else if (gameState == GameState.TECHNICAL_DEFEAT_WHITE) {
+      message = "Техническое поражение белых. Чёрные выиграли!";
+      sound = "blackWinSound.wav";
+    } else if (gameState == GameState.TECHNICAL_DEFEAT_BLACK) {
+      message = "Техническое поражение черных. Белые выиграли!";
+      sound = "whiteWinSound.wav";
     } else {
       message = "Ничья!";
       sound = "drawSound.wav";

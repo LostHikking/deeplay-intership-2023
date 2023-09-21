@@ -2,7 +2,6 @@ package io.deeplay.grandmastery;
 
 import io.deeplay.grandmastery.core.Board;
 import io.deeplay.grandmastery.core.GameHistory;
-import io.deeplay.grandmastery.core.GameStateChecker;
 import io.deeplay.grandmastery.core.Move;
 import io.deeplay.grandmastery.core.Position;
 import io.deeplay.grandmastery.domain.Color;

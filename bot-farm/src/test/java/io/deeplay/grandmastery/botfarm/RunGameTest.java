@@ -1,5 +1,8 @@
 package io.deeplay.grandmastery.botfarm;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import io.deeplay.grandmastery.botfarm.utils.FarmUtils;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.core.Randomus;
 import io.deeplay.grandmastery.domain.Color;
@@ -12,10 +15,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.slf4j.LoggerFactory;
 
 class RunGameTest {
+
+  @BeforeAll
+  public static void offLoggers() {
+    Logger farmUtilsLogger = (Logger) LoggerFactory.getLogger(FarmUtils.class);
+    farmUtilsLogger.setLevel(Level.OFF);
+  }
 
   @Test
   void runTest() throws IOException {
