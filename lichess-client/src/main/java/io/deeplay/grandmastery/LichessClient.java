@@ -5,15 +5,10 @@ import chariot.model.Event;
 import chariot.model.GameEvent;
 import java.util.stream.Stream;
 
-public class LichessClient {
-
-  private final ClientAuth client;
-
-  public LichessClient(ClientAuth client) {
-    this.client = client;
-  }
+public record LichessClient(ClientAuth client) {
 
   public Stream<Event> streamEvents() {
+    client.bot().upgradeToBotAccount();
     return client.bot().connect().stream();
   }
 
