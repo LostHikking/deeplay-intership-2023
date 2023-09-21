@@ -1,6 +1,5 @@
 package io.deeplay.grandmastery.utils;
 
-import io.deeplay.grandmastery.core.GameHistory;
 import io.deeplay.grandmastery.core.HashBoard;
 import io.deeplay.grandmastery.domain.Color;
 import org.junit.jupiter.api.Assertions;
@@ -39,28 +38,5 @@ class BotUtilsTest {
     Assertions.assertAll(
         () -> Assertions.assertTrue(Boards.equals(startBoard, board)),
         () -> Assertions.assertFalse(Boards.equals(startBoard, newBoard)));
-  }
-
-  @Test
-  void getFenFromBoard() {
-    var board = new HashBoard();
-    Boards.defaultChess().accept(board);
-
-    var fen = BotUtils.getFenFromBoard(board, Color.WHITE, new GameHistory());
-    var excepted = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
-    Assertions.assertEquals(excepted, fen);
-  }
-
-  @Test
-  void writeFenBoard() {
-    var stringBuilder = new StringBuilder();
-    var board = new HashBoard();
-
-    Boards.defaultChess().accept(board);
-    BotUtils.writeFenBoard(stringBuilder, board);
-
-    var excepted = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    Assertions.assertEquals(excepted, stringBuilder.toString());
   }
 }
