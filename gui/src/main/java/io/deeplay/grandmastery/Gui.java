@@ -56,12 +56,15 @@ public class Gui implements UI {
   private int currentVolumeIndex;
   private AudioInputStream audioInputStream;
   private float[] volumeLevels = {0f, 0.6f, 0.8f};
+
   /** Контейнер с компонентами графического интерфейса. */
   private GuiContainer guiContainer;
+
   /** Очередь, в которой хранятся клики по доске. */
   private BlockingQueue<Point> clickQueue = new LinkedBlockingQueue<>();
 
   private List<Move> moves;
+
   /** Переменная для отслеживания изменений в очереди(метод inputMove). */
   private final Object monitor;
 
