@@ -35,7 +35,21 @@ xml [файл](./config/checkstyle/checkstyle.xml) с описанием пра�
 ./gradlew build
 ```
 
+## Вики
+
+Подробное описание по работе каждого модуля читать на [вики](https://github.com/LostHikking/grandmastery/wiki)
+
 ## Модули
+
+- ### bots
+    - ##### bots-factory: Фабрика ботов
+    - ##### ljedmitry-bot: Боты [Димы](https://github.com/LjeDmitr)
+    - ##### melniknow-bots: Боты [Серёжи](https://github.com/melniknow)
+    - ##### yurkevich-bots: Боты [Матвея](https://github.com/motomoto8913)
+
+- ### bot-farm
+
+Модуль с бот-фермой
 
 - ### client
 
@@ -64,3 +78,7 @@ xml [файл](./config/checkstyle/checkstyle.xml) с описанием пра�
 - ### tui
 
 Модуль содержащий реализацию текстового интерфейса
+
+- ### lichess-client
+
+Модуль содержащий lichess клиент
