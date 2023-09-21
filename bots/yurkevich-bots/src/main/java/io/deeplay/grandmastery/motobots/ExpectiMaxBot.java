@@ -84,7 +84,8 @@ public class ExpectiMaxBot extends Bot {
 
     Board board = this.getBoard();
     Color mainColor = this.getColor();
-    State mainState = new State(board, mainColor, mainColor, null, gameHistory, true);
+    Color opponentColor = mainColor == Color.BLACK ? Color.WHITE : Color.BLACK;
+    State mainState = new State(board, mainColor, opponentColor, null, gameHistory, true);
     expectiMax(mainState, searchDepth, true);
     Move move = mainState.getMove();
     if (move.promotionPiece() != null) {
