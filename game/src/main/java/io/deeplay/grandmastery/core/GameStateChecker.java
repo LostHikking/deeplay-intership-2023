@@ -20,7 +20,7 @@ public class GameStateChecker {
 
     List<Position> piecePosition = board.getAllPiecePositionByColor(color.getOpposite());
     for (Position position : piecePosition) {
-      Piece piece = board.getPiece(position);
+      var piece = board.getPiece(position);
       FigureType promotionPiece = null;
       if (piece.getFigureType() == FigureType.PAWN
           && (kingPoz.row().value() == 0 || kingPoz.row().value() == 7)) {
@@ -189,12 +189,12 @@ public class GameStateChecker {
   }
 
   /**
-   * Метод проверяет-стоит ли на доске ничья из-за пяти кратного повторения позиции.
+   * Метод проверяет-стоит ли на доске ничья из-за троекратного повторения позиции.
    *
    * @param gameHistory История партии
    * @return Стоит ли на доске ничья
    */
   private static boolean drawWithRepeatPosition(GameHistory gameHistory, Board board) {
-    return gameHistory.getMaxRepeatPosition(board) >= 5;
+    return gameHistory.getMaxRepeatPosition(board) >= 3;
   }
 }
