@@ -81,7 +81,6 @@ allprojects {
     tasks.shadowJar {
         dependencies {
             exclude(dependency("org.nd4j:.*:.*"))
-            exclude(dependency("org.deeplearning4j:.*:.*"))
             exclude(dependency("org.bytedeco:.*:.*"))
         }
     }

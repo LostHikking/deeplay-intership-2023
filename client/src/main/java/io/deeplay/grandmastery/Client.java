@@ -80,10 +80,6 @@ public class Client {
     clientController.connect(host, port);
   }
 
-  private static boolean isServerUnavailable(IOException e) {
-    return e.getMessage().contains("Server disconnect");
-  }
-
   /**
    * Запускает клиент с определённым UI.
    *
@@ -103,11 +99,20 @@ public class Client {
           ChessType chessType = clientController.selectChessType();
 
           player = new HumanPlayer(name, color, clientController.getUi());
-          StartGameRequest request =
-              gameMode == GameMode.HUMAN_VS_BOT
-                  ? new StartGameRequest(
-                      name, chessType, color, clientController.selectBot(color.getOpposite()), null)
-                  : new StartGameRequest(name, chessType, color, null, null);
+          StartGameRequest request;
+          if (gameMode == GameMode.HUMAN_VS_BOT) {
+            String botName = clientController.selectBot(color.getOpposite());
+            if (botName == null) {
+              reconnect();
+              clientController.printEventMessage(
+                  "Бот ферма недоступна, выберите другой режим или попробуйте позднее");
+              continue;
+            }
+
+            request = new StartGameRequest(name, chessType, color, botName, null);
+          } else {
+            request = new StartGameRequest(name, chessType, color, null, null);
+          }
           IDto response = clientController.query(request);
 
           if (response instanceof StartGameResponse responseDto) {
@@ -122,14 +127,10 @@ public class Client {
           }
         }
       } catch (IOException e) {
-        if (isServerUnavailable(e)) {
-          log.error("Соединение с сервером разорвано");
-          log.info("Попытка переподключения: ");
+        log.error("Соединение с сервером разорвано");
+        log.info("Попытка переподключения...");
 
-          reconnect();
-        } else {
-          throw e;
-        }
+        reconnect();
       }
     } while (reconnect);
 
@@ -146,9 +147,20 @@ public class Client {
    * @throws QueryException ошибка во время запроса.
    * @throws IllegalStateException неизвестный тип ответа от сервера.
    */
-  private void botVsBot(ChessType chessType) throws IOException, IllegalStateException {
+  private void botVsBot(ChessType chessType) throws Exception {
     String firstBot = clientController.selectBot(Color.WHITE);
+    if (firstBot == null) {
+      clientController.printEventMessage(
+          "Бот ферма недоступна, выберите другой режим или попробуйте позднее");
+      throw new IOException();
+    }
+
     String secondBot = clientController.selectBot(Color.BLACK);
+    if (secondBot == null) {
+      clientController.printEventMessage(
+          "Бот ферма недоступна, выберите другой режим или попробуйте позднее");
+      throw new IOException();
+    }
 
     StartGameRequest request =
         new StartGameRequest("AI", chessType, Color.WHITE, firstBot, secondBot);
