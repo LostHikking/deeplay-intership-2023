@@ -4,6 +4,7 @@ import static io.deeplay.grandmastery.Server.GAMES;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import io.deeplay.grandmastery.domain.Color;
+import io.deeplay.grandmastery.dto.ErrorConnectionBotFarm;
 import io.deeplay.grandmastery.dto.GetListBotsFromFarm;
 import io.deeplay.grandmastery.dto.IDto;
 import io.deeplay.grandmastery.dto.SendListBots;
@@ -60,6 +61,10 @@ public class CreateGame implements Runnable {
                 this.out,
                 ConversationService.serialize(
                     getListBotsFromFarm(new GetListBotsFromFarm(), in, out)));
+          } catch (IOException e) {
+            log.error("Не удалось подключится к бот ферме");
+            ServerDao.send(this.out, ConversationService.serialize(new ErrorConnectionBotFarm()));
+            return;
           }
         }
       } while (!(requestDto instanceof StartGameRequest));

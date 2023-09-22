@@ -8,6 +8,7 @@ import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.dto.ErrorConnectionBotFarm;
 import io.deeplay.grandmastery.dto.GetListBotsFromFarm;
 import io.deeplay.grandmastery.dto.IDto;
 import io.deeplay.grandmastery.dto.SendListBots;
@@ -27,7 +28,7 @@ public class ClientController {
   private static final int TIME_RECONNECTION = 5000;
 
   @Getter private final UI ui;
-  private ClientDao clientDao;
+  protected ClientDao clientDao;
 
   public ClientController(UI ui) {
     this.ui = ui;
@@ -115,8 +116,21 @@ public class ClientController {
     return clientDao.isClosed();
   }
 
+  /**
+   * Запрашивает список ботов у сервера и выбирает одного.
+   *
+   * @param color цвет бота
+   * @return имя бота
+   * @throws IOException в случае ошибки чтения/записи
+   */
   public String selectBot(Color color) throws IOException {
-    List<String> bots = ((SendListBots) clientDao.query(new GetListBotsFromFarm())).getBots();
+    IDto dto = clientDao.query(new GetListBotsFromFarm());
+
+    if (dto instanceof ErrorConnectionBotFarm) {
+      return null;
+    }
+
+    List<String> bots = ((SendListBots) dto).getBots();
     return ui.selectBot(bots, color);
   }
 

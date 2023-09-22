@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   @JsonSubTypes.Type(CreateFarmGameRequest.class),
   @JsonSubTypes.Type(CreateFarmGameResponse.class),
   @JsonSubTypes.Type(GetListBotsFromFarm.class),
+  @JsonSubTypes.Type(ErrorConnectionBotFarm.class),
   @JsonSubTypes.Type(SendListBots.class),
   @JsonSubTypes.Type(SendBoard.class)
 })

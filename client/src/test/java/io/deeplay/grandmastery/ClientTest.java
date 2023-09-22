@@ -3,6 +3,7 @@ package io.deeplay.grandmastery;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
@@ -20,9 +22,12 @@ import io.deeplay.grandmastery.domain.ChessType;
 import io.deeplay.grandmastery.domain.Color;
 import io.deeplay.grandmastery.domain.GameMode;
 import io.deeplay.grandmastery.domain.GameState;
+import io.deeplay.grandmastery.dto.ErrorConnectionBotFarm;
 import io.deeplay.grandmastery.dto.ResultGame;
+import io.deeplay.grandmastery.dto.SendListBots;
 import io.deeplay.grandmastery.dto.StartGameRequest;
 import io.deeplay.grandmastery.dto.StartGameResponse;
+import io.deeplay.grandmastery.exceptions.QueryException;
 import io.deeplay.grandmastery.ui.ConsoleUi;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -114,7 +119,7 @@ public class ClientTest {
   }
 
   @Test
-  public void runBotVsBot() throws Exception {
+  public void runBotVsBotTest() throws Exception {
     runTestServer();
     client = new Client(mockUi);
     ResultGame resultGame = new ResultGame(GameState.WHITE_WIN, List.of(""));
@@ -122,6 +127,7 @@ public class ClientTest {
 
     when(mockClientController.selectMode()).thenReturn(GameMode.BOT_VS_BOT, GameMode.BOT_VS_BOT);
     when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC, ChessType.CLASSIC);
+    when(mockClientController.selectBot(any())).thenReturn("Bot");
     when(mockClientController.query(any())).thenReturn(resultGame, resultGame);
     when(mockClientController.startNewGame()).thenReturn(true, false);
 
@@ -131,15 +137,42 @@ public class ClientTest {
   }
 
   @Test
-  public void errorRunBotVsBot() throws Exception {
+  public void runHumanVsBotErrorTest() throws Exception {
+    runTestServer();
+    client = new Client(mockUi);
+    ClientController mockClientController = mock(ClientController.class);
+    StartGameResponse startGameResponse =
+        new StartGameResponse("rp____PRnp____PNbp____PBqp____PQkp____PKbp____PBnp____PNrp____PR");
+
+    when(mockClientController.query(any())).thenReturn(startGameResponse);
+    when(mockClientController.getUi()).thenReturn(mockUi);
+    when(mockClientController.getJsonFromServer())
+        .thenReturn("{\"type\":\"ResultGame\",\"gameState\":\"BLACK_WIN\",\"boards\":[\"\"]}");
+    when(mockClientController.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
+    when(mockClientController.selectColor()).thenReturn(Color.WHITE);
+    when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC);
+    when(mockClientController.selectBot(any())).thenReturn(null, "Bot");
+    when(mockClientController.startNewGame()).thenReturn(false);
+
+    client.clientController = mockClientController;
+    Assertions.assertAll(
+        () -> assertDoesNotThrow(client::run),
+        () -> assertFalse(client.reconnect),
+        () -> verify(mockClientController, times(2)).close());
+  }
+
+  @Test
+  public void errorBotVsBotTest() throws Exception {
     runTestServer();
     client = new Client(mockUi);
     StartGameRequest startGameRequest = new StartGameRequest();
     ClientController mockClientController = mock(ClientController.class);
 
     when(mockClientController.selectMode()).thenReturn(GameMode.BOT_VS_BOT);
-    when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC);
+    when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC, ChessType.CLASSIC);
+    when(mockClientController.selectBot(any())).thenReturn("Bot");
     when(mockClientController.query(any())).thenReturn(startGameRequest);
+    when(mockClientController.startNewGame()).thenReturn(false);
 
     client.clientController = mockClientController;
     Assertions.assertAll(
@@ -148,7 +181,47 @@ public class ClientTest {
   }
 
   @Test
-  public void runGameWithHuman() throws Exception {
+  public void errorBotVsBotUnavailableBotFarmTest() throws Exception {
+    runTestServer();
+    client = new Client(mockUi);
+    ClientController mockClientController = mock(ClientController.class);
+
+    when(mockClientController.selectMode()).thenReturn(GameMode.BOT_VS_BOT);
+    when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC);
+    when(mockClientController.selectBot(any())).thenReturn(null, "bot", null, "Bot");
+    when(mockClientController.query(any()))
+        .thenReturn(new ResultGame(GameState.WHITE_WIN, List.of("")));
+    when(mockClientController.startNewGame()).thenReturn(false);
+
+    client.clientController = mockClientController;
+    Assertions.assertAll(
+        () -> assertDoesNotThrow(client::run),
+        () -> verify(mockClientController, times(3)).close());
+  }
+
+  @Test
+  public void selectBotTest() throws IOException {
+    ClientController clientController = new ClientController(mockUi);
+    ClientDao mockDao = mock(ClientDao.class);
+    when(mockDao.query(any())).thenReturn(new SendListBots());
+    when(mockUi.selectBot(any(), any())).thenReturn("bot");
+
+    clientController.clientDao = mockDao;
+    assertEquals("bot", clientController.selectBot(Color.WHITE));
+  }
+
+  @Test
+  public void errorSelectBotTest() throws IOException {
+    ClientController clientController = new ClientController(mockUi);
+    ClientDao mockDao = mock(ClientDao.class);
+    when(mockDao.query(any())).thenReturn(new ErrorConnectionBotFarm());
+
+    clientController.clientDao = mockDao;
+    assertNull(clientController.selectBot(Color.WHITE));
+  }
+
+  @Test
+  public void runGameWithHumanTest() throws Exception {
     runTestServer();
     client = new Client(mockUi);
 
@@ -156,7 +229,7 @@ public class ClientTest {
     StartGameResponse startGameResponse =
         new StartGameResponse("rp____PRnp____PNbp____PBqp____PQkp____PKbp____PBnp____PNrp____PR");
 
-    when(mockClientController.selectMode()).thenReturn(GameMode.HUMAN_VS_BOT);
+    when(mockClientController.selectMode()).thenReturn(GameMode.HUMAN_VS_HUMAN);
     when(mockClientController.startNewGame()).thenReturn(false);
     when(mockClientController.getUi()).thenReturn(mockUi);
     when(mockClientController.selectColor()).thenReturn(Color.WHITE);
@@ -181,6 +254,46 @@ public class ClientTest {
         () -> assertTrue(client.player.isGameOver(), "Player game over"),
         () -> assertTrue(client.player.getGameHistory().isGameOver(), "History game over"),
         () -> verify(mockClientController, times(1)).close());
+  }
+
+  @Test
+  public void disconnectServerTest() throws Exception {
+    runTestServer();
+    client = new Client(mockUi);
+    Logger clientLogger = (Logger) LoggerFactory.getLogger(Client.class);
+    clientLogger.setLevel(Level.OFF);
+
+    ClientController mockClientController = mock(ClientController.class);
+    StartGameResponse startGameResponse =
+        new StartGameResponse("rp____PRnp____PNbp____PBqp____PQkp____PKbp____PBnp____PNrp____PR");
+
+    when(mockClientController.selectMode()).thenReturn(GameMode.HUMAN_VS_HUMAN);
+    when(mockClientController.startNewGame()).thenReturn(false);
+    when(mockClientController.getUi()).thenReturn(mockUi);
+    when(mockClientController.selectColor()).thenReturn(Color.WHITE);
+    when(mockClientController.inputPlayerName(Color.WHITE)).thenReturn("Player");
+    when(mockClientController.selectChessType()).thenReturn(ChessType.CLASSIC);
+    when(mockClientController.query(any()))
+        .thenThrow(QueryException.class)
+        .thenReturn(startGameResponse);
+    when(mockClientController.getJsonFromServer()).thenReturn("{\"type\":\"WaitMove\"}");
+    when(mockClientController.getJsonFromServer())
+        .thenAnswer(
+            invocation -> {
+              Thread.sleep(2000);
+              return "{\"type\":\"ResultGame\",\"gameState\":\"BLACK_WIN\",\"boards\":[\"\"]}";
+            });
+
+    when(mockUi.inputMove(anyString())).thenReturn("e2e4");
+    client.clientController = mockClientController;
+
+    Assertions.assertAll(
+        () -> assertDoesNotThrow(client::run),
+        () -> assertFalse(client.reconnect),
+        () -> assertEquals(mockUi, client.clientController.getUi()),
+        () -> assertTrue(client.player.isGameOver(), "Player game over"),
+        () -> assertTrue(client.player.getGameHistory().isGameOver(), "History game over"),
+        () -> verify(mockClientController, times(2)).close());
   }
 
   @Test
